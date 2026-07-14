@@ -1,124 +1,126 @@
-# - HardwareModularWorkflow
+# HardwareModularWorkflow
 
-HardwareModularWorkflow 是一款硬件模块化工作流软件。根据编辑的工作流进行独立运动，亦可 进行同步（等待某工作流完成）
-在设计理念中可以在工作流中可以添加其他工作流（对于当前工作流的引用不可取），
+HardwareModularWorkflow 是一个面向硬件设备的模块化工作流平台。它将硬件操作抽象为可复用步骤，并通过模块与工作流进行组合，支持串行、并行、嵌套引用、超时控制和执行结果记录。
 
+当前以 WPF 桌面应用为入口，使用 SQLite 持久化硬件、控制器、模块、工作流与执行日志等数据。
 
-UI画风参考：https://github.com/yoi102/VisionProcess 
+## 主要能力
 
-## 项目
+- 硬件抽象：统一描述电机、温控、制冷及自定义硬件。
+- 命令执行：通过命令与驱动接口隔离具体设备通信实现。
+- 模块编排：将多个硬件步骤组合为可复用模块。
+- 工作流调度：将多个模块组合为工作流，支持串行或并行执行。
+- 工作流嵌套：工作流可引用其他工作流并配置执行条件。
+- 执行控制：支持超时、取消、失败策略与结果汇总。
+- 控制器适配：提供 CAN/PLC 适配层，可接入厂商动态库。
+- 桌面管理：提供仪表盘、硬件、控制器、模块、工作流、监控与日志视图。
 
-当前 `HardwareModularWorkflow.sln` 中的项目如下：
+## 技术栈
+
+- .NET 10
+- WPF
+- C#（Nullable、Implicit Usings）
+- SQLite / Entity Framework Core
+- Microsoft.Extensions.DependencyInjection
+- CommunityToolkit.Mvvm
+- MahApps.Metro / MaterialDesign
+
+## 解决方案结构
+
 ```text
-HardwareModularWorkflow.Core
-HardwareModularWorkflow.Db
-HardwareModularWorkflow.Wpf
-HardwareModularWorkflow.Hardware
-HardwareModularWorkflow.Workflow
-HardwareModularWorkflow.MotioncontrolPlc
+HardwareModularWorkflow/
+├── HardwareModularWorkflow.Core        核心服务、依赖注入、运行时编排
+├── HardwareModularWorkflow.Hardware    硬件抽象、硬件模型、命令与执行结果
+├── HardwareModularWorkflow.Workflow    工作流模型、执行器、调度器
+├── HardwareModularWorkflow.Controller     CAN/PLC 控制器与厂商库适配
+├── HardwareModularWorkflow.Db          数据库上下文、实体、数据服务
+└── HardwareModularWorkflow.Wpf         WPF 应用、View、ViewModel
 ```
-View / ViewModel 放在 Wpf 中
 
-# - 框架分层
+## 架构分层
+
 ```mermaid
 flowchart TD
-    Ui["Wpf Ui<br/>***.Wpf.Views<br/>***.Wpf.ViewModels"]
-    Db["Hardware Data Model<br/>***.Db.Services<br/>***"]
-    Plc["Control Plc<br/>***.MotioncontrolPlc.Dlls<br/>***.MotioncontrolPlc.Services"]
-    Hardware["Hardware Operate<br/>***.Hardware.Models"]
-    
-
-    UI->Core
-    Core->Db
-
+    Wpf["WPF UI<br/>Views / ViewModels"] --> Core["Core<br/>运行时服务 / 编排"]
+    Core --> Workflow["Workflow<br/>执行器 / 调度"]
+    Core --> Db["Db<br/>SQLite / 数据服务"]
+    Core --> Hardware["Hardware<br/>抽象 / 命令"]
+    Hardware --> Controller["Controller<br/>CAN / PLC 适配"]
+    Workflow --> Hardware
 ```
+
+## 核心概念
+
+```text
+Flow（工作流）
+└── Module（模块）
+    └── HardwareStep（硬件步骤）
+        └── HardwareCommand（硬件命令）
+```
+
+- Hardware：设备与状态抽象。
+- HardwareCommand：设备操作描述。
+- Module：可复用执行单元，包含多个硬件步骤。
+- Flow：由模块与子工作流引用组成的执行编排。
+
+执行模式：
+
+| 模式 | 说明 |
+| --- | --- |
+| Sequential | 上一步完成后执行下一步 |
+| Parallel | 并行执行并等待结果 |
 
 ## 项目职责
 
-### .Core
+### HardwareModularWorkflow.Core
 
-调度各库的操作
-  
-### .Db
+负责依赖注入、服务注册、跨项目协调与运行时入口。
 
-数据模型层，是 模块、流参数
+### HardwareModularWorkflow.Db
 
-主要职责：
+负责数据模型、数据库上下文、仓储/服务与初始化。
 
-- 定义 `HardwareDocument`、Communication、
+### HardwareModularWorkflow.Hardware
 
+负责硬件抽象、命令模型、执行结果与驱动接口。
 
-### .Wpf
+### HardwareModularWorkflow.Workflow
 
-### .Hardware
+负责工作流模型、执行引擎、调度策略与取消/超时控制。
 
-### .Workflow
+### HardwareModularWorkflow.Controller
 
-### .MotioncontrolPlc
+负责 CAN/PLC 控制器适配、厂商动态库加载与通信实现。
 
-### .命令
+### HardwareModularWorkflow.Wpf
 
+负责桌面 UI、页面导航、ViewModel 交互与可视化监控。
 
-## 类型_定义
+## 运行方式
 
-硬件： 关键元素，应该是可自定义并且多样化类型
-命令： 发/收命令，线程池处理加安全线程（是否返回执行结果，返回结果的打印日志） 
+在仓库根目录执行：
 
-模块： 自定义（几个硬件组合最小单元，工作流最小的模块（添加硬件/自定义）） 
-流： 由单个或多个 模块 组合的工作流 可单独起别名 某某_模组
-引用： 将引用的上级提供导航    
-层次： 目前工作流所在层次
-
-```
-    流->模块->硬件->命令
+```powershell
+dotnet restore .\HardwareModularWorkflow\HardwareModularWorkflow.slnx
+dotnet build .\HardwareModularWorkflow\HardwareModularWorkflow.slnx
+dotnet run --project .\HardwareModularWorkflow\HardwareModularWorkflow.Wpf\HardwareModularWorkflow.Wpf.csproj
 ```
 
+或在 Visual Studio 中打开 `HardwareModularWorkflow.slnx`，将 `HardwareModularWorkflow.Wpf` 设为启动项目后运行。
 
-## 内容 属性
-    
-模块： 由单个或多个 #硬件 组成的工作流 可单独起别名 某某_模块 内容：“名称、标签、备注、核心事件、通知事件、”
-模组： 由单个或多个 #模块 组合的工作流 可单独起别名 某某_模组
-工作流属性： 名称、标签、备注、核心事件、通知事件、
+默认数据库文件位于应用工作目录（SQLite）。首次运行会执行必要初始化。
 
-硬件： 节点索引信息（Id、名称、端口、地址） ，类型信息（电机、制温、制冷、自定义）决定硬件命令方式
-    电机： 基本属性（编码，移动，速度，扭力等）
-硬件类型的自定义详情： 提供json定义数据类型 将数据解析到 数据库中保存使用 但建表？？？还是 保存json文件
-{
-    Name:string,
-    Id:long,
-    Allas:string,
-    Note:string,
-    Custon:// 自定义项
-    [
-        X:int,
-        Y:int,
-        Z:int,
-        Pa:double
-    ]
-}
-配置： 通道（指的 Can/Plc等通道）、及其他自定义配置、数据上传服务地址、
+## 功能说明
 
-## 流程
-     
-工作流
-    执行流程示例：模块（启动顺序第一个硬件） -> 模组（第一个模块）
-    异步动作流程等待 模组->模块内 步骤完成
+- 硬件/模块/工作流配置管理（增删改查）
+- 控制器通道配置（CAN/PLC）
+- 工作流串行/并行执行与嵌套引用
+- 取消、超时、失败策略控制
+- 执行耗时与结果日志记录
+- 面向真实设备与模拟环境的适配运行
 
-示例：试想 一个模块只能处理一个动作 为 R ，一个模组是连续动作 D ，
+## 当前状态
 
-对于工作流 循环嵌套 使用的流或模块 进行控制 结束
-    解决思路 1： 应当 从最小正在执行的 方法中 return throw 线程终止异常 到流中捕捉。
-    解决思路 2； 一步一步判断 CancellationToken 的状态在进行返回  在监听或等待 其他异步返回时，应当不能继续等待，
-
-    
-## 功能 
-
-增删改查：适配 上传/本地
-    
-异步`逐步：
-    硬件的执行方式 逐步走还是异步走 用来 定 模块/模组
-    返回耗时 时长/执行结果
-
-
+项目处于持续开发阶段。基础领域模型、执行框架和 WPF 管理界面已建立；具体硬件通信能力取决于目标设备、厂商 SDK 与运行环境配置。
 
 
