@@ -13,12 +13,28 @@ namespace HardwareModularWorkflow.Wpf.ViewModels;
 public partial class HardwareDefinitionViewModel : ObservableObject
 {
     private readonly HardwareDefinitionService _definitionService;
+    private readonly HardwareCatalogService _catalogService;
 
     [ObservableProperty]
     private ObservableCollection<HardwareDefinition> _hardwareDefinitions = new();
 
     [ObservableProperty]
     private ObservableCollection<HardwareDefinition> _filteredDefinitions = new();
+
+    [ObservableProperty]
+    private ObservableCollection<HardwareCategory> _hardwareCategories = new();
+
+    [ObservableProperty]
+    private ObservableCollection<HardwareControlProfile> _controlProfiles = new();
+
+    [ObservableProperty]
+    private ObservableCollection<HardwareControlProfile> _availableControlProfiles = new();
+
+    [ObservableProperty]
+    private long? _selectedCategoryId;
+
+    [ObservableProperty]
+    private long? _selectedControlProfileId;
 
     [ObservableProperty]
     private string _searchText = string.Empty;
@@ -38,10 +54,14 @@ public partial class HardwareDefinitionViewModel : ObservableObject
     [ObservableProperty]
     private string _statusMessage = string.Empty;
 
-    public HardwareDefinitionViewModel(HardwareDefinitionService definitionService)
+    public HardwareDefinitionViewModel(
+        HardwareDefinitionService definitionService,
+        HardwareCatalogService catalogService)
     {
         _definitionService = definitionService
             ?? throw new ArgumentNullException(nameof(definitionService));
+        _catalogService = catalogService
+            ?? throw new ArgumentNullException(nameof(catalogService));
     }
 
     partial void OnSearchTextChanged(string value) => ApplyFilter();
@@ -63,9 +83,31 @@ public partial class HardwareDefinitionViewModel : ObservableObject
             .Where(definition =>
                 definition.Name.Contains(filter, StringComparison.OrdinalIgnoreCase)
                 || (definition.Alias?.Contains(filter, StringComparison.OrdinalIgnoreCase) ?? false)
-                || definition.Type.Contains(filter, StringComparison.OrdinalIgnoreCase))
+                || (definition.Category?.Name.Contains(filter, StringComparison.OrdinalIgnoreCase) ?? false)
+                || (definition.ControlProfile?.Name.Contains(filter, StringComparison.OrdinalIgnoreCase) ?? false))
             .ToList();
         FilteredDefinitions = new ObservableCollection<HardwareDefinition>(filtered);
+    }
+
+    partial void OnSelectedCategoryIdChanged(long? value)
+    {
+        AvailableControlProfiles = new ObservableCollection<HardwareControlProfile>(
+            ControlProfiles.Where(profile => profile.CategoryId == value));
+
+        if (SelectedControlProfileId.HasValue
+            && !AvailableControlProfiles.Any(profile => profile.Id == SelectedControlProfileId.Value))
+        {
+            SelectedControlProfileId = null;
+        }
+    }
+
+    partial void OnSelectedControlProfileIdChanged(long? value)
+    {
+        if (EditModel is not null)
+        {
+            EditModel.CategoryId = SelectedCategoryId;
+            EditModel.ControlProfileId = value;
+        }
     }
 
     [RelayCommand]
@@ -75,6 +117,13 @@ public partial class HardwareDefinitionViewModel : ObservableObject
         StatusMessage = "Loading hardware definitions...";
         try
         {
+            var categories = await _catalogService.GetCategoriesAsync();
+            HardwareCategories = new ObservableCollection<HardwareCategory>(categories);
+
+            var profiles = await _catalogService.GetProfilesAsync();
+            ControlProfiles = new ObservableCollection<HardwareControlProfile>(profiles);
+            OnSelectedCategoryIdChanged(SelectedCategoryId);
+
             var definitions = await _definitionService.GetAllAsync();
             HardwareDefinitions =
                 new ObservableCollection<HardwareDefinition>(definitions);
@@ -94,6 +143,9 @@ public partial class HardwareDefinitionViewModel : ObservableObject
     private void AddDefinition()
     {
         EditModel = new HardwareDefinitionEditModel();
+        SelectedCategoryId = null;
+        SelectedControlProfileId = null;
+        AvailableControlProfiles = new ObservableCollection<HardwareControlProfile>();
         EditPanelTitle = "Add Hardware Definition";
         IsEditing = true;
         StatusMessage = "Adding hardware definition...";
@@ -113,11 +165,14 @@ public partial class HardwareDefinitionViewModel : ObservableObject
             Name = definition.Name,
             Alias = definition.Alias,
             Note = definition.Note,
-            Type = definition.Type,
+            CategoryId = definition.CategoryId,
+            ControlProfileId = definition.ControlProfileId,
             CustomSchemaJson = definition.CustomSchemaJson,
             DefaultParametersJson = definition.DefaultParametersJson,
             IsSystem = definition.IsSystem
         };
+        SelectedCategoryId = definition.CategoryId;
+        SelectedControlProfileId = definition.ControlProfileId;
         EditPanelTitle = $"Edit Hardware Definition (ID: {definition.Id})";
         IsEditing = true;
         StatusMessage = $"Editing {definition.Name}...";
@@ -137,9 +192,15 @@ public partial class HardwareDefinitionViewModel : ObservableObject
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(EditModel.Type))
+        if (!SelectedCategoryId.HasValue)
         {
-            StatusMessage = "Hardware type is required";
+            StatusMessage = "Hardware category is required";
+            return;
+        }
+
+        if (!SelectedControlProfileId.HasValue)
+        {
+            StatusMessage = "Control profile is required";
             return;
         }
 
@@ -152,13 +213,23 @@ public partial class HardwareDefinitionViewModel : ObservableObject
         IsLoading = true;
         try
         {
+            var category = HardwareCategories.FirstOrDefault(
+                item => item.Id == SelectedCategoryId.Value);
+            if (category is null)
+            {
+                StatusMessage = "The selected hardware category is unavailable";
+                return;
+            }
+
             var entity = new HardwareDefinition
             {
                 Id = EditModel.Id,
                 Name = EditModel.Name.Trim(),
                 Alias = EditModel.Alias,
                 Note = EditModel.Note,
-                Type = EditModel.Type.Trim(),
+                Type = category.Code,
+                CategoryId = SelectedCategoryId,
+                ControlProfileId = SelectedControlProfileId,
                 CustomSchemaJson = NormalizeJson(EditModel.CustomSchemaJson),
                 DefaultParametersJson = NormalizeJson(EditModel.DefaultParametersJson),
                 IsSystem = EditModel.IsSystem
@@ -262,7 +333,10 @@ public partial class HardwareDefinitionEditModel : ObservableObject
     private string? _note;
 
     [ObservableProperty]
-    private string _type = "Motor";
+    private long? _categoryId;
+
+    [ObservableProperty]
+    private long? _controlProfileId;
 
     [ObservableProperty]
     private string? _customSchemaJson;

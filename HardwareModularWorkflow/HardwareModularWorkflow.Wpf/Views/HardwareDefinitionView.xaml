@@ -67,7 +67,8 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="150" />
                         <DataGridTextColumn Header="Alias" Binding="{Binding Alias}" Width="120" />
-                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="100" />
+                        <DataGridTextColumn Header="Category" Binding="{Binding Category.Name}" Width="120" />
+                        <DataGridTextColumn Header="Control Profile" Binding="{Binding ControlProfile.Name}" Width="140" />
                         <DataGridTextColumn Header="Note" Binding="{Binding Note}" Width="*" />
                         <DataGridCheckBoxColumn Header="System" Binding="{Binding IsSystem}" Width="70" />
                         <DataGridTemplateColumn Header="Actions" Width="90">
@@ -142,15 +143,18 @@
                             <TextBox Text="{Binding EditModel.Note}"
                                      materialDesign:HintAssist.Hint="Note"
                                      Margin="0,0,0,8" />
-                            <ComboBox Text="{Binding EditModel.Type}"
-                                      IsEditable="True"
-                                      materialDesign:HintAssist.Hint="Hardware Type *"
-                                      Margin="0,0,0,8">
-                                <ComboBoxItem Content="Motor" />
-                                <ComboBoxItem Content="Temperature" />
-                                <ComboBoxItem Content="Cooling" />
-                                <ComboBoxItem Content="Custom" />
-                            </ComboBox>
+                            <ComboBox ItemsSource="{Binding HardwareCategories}"
+                                      SelectedValue="{Binding SelectedCategoryId}"
+                                      SelectedValuePath="Id"
+                                      DisplayMemberPath="Name"
+                                      materialDesign:HintAssist.Hint="Hardware Category *"
+                                      Margin="0,0,0,8" />
+                            <ComboBox ItemsSource="{Binding AvailableControlProfiles}"
+                                      SelectedValue="{Binding SelectedControlProfileId}"
+                                      SelectedValuePath="Id"
+                                      DisplayMemberPath="Name"
+                                      materialDesign:HintAssist.Hint="Control Profile *"
+                                      Margin="0,0,0,8" />
                             <TextBox Text="{Binding EditModel.DefaultParametersJson}"
                                      Height="100"
                                      AcceptsReturn="True"

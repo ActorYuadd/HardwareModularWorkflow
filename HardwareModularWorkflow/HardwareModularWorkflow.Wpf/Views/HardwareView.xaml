@@ -72,7 +72,8 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="150" />
                         <DataGridTextColumn Header="Alias" Binding="{Binding Alias}" Width="120" />
-                        <DataGridTextColumn Header="Type" Binding="{Binding Definition.Type}" Width="100" />
+                        <DataGridTextColumn Header="Category" Binding="{Binding Definition.Category.Name}" Width="110" />
+                        <DataGridTextColumn Header="Control Profile" Binding="{Binding Definition.ControlProfile.Name}" Width="130" />
                         <DataGridTextColumn Header="Controller" Binding="{Binding Controller.Name}" Width="120" />
                         <DataGridTextColumn Header="Port" Binding="{Binding Port}" Width="80" />
                         <DataGridTextColumn Header="Address" Binding="{Binding Address}" Width="100" />
@@ -144,8 +145,15 @@
                                      materialDesign:HintAssist.Hint="Note"
                                      Margin="0,0,0,8" />
 
-                            <ComboBox ItemsSource="{Binding HardwareDefinitions}"
-                                      SelectedValue="{Binding EditModel.DefinitionId}"
+                            <ComboBox ItemsSource="{Binding HardwareCategories}"
+                                      SelectedValue="{Binding SelectedCategoryId}"
+                                      SelectedValuePath="Id"
+                                      DisplayMemberPath="Name"
+                                      materialDesign:HintAssist.Hint="Hardware Category *"
+                                      Margin="0,0,0,8" />
+
+                            <ComboBox ItemsSource="{Binding AvailableDefinitions}"
+                                      SelectedValue="{Binding SelectedDefinitionId}"
                                       SelectedValuePath="Id"
                                       DisplayMemberPath="Name"
                                       materialDesign:HintAssist.Hint="Hardware Definition *"
@@ -159,7 +167,7 @@
                                      materialDesign:HintAssist.Hint="Address"
                                      Margin="0,0,0,8" />
 
-                            <ComboBox ItemsSource="{Binding Controllers}"
+                            <ComboBox ItemsSource="{Binding CompatibleControllers}"
                                       SelectedValue="{Binding EditModel.ControllerId}"
                                       SelectedValuePath="Id"
                                       materialDesign:HintAssist.Hint="Controller"

@@ -1,11 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using HardwareModularWorkflow.Hardware.Enums;
-
 namespace HardwareModularWorkflow.Db.Entities;
 
 /// <summary>
-/// 硬件定义表：硬件类型模板（电机、制温、制冷、自定义）
+/// 硬件定义表：按硬件类别和控制能力组合的模板
 /// </summary>
 public class HardwareDefinition
 {
@@ -21,9 +19,22 @@ public class HardwareDefinition
     [MaxLength(500)]
     public string? Note { get; set; }
 
-    /// <summary>硬件类型：Motor / Temperature / Cooling / Custom</summary>
+    /// <summary>
+    /// Legacy hardware type retained during phase one so existing runtime logic and data remain compatible.
+    /// New definitions derive this value from Category.Code.
+    /// </summary>
     [Required, MaxLength(50)]
     public string Type { get; set; } = string.Empty;
+
+    /// <summary>Hardware category, for example Motor, Camera, Temperature, or Infrared.</summary>
+    public long? CategoryId { get; set; }
+    [ForeignKey(nameof(CategoryId))]
+    public HardwareCategory? Category { get; set; }
+
+    /// <summary>Control profile that determines the intended driver and controller compatibility.</summary>
+    public long? ControlProfileId { get; set; }
+    [ForeignKey(nameof(ControlProfileId))]
+    public HardwareControlProfile? ControlProfile { get; set; }
 
     /// <summary>自定义类型时的 JSON Schema（固定类型时为 null）</summary>
     [Column(TypeName = "TEXT")]

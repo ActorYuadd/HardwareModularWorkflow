@@ -11,6 +11,8 @@ public class HardwareModularWorkflowDbContext : Microsoft.EntityFrameworkCore.Db
 {
     // --- DbSets ---
     public DbSet<ControllerEntity> Controllers { get; set; } = null!;
+    public DbSet<HardwareCategory> HardwareCategories { get; set; } = null!;
+    public DbSet<HardwareControlProfile> HardwareControlProfiles { get; set; } = null!;
     public DbSet<HardwareDefinition> HardwareDefinitions { get; set; } = null!;
     public DbSet<HardwareInstance> HardwareInstances { get; set; } = null!;
     public DbSet<ModuleEntity> Modules { get; set; } = null!;
@@ -39,12 +41,45 @@ public class HardwareModularWorkflowDbContext : Microsoft.EntityFrameworkCore.Db
             entity.HasIndex(e => e.IsDefault).HasDatabaseName("IX_Controllers_Default");
         });
 
+        // --- HardwareCategory ---
+        modelBuilder.Entity<HardwareCategory>(entity =>
+        {
+            entity.ToTable("HardwareCategories");
+            entity.HasIndex(e => e.Code).IsUnique().HasDatabaseName("IX_HardwareCategories_Code");
+            entity.HasIndex(e => e.IsSystem).HasDatabaseName("IX_HardwareCategories_System");
+        });
+
+        // --- HardwareControlProfile ---
+        modelBuilder.Entity<HardwareControlProfile>(entity =>
+        {
+            entity.ToTable("HardwareControlProfiles");
+            entity.HasIndex(e => new { e.CategoryId, e.Code })
+                .IsUnique()
+                .HasDatabaseName("IX_HardwareControlProfiles_Category_Code");
+            entity.HasIndex(e => e.RequiredControllerType)
+                .HasDatabaseName("IX_HardwareControlProfiles_ControllerType");
+            entity.HasOne(e => e.Category)
+                .WithMany(c => c.ControlProfiles)
+                .HasForeignKey(e => e.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
         // --- HardwareDefinition ---
         modelBuilder.Entity<HardwareDefinition>(entity =>
         {
             entity.ToTable("HardwareDefinitions");
             entity.HasIndex(e => e.Type).HasDatabaseName("IX_HardwareDefinitions_Type");
             entity.HasIndex(e => e.IsSystem).HasDatabaseName("IX_HardwareDefinitions_System");
+            entity.HasIndex(e => e.CategoryId).HasDatabaseName("IX_HardwareDefinitions_CategoryId");
+            entity.HasIndex(e => e.ControlProfileId).HasDatabaseName("IX_HardwareDefinitions_ControlProfileId");
+            entity.HasOne(e => e.Category)
+                .WithMany(c => c.HardwareDefinitions)
+                .HasForeignKey(e => e.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(e => e.ControlProfile)
+                .WithMany(p => p.HardwareDefinitions)
+                .HasForeignKey(e => e.ControlProfileId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         // --- HardwareInstance ---

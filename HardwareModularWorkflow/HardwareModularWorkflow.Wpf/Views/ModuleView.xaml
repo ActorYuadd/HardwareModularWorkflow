@@ -266,16 +266,19 @@
                                                     <StackPanel Orientation="Horizontal">
                                                         <TextBlock Text="{Binding Name}" FontWeight="Bold" />
                                                         <TextBlock Text=" (" />
-                                                        <TextBlock Text="{Binding Definition.Type}" />
+                                                        <TextBlock Text="{Binding Definition.Category.Name}" />
                                                         <TextBlock Text=")" />
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </ComboBox.ItemTemplate>
                                         </ComboBox>
 
-                                        <TextBox Text="{Binding SelectedStep.CommandName}"
-                                                 materialDesign:HintAssist.Hint="Command Name *"
-                                                 Margin="0,0,0,6" />
+                                        <ComboBox ItemsSource="{Binding AvailableCommands}"
+                                                  SelectedValue="{Binding SelectedStep.CommandName}"
+                                                  SelectedValuePath="Name"
+                                                  DisplayMemberPath="DisplayName"
+                                                  materialDesign:HintAssist.Hint="Command *"
+                                                  Margin="0,0,0,6" />
 
                                         <TextBox Text="{Binding SelectedStep.CommandParametersJson}"
                                                  materialDesign:HintAssist.Hint="Command Parameters JSON"

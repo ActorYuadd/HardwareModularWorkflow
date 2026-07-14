@@ -13,6 +13,7 @@ public partial class HardwareViewModel : ObservableObject
 {
     private readonly HardwareInstanceService _instanceService;
     private readonly HardwareDefinitionService _definitionService;
+    private readonly HardwareCatalogService _catalogService;
     private readonly ControllerService _controllerService;
 
     [ObservableProperty]
@@ -25,7 +26,22 @@ public partial class HardwareViewModel : ObservableObject
     private ObservableCollection<HardwareDefinition> _hardwareDefinitions = new();
 
     [ObservableProperty]
+    private ObservableCollection<HardwareDefinition> _availableDefinitions = new();
+
+    [ObservableProperty]
+    private ObservableCollection<HardwareCategory> _hardwareCategories = new();
+
+    [ObservableProperty]
     private ObservableCollection<ControllerEntity> _controllers = new();
+
+    [ObservableProperty]
+    private ObservableCollection<ControllerEntity> _compatibleControllers = new();
+
+    [ObservableProperty]
+    private long? _selectedCategoryId;
+
+    [ObservableProperty]
+    private long _selectedDefinitionId;
 
     [ObservableProperty]
     private string _searchText = string.Empty;
@@ -48,10 +64,12 @@ public partial class HardwareViewModel : ObservableObject
     public HardwareViewModel(
         HardwareInstanceService instanceService,
         HardwareDefinitionService definitionService,
+        HardwareCatalogService catalogService,
         ControllerService controllerService)
     {
         _instanceService = instanceService ?? throw new ArgumentNullException(nameof(instanceService));
         _definitionService = definitionService ?? throw new ArgumentNullException(nameof(definitionService));
+        _catalogService = catalogService ?? throw new ArgumentNullException(nameof(catalogService));
         _controllerService = controllerService ?? throw new ArgumentNullException(nameof(controllerService));
     }
 
@@ -77,9 +95,47 @@ public partial class HardwareViewModel : ObservableObject
             var filtered = HardwareInstances
                 .Where(h => h.Name.Contains(filter, StringComparison.OrdinalIgnoreCase)
                     || (h.Alias?.Contains(filter, StringComparison.OrdinalIgnoreCase) ?? false)
-                    || h.Definition.Type.Contains(filter, StringComparison.OrdinalIgnoreCase))
+                    || (h.Definition.Category?.Name.Contains(filter, StringComparison.OrdinalIgnoreCase) ?? false)
+                    || (h.Definition.ControlProfile?.Name.Contains(filter, StringComparison.OrdinalIgnoreCase) ?? false))
                 .ToList();
             FilteredInstances = new ObservableCollection<HardwareInstance>(filtered);
+        }
+    }
+
+    partial void OnSelectedCategoryIdChanged(long? value)
+    {
+        AvailableDefinitions = new ObservableCollection<HardwareDefinition>(
+            HardwareDefinitions.Where(definition => definition.CategoryId == value));
+
+        if (SelectedDefinitionId != 0
+            && !AvailableDefinitions.Any(definition => definition.Id == SelectedDefinitionId))
+        {
+            SelectedDefinitionId = 0;
+        }
+    }
+
+    partial void OnSelectedDefinitionIdChanged(long value)
+    {
+        if (EditModel is not null)
+        {
+            EditModel.DefinitionId = value;
+        }
+
+        var definition = HardwareDefinitions.FirstOrDefault(item => item.Id == value);
+        var requiredControllerType = definition?.ControlProfile?.RequiredControllerType;
+        CompatibleControllers = new ObservableCollection<ControllerEntity>(
+            Controllers.Where(controller =>
+                controller.IsEnabled
+                && (string.IsNullOrWhiteSpace(requiredControllerType)
+                    || string.Equals(
+                        controller.ControllerType,
+                        requiredControllerType,
+                        StringComparison.OrdinalIgnoreCase))));
+
+        if (EditModel?.ControllerId is long controllerId
+            && !CompatibleControllers.Any(controller => controller.Id == controllerId))
+        {
+            EditModel.ControllerId = null;
         }
     }
 
@@ -96,8 +152,13 @@ public partial class HardwareViewModel : ObservableObject
             var definitions = await _definitionService.GetAllAsync();
             HardwareDefinitions = new ObservableCollection<HardwareDefinition>(definitions);
 
+            var categories = await _catalogService.GetCategoriesAsync();
+            HardwareCategories = new ObservableCollection<HardwareCategory>(categories);
+            OnSelectedCategoryIdChanged(SelectedCategoryId);
+
             var controllers = await _controllerService.GetAllAsync();
             Controllers = new ObservableCollection<ControllerEntity>(controllers);
+            OnSelectedDefinitionIdChanged(SelectedDefinitionId);
 
             StatusMessage = $"Loaded {instances.Count} hardware instances";
         }
@@ -115,6 +176,11 @@ public partial class HardwareViewModel : ObservableObject
     private void AddHardware()
     {
         EditModel = new HardwareEditModel();
+        SelectedCategoryId = null;
+        SelectedDefinitionId = 0;
+        AvailableDefinitions = new ObservableCollection<HardwareDefinition>();
+        CompatibleControllers = new ObservableCollection<ControllerEntity>(
+            Controllers.Where(controller => controller.IsEnabled));
         EditPanelTitle = "Add Hardware";
         IsEditing = true;
         StatusMessage = "Adding new hardware...";
@@ -138,6 +204,8 @@ public partial class HardwareViewModel : ObservableObject
             ControllerType = instance.ControllerType,
             IsEnabled = instance.IsEnabled
         };
+        SelectedCategoryId = instance.Definition.CategoryId;
+        SelectedDefinitionId = instance.DefinitionId;
         EditPanelTitle = $"Edit Hardware (ID: {instance.Id})";
         IsEditing = true;
         StatusMessage = $"Editing {instance.Name}...";
@@ -163,10 +231,30 @@ public partial class HardwareViewModel : ObservableObject
         IsLoading = true;
         try
         {
+            var definition = HardwareDefinitions.FirstOrDefault(
+                item => item.Id == EditModel.DefinitionId);
+            if (definition is null)
+            {
+                StatusMessage = "The selected hardware definition is unavailable";
+                return;
+            }
+
             // 同步 ControllerType
             if (EditModel.ControllerId.HasValue && EditModel.ControllerId.Value != 0)
             {
                 var controller = Controllers.FirstOrDefault(c => c.Id == EditModel.ControllerId.Value);
+                var requiredControllerType = definition.ControlProfile?.RequiredControllerType;
+                if (controller is null
+                    || (!string.IsNullOrWhiteSpace(requiredControllerType)
+                        && !string.Equals(
+                            controller.ControllerType,
+                            requiredControllerType,
+                            StringComparison.OrdinalIgnoreCase)))
+                {
+                    StatusMessage = "The selected controller is not compatible with this definition";
+                    return;
+                }
+
                 EditModel.ControllerType = controller?.ControllerType;
             }
             else

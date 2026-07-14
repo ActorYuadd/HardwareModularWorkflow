@@ -20,17 +20,21 @@ public sealed class HardwareDriverFactory
     private readonly ControllerFactory _controllerFactory;
     private readonly HardwareInstanceService _hardwareInstanceService;
     private readonly ControllerService _controllerService;
+    private readonly HardwareProfileDriverRegistry _profileDriverRegistry;
     private readonly Dictionary<long, IHardwareDriver> _driverCache = new();
     private readonly SemaphoreSlim _cacheLock = new(1, 1);
 
     public HardwareDriverFactory(
         ControllerFactory controllerFactory,
         HardwareInstanceService hardwareInstanceService,
-        ControllerService controllerService)
+        ControllerService controllerService,
+        HardwareProfileDriverRegistry profileDriverRegistry)
     {
         _controllerFactory = controllerFactory ?? throw new ArgumentNullException(nameof(controllerFactory));
         _hardwareInstanceService = hardwareInstanceService ?? throw new ArgumentNullException(nameof(hardwareInstanceService));
         _controllerService = controllerService ?? throw new ArgumentNullException(nameof(controllerService));
+        _profileDriverRegistry = profileDriverRegistry
+            ?? throw new ArgumentNullException(nameof(profileDriverRegistry));
     }
 
     /// <summary>
@@ -48,6 +52,9 @@ public sealed class HardwareDriverFactory
             var instance = await _hardwareInstanceService.GetByIdAsync(hardwareInstanceId, ct);
             if (instance is null)
                 throw new InvalidOperationException($"Hardware instance {hardwareInstanceId} not found in database.");
+            var profile = instance.Definition.ControlProfile
+                ?? throw new InvalidOperationException(
+                    $"Hardware definition '{instance.Definition.Name}' has no control profile.");
 
             // 2. 创建 IHardware 模型
             var hardware = CreateHardwareModel(instance);
@@ -60,8 +67,8 @@ public sealed class HardwareDriverFactory
                 controller = await _controllerFactory.GetOrCreateAsync(controllerConfig, ct);
             }
 
-            // 4. 创建硬件驱动
-            var driver = new CoreHardwareDriver(hardware, controller);
+            // 4. The profile selects the installed driver and validates controller compatibility.
+            var driver = _profileDriverRegistry.CreateDriver(hardware, profile, controller);
             _driverCache[hardwareInstanceId] = driver;
             return driver;
         }
@@ -204,8 +211,13 @@ public sealed class HardwareDriverFactory
             : JsonSerializer.Deserialize<Dictionary<string, object>>(instance.ParametersJson)
               ?? new Dictionary<string, object>();
 
-        // 根据定义类型创建具体硬件模型
-        HardwareBase hardware = instance.Definition?.Type?.ToUpperInvariant() switch
+        var categoryCode = instance.Definition?.Category?.Code
+            ?? instance.Definition?.Type
+            ?? "Custom";
+        var driverKey = instance.Definition?.ControlProfile?.DriverKey ?? string.Empty;
+
+        // Category controls the compatibility model. Profile controls execution through the registry.
+        HardwareBase hardware = categoryCode.ToUpperInvariant() switch
         {
             "MOTOR" => new MotorHardware(),
             "TEMPERATURE" => new TemperatureHardware(),
@@ -223,6 +235,8 @@ public sealed class HardwareDriverFactory
         hardware.Parameters = parameters;
         hardware.ControllerId = instance.ControllerId;
         hardware.ControllerType = instance.ControllerType;
+        hardware.CategoryCode = categoryCode;
+        hardware.DriverKey = driverKey;
 
         return hardware;
     }

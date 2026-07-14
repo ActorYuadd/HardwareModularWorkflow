@@ -44,6 +44,7 @@ public static class ServiceRegistration
 
         // --- 2. 数据库服务 ---
         services.AddScoped<ControllerService>();
+        services.AddScoped<HardwareCatalogService>();
         services.AddScoped<HardwareDefinitionService>();
         services.AddScoped<HardwareInstanceService>();
         services.AddScoped<ModuleService>();
@@ -66,6 +67,7 @@ public static class ServiceRegistration
         services.AddSingleton<Controller.Factory.ControllerFactory>();
 
         // --- 4. Core 层编排 ---
+        services.AddSingleton<HardwareProfileDriverRegistry>();
         services.AddSingleton<HardwareDriverFactory>();
         services.AddSingleton<CoreStepExecutor>();
         services.AddSingleton<IStepExecutor>(provider => provider.GetRequiredService<CoreStepExecutor>());
@@ -95,5 +97,6 @@ public static class ServiceRegistration
         using var scope = provider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<HardwareModularWorkflowDbContext>();
         await dbContext.Database.EnsureCreatedAsync();
+        await HardwareCatalogInitializer.InitializeAsync(dbContext);
     }
 }

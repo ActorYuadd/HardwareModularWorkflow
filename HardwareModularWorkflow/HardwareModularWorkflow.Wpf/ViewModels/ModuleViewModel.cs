@@ -46,6 +46,9 @@ public partial class ModuleViewModel : ObservableObject
     private StepEditModel? _selectedStep;
 
     [ObservableProperty]
+    private ObservableCollection<HardwareCommandDefinition> _availableCommands = new();
+
+    [ObservableProperty]
     private string _editPanelTitle = "Add Module";
 
     [ObservableProperty]
@@ -69,6 +72,11 @@ public partial class ModuleViewModel : ObservableObject
     partial void OnModulesChanged(ObservableCollection<ModuleEntity> value)
     {
         ApplyFilter();
+    }
+
+    partial void OnSelectedStepChanged(StepEditModel? value)
+    {
+        RefreshAvailableCommands();
     }
 
     private void ApplyFilter()
@@ -162,6 +170,7 @@ public partial class ModuleViewModel : ObservableObject
                     TimeoutMs = step.TimeoutMs,
                     ContinueOnFailure = step.ContinueOnFailure
                 });
+                ConfigureStep(Steps[^1]);
             }
         }
 
@@ -179,6 +188,11 @@ public partial class ModuleViewModel : ObservableObject
         if (string.IsNullOrWhiteSpace(EditModel.Name))
         {
             StatusMessage = "Module name is required";
+            return;
+        }
+
+        if (!ValidateSteps())
+        {
             return;
         }
 
@@ -324,6 +338,7 @@ public partial class ModuleViewModel : ObservableObject
             ExecutionMode = EditModel?.DefaultExecutionMode ?? "Sequential",
             IsAsync = true
         };
+        ConfigureStep(step);
         Steps.Add(step);
         SelectedStep = step;
         StatusMessage = "Step added";
@@ -366,6 +381,93 @@ public partial class ModuleViewModel : ObservableObject
         {
             step.OrderIndex = order++;
         }
+    }
+
+    private void ConfigureStep(StepEditModel step)
+    {
+        step.PropertyChanged += (_, eventArgs) =>
+        {
+            if (eventArgs.PropertyName == nameof(StepEditModel.HardwareInstanceId)
+                && ReferenceEquals(step, SelectedStep))
+            {
+                RefreshAvailableCommands();
+            }
+        };
+    }
+
+    private void RefreshAvailableCommands()
+    {
+        if (SelectedStep is null)
+        {
+            AvailableCommands = new ObservableCollection<HardwareCommandDefinition>();
+            return;
+        }
+
+        var profile = HardwareInstances
+            .FirstOrDefault(instance => instance.Id == SelectedStep.HardwareInstanceId)
+            ?.Definition.ControlProfile;
+        if (profile is null)
+        {
+            AvailableCommands = new ObservableCollection<HardwareCommandDefinition>();
+            return;
+        }
+
+        AvailableCommands = new ObservableCollection<HardwareCommandDefinition>(
+            HardwareCommandCatalog.Parse(profile.CommandDefinitionsJson));
+        var selectedCommand = AvailableCommands.FirstOrDefault(command =>
+            string.Equals(command.Name, SelectedStep.CommandName, StringComparison.OrdinalIgnoreCase));
+        if (selectedCommand is null && !string.IsNullOrWhiteSpace(SelectedStep.CommandName))
+        {
+            SelectedStep.CommandName = string.Empty;
+            SelectedStep.CommandParametersJson = null;
+            StatusMessage = "The selected hardware profile does not support the previous command";
+        }
+        else if (selectedCommand is not null)
+        {
+            SelectedStep.IsAsync = selectedCommand.IsAsync;
+        }
+    }
+
+    private bool ValidateSteps()
+    {
+        foreach (var step in Steps)
+        {
+            var profile = HardwareInstances
+                .FirstOrDefault(instance => instance.Id == step.HardwareInstanceId)
+                ?.Definition.ControlProfile;
+            if (profile is null)
+            {
+                StatusMessage = $"Step '{step.Name}' requires a hardware instance with a control profile";
+                return false;
+            }
+
+            Dictionary<string, object>? parameters = null;
+            if (!string.IsNullOrWhiteSpace(step.CommandParametersJson))
+            {
+                try
+                {
+                    parameters = JsonSerializer.Deserialize<Dictionary<string, object>>(
+                        step.CommandParametersJson);
+                }
+                catch (JsonException)
+                {
+                    StatusMessage = $"Step '{step.Name}' has invalid command parameters JSON";
+                    return false;
+                }
+            }
+
+            try
+            {
+                HardwareCommandCatalog.Validate(profile, step.CommandName, parameters);
+            }
+            catch (InvalidOperationException ex)
+            {
+                StatusMessage = $"Step '{step.Name}': {ex.Message}";
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 

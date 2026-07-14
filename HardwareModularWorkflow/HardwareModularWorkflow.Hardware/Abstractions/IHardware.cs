@@ -39,4 +39,10 @@ public interface IHardware
 
     /// <summary>控制器类型（Plc / Can），运行时由 ControllerId 解析</summary>
     string? ControllerType { get; set; }
+
+    /// <summary>Hardware category code used for runtime model compatibility.</summary>
+    string CategoryCode { get; set; }
+
+    /// <summary>Control profile driver key resolved by the Core runtime.</summary>
+    string DriverKey { get; set; }
 }

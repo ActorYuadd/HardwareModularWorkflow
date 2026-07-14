@@ -19,6 +19,8 @@ public abstract class HardwareBase : Abstractions.IHardware
     public Dictionary<string, object> Parameters { get; set; } = new();
     public long? ControllerId { get; set; }
     public string? ControllerType { get; set; }
+    public string CategoryCode { get; set; } = string.Empty;
+    public string DriverKey { get; set; } = string.Empty;
 
     /// <summary>
     /// 获取类型特定的参数值

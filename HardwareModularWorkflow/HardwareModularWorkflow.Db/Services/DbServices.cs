@@ -83,7 +83,9 @@ public class HardwareDefinitionService
     {
         return await _context.HardwareDefinitions
             .AsNoTracking()
-            .OrderBy(h => h.Type).ThenBy(h => h.Name)
+            .Include(h => h.Category)
+            .Include(h => h.ControlProfile)
+            .OrderBy(h => h.Category!.Name).ThenBy(h => h.Name)
             .ToListAsync(ct);
     }
 
@@ -92,11 +94,14 @@ public class HardwareDefinitionService
         return await _context.HardwareDefinitions
             .AsNoTracking()
             .Include(h => h.HardwareInstances)
+            .Include(h => h.Category)
+            .Include(h => h.ControlProfile)
             .FirstOrDefaultAsync(h => h.Id == id, ct);
     }
 
     public async Task<HardwareDefinition> CreateAsync(HardwareDefinition entity, CancellationToken ct = default)
     {
+        await ApplyCategoryAndProfileAsync(entity, ct);
         entity.CreatedAt = DateTime.UtcNow;
         entity.UpdatedAt = DateTime.UtcNow;
         _context.HardwareDefinitions.Add(entity);
@@ -106,6 +111,7 @@ public class HardwareDefinitionService
 
     public async Task<HardwareDefinition> UpdateAsync(HardwareDefinition entity, CancellationToken ct = default)
     {
+        await ApplyCategoryAndProfileAsync(entity, ct);
         entity.UpdatedAt = DateTime.UtcNow;
         _context.HardwareDefinitions.Update(entity);
         await _context.SaveChangesAsync(ct);
@@ -144,6 +150,60 @@ public class HardwareDefinitionService
             .Where(h => h.Type == type)
             .ToListAsync(ct);
     }
+
+    private async Task ApplyCategoryAndProfileAsync(
+        HardwareDefinition entity,
+        CancellationToken ct)
+    {
+        if (!entity.CategoryId.HasValue || !entity.ControlProfileId.HasValue)
+        {
+            throw new InvalidOperationException(
+                "A hardware category and control profile are required.");
+        }
+
+        var profile = await _context.HardwareControlProfiles
+            .Include(item => item.Category)
+            .FirstOrDefaultAsync(
+                item => item.Id == entity.ControlProfileId.Value,
+                ct);
+        if (profile is null || profile.CategoryId != entity.CategoryId.Value)
+        {
+            throw new InvalidOperationException(
+                "The selected control profile does not belong to the hardware category.");
+        }
+
+        // Keep the first-phase runtime compatible until driver resolution uses profiles.
+        entity.Type = profile.Category.Code;
+    }
+}
+
+/// <summary>
+/// Hardware catalog service: exposes hardware categories and their control profiles.
+/// </summary>
+public class HardwareCatalogService
+{
+    private readonly HardwareModularWorkflowDbContext _context;
+
+    public HardwareCatalogService(HardwareModularWorkflowDbContext context)
+    {
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+    }
+
+    public async Task<List<HardwareCategory>> GetCategoriesAsync(
+        CancellationToken ct = default) =>
+        await _context.HardwareCategories
+            .AsNoTracking()
+            .OrderBy(category => category.Name)
+            .ToListAsync(ct);
+
+    public async Task<List<HardwareControlProfile>> GetProfilesAsync(
+        CancellationToken ct = default) =>
+        await _context.HardwareControlProfiles
+            .AsNoTracking()
+            .Include(profile => profile.Category)
+            .OrderBy(profile => profile.Category.Name)
+            .ThenBy(profile => profile.Name)
+            .ToListAsync(ct);
 }
 
 /// <summary>
@@ -163,6 +223,9 @@ public class HardwareInstanceService
         return await _context.HardwareInstances
             .AsNoTracking()
             .Include(h => h.Definition)
+                .ThenInclude(d => d.Category)
+            .Include(h => h.Definition)
+                .ThenInclude(d => d.ControlProfile)
             .Include(h => h.Controller)
             .OrderBy(h => h.Name)
             .ToListAsync(ct);
@@ -173,6 +236,9 @@ public class HardwareInstanceService
         return await _context.HardwareInstances
             .AsNoTracking()
             .Include(h => h.Definition)
+                .ThenInclude(d => d.Category)
+            .Include(h => h.Definition)
+                .ThenInclude(d => d.ControlProfile)
             .Include(h => h.Controller)
             .FirstOrDefaultAsync(h => h.Id == id, ct);
     }
@@ -182,6 +248,9 @@ public class HardwareInstanceService
         return await _context.HardwareInstances
             .AsNoTracking()
             .Include(h => h.Definition)
+                .ThenInclude(d => d.Category)
+            .Include(h => h.Definition)
+                .ThenInclude(d => d.ControlProfile)
             .Where(h => h.ControllerId == controllerId)
             .ToListAsync(ct);
     }
