@@ -27,4 +27,7 @@
         <Setter Property="Margin" Value="4" />
     </Style>
     
+    <!-- 布尔值到可见性转换器 -->
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    
 </ResourceDictionary>

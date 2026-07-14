@@ -209,7 +209,7 @@
                                        Margin="0,0,0,16" />
 
                             <materialDesign:PackIcon Grid.Row="1" Grid.Column="0"
-                                                     Kind="Slots" Width="24" Height="24"
+                                                     Kind="Schedule" Width="24" Height="24"
                                                      Margin="0,0,12,0" VerticalAlignment="Center"
                                                      Foreground="#FF9800" />
                             <StackPanel Grid.Row="1" Grid.Column="1">
