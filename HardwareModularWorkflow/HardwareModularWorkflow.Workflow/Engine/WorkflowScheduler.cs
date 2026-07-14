@@ -168,7 +168,7 @@ public sealed class WorkflowScheduler : IAsyncDisposable
     public async Task WaitForAllAsync(TimeSpan? timeout = null)
     {
         Task[] tasks;
-        await _taskListLock.WaitAsync();
+        await _taskListLock.WaitAsync().ConfigureAwait(false);
         try
         {
             tasks = _runningTasks.ToArray();
@@ -185,7 +185,7 @@ public sealed class WorkflowScheduler : IAsyncDisposable
             using var timeoutCts = new CancellationTokenSource(timeout.Value);
             try
             {
-                await Task.WhenAll(tasks).WaitAsync(timeoutCts.Token);
+                await Task.WhenAll(tasks).WaitAsync(timeoutCts.Token).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -194,7 +194,7 @@ public sealed class WorkflowScheduler : IAsyncDisposable
         }
         else
         {
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks).ConfigureAwait(false);
         }
     }
 
@@ -392,7 +392,7 @@ public sealed class WorkflowScheduler : IAsyncDisposable
 
         Cancel();
         Stop();
-        await WaitForAllAsync(TimeSpan.FromSeconds(5));
+        await WaitForAllAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
 
         _globalCts.Dispose();
         _concurrencyLimit.Dispose();
