@@ -14,6 +14,7 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly WorkflowRuntimeService _runtimeService;
     private readonly DashboardViewModel _dashboardViewModel;
     private readonly HardwareViewModel _hardwareViewModel;
+    private readonly HardwareDefinitionViewModel _hardwareDefinitionViewModel;
     private readonly ControllerViewModel _controllerViewModel;
     private readonly ModuleViewModel _moduleViewModel;
     private readonly FlowViewModel _flowViewModel;
@@ -42,6 +43,7 @@ public partial class MainWindowViewModel : ObservableObject
         WorkflowRuntimeService runtimeService,
         DashboardViewModel dashboardViewModel,
         HardwareViewModel hardwareViewModel,
+        HardwareDefinitionViewModel hardwareDefinitionViewModel,
         ControllerViewModel controllerViewModel,
         ModuleViewModel moduleViewModel,
         FlowViewModel flowViewModel,
@@ -52,6 +54,8 @@ public partial class MainWindowViewModel : ObservableObject
         _runtimeService = runtimeService ?? throw new ArgumentNullException(nameof(runtimeService));
         _dashboardViewModel = dashboardViewModel ?? throw new ArgumentNullException(nameof(dashboardViewModel));
         _hardwareViewModel = hardwareViewModel ?? throw new ArgumentNullException(nameof(hardwareViewModel));
+        _hardwareDefinitionViewModel = hardwareDefinitionViewModel
+            ?? throw new ArgumentNullException(nameof(hardwareDefinitionViewModel));
         _controllerViewModel = controllerViewModel ?? throw new ArgumentNullException(nameof(controllerViewModel));
         _moduleViewModel = moduleViewModel ?? throw new ArgumentNullException(nameof(moduleViewModel));
         _flowViewModel = flowViewModel ?? throw new ArgumentNullException(nameof(flowViewModel));
@@ -65,6 +69,8 @@ public partial class MainWindowViewModel : ObservableObject
     {
         NavigationItems.Add(new NavigationItem("Dashboard", "ViewDashboard", _dashboardViewModel));
         NavigationItems.Add(new NavigationItem("Hardware", "Chip", _hardwareViewModel));
+        NavigationItems.Add(new NavigationItem(
+            "Hardware Definitions", "Shape", _hardwareDefinitionViewModel));
         NavigationItems.Add(new NavigationItem("Controller", "LanConnect", _controllerViewModel));
         NavigationItems.Add(new NavigationItem("Module", "ViewModule", _moduleViewModel));
         NavigationItems.Add(new NavigationItem("Workflow", "SourceFork", _flowViewModel));

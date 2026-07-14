@@ -115,11 +115,26 @@ public class HardwareDefinitionService
     public async Task DeleteAsync(long id, CancellationToken ct = default)
     {
         var entity = await _context.HardwareDefinitions.FindAsync(new object[] { id }, ct);
-        if (entity is not null && !entity.IsSystem)
+        if (entity is null)
         {
-            _context.HardwareDefinitions.Remove(entity);
-            await _context.SaveChangesAsync(ct);
+            return;
         }
+
+        if (entity.IsSystem)
+        {
+            throw new InvalidOperationException("System hardware definitions cannot be deleted.");
+        }
+
+        var isInUse = await _context.HardwareInstances
+            .AnyAsync(h => h.DefinitionId == id, ct);
+        if (isInUse)
+        {
+            throw new InvalidOperationException(
+                "This hardware definition is in use and cannot be deleted.");
+        }
+
+        _context.HardwareDefinitions.Remove(entity);
+        await _context.SaveChangesAsync(ct);
     }
 
     public async Task<List<HardwareDefinition>> GetByTypeAsync(string type, CancellationToken ct = default)

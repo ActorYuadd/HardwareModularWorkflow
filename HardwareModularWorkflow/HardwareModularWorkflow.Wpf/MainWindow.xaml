@@ -28,6 +28,9 @@
         <DataTemplate DataType="{x:Type vm:HardwareViewModel}">
             <views:HardwareView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:HardwareDefinitionViewModel}">
+            <views:HardwareDefinitionView />
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:ControllerViewModel}">
             <views:ControllerView />
         </DataTemplate>
