@@ -1,0 +1,193 @@
+<UserControl x:Class="HardwareModularWorkflow.Wpf.Views.HardwareDefinitionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             d:DesignHeight="600"
+             d:DesignWidth="900">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="Hardware Definitions"
+                   Style="{StaticResource PageTitleStyle}" />
+
+        <Grid Grid.Row="1" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0"
+                     Width="300"
+                     HorizontalAlignment="Left"
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                     materialDesign:HintAssist.Hint="Search hardware definitions..."
+                     materialDesign:TextFieldAssist.HasLeadingIcon="True"
+                     materialDesign:TextFieldAssist.LeadingIcon="Magnify" />
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button Command="{Binding LoadDefinitionsCommand}"
+                        Style="{StaticResource ActionButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Refresh" Margin="0,0,4,0" />
+                        <TextBlock Text="Refresh" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding AddDefinitionCommand}"
+                        Style="{StaticResource ActionButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Plus" Margin="0,0,4,0" />
+                        <TextBlock Text="Add Definition" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <materialDesign:Card Grid.Column="0"
+                                 Style="{StaticResource CardContainerStyle}">
+                <DataGrid ItemsSource="{Binding FilteredDefinitions}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          GridLinesVisibility="Horizontal"
+                          HeadersVisibility="Column"
+                          CanUserAddRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="150" />
+                        <DataGridTextColumn Header="Alias" Binding="{Binding Alias}" Width="120" />
+                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="100" />
+                        <DataGridTextColumn Header="Note" Binding="{Binding Note}" Width="*" />
+                        <DataGridCheckBoxColumn Header="System" Binding="{Binding IsSystem}" Width="70" />
+                        <DataGridTemplateColumn Header="Actions" Width="90">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Command="{Binding DataContext.EditDefinitionCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource MaterialDesignFlatButton}"
+                                                Padding="4">
+                                            <materialDesign:PackIcon Kind="Pencil" />
+                                        </Button>
+                                        <Button Command="{Binding DataContext.DeleteDefinitionCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"
+                                                Padding="4"
+                                                Foreground="Red">
+                                            <Button.Style>
+                                                <Style TargetType="Button"
+                                                       BasedOn="{StaticResource MaterialDesignFlatButton}">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsSystem}" Value="True">
+                                                            <Setter Property="IsEnabled" Value="False" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                            <materialDesign:PackIcon Kind="Delete" />
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </materialDesign:Card>
+
+            <materialDesign:Card Grid.Column="1"
+                                 Width="390"
+                                 Margin="16,0,0,0"
+                                 Padding="16">
+                <materialDesign:Card.Style>
+                    <Style TargetType="materialDesign:Card" BasedOn="{StaticResource CardContainerStyle}">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEditing}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </materialDesign:Card.Style>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Text="{Binding EditPanelTitle}"
+                               Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                               Margin="0,0,0,16" />
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBox Text="{Binding EditModel.Name}"
+                                     materialDesign:HintAssist.Hint="Name *"
+                                     Margin="0,0,0,8" />
+                            <TextBox Text="{Binding EditModel.Alias}"
+                                     materialDesign:HintAssist.Hint="Alias"
+                                     Margin="0,0,0,8" />
+                            <TextBox Text="{Binding EditModel.Note}"
+                                     materialDesign:HintAssist.Hint="Note"
+                                     Margin="0,0,0,8" />
+                            <ComboBox Text="{Binding EditModel.Type}"
+                                      IsEditable="True"
+                                      materialDesign:HintAssist.Hint="Hardware Type *"
+                                      Margin="0,0,0,8">
+                                <ComboBoxItem Content="Motor" />
+                                <ComboBoxItem Content="Temperature" />
+                                <ComboBoxItem Content="Cooling" />
+                                <ComboBoxItem Content="Custom" />
+                            </ComboBox>
+                            <TextBox Text="{Binding EditModel.DefaultParametersJson}"
+                                     Height="100"
+                                     AcceptsReturn="True"
+                                     TextWrapping="Wrap"
+                                     FontFamily="Consolas"
+                                     FontSize="12"
+                                     materialDesign:HintAssist.Hint="Default Parameters JSON"
+                                     Margin="0,0,0,8" />
+                            <TextBox Text="{Binding EditModel.CustomSchemaJson}"
+                                     Height="120"
+                                     AcceptsReturn="True"
+                                     TextWrapping="Wrap"
+                                     FontFamily="Consolas"
+                                     FontSize="12"
+                                     materialDesign:HintAssist.Hint="Custom Schema JSON"
+                                     Margin="0,0,0,8" />
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Command="{Binding SaveDefinitionCommand}"
+                                Style="{StaticResource ActionButtonStyle}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="ContentSave" Margin="0,0,4,0" />
+                                <TextBlock Text="Save" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding CancelEditCommand}"
+                                Style="{StaticResource ActionButtonStyle}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Cancel" Margin="0,0,4,0" />
+                                <TextBlock Text="Cancel" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </materialDesign:Card>
+        </Grid>
+    </Grid>
+</UserControl>

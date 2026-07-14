@@ -61,6 +61,7 @@ public partial class App : Application
         // WPF ViewModel
         services.AddSingleton<DashboardViewModel>();
         services.AddSingleton<HardwareViewModel>();
+        services.AddSingleton<HardwareDefinitionViewModel>();
         services.AddSingleton<ControllerViewModel>();
         services.AddSingleton<ModuleViewModel>();
         services.AddSingleton<FlowViewModel>();
