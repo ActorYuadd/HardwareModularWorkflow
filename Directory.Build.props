@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <SoftwareOutputRoot>H:\Software Output Directory</SoftwareOutputRoot>
+    <BuildEnvironmentName Condition="'$(Configuration)' == 'Release'">正式环境</BuildEnvironmentName>
+    <BuildEnvironmentName Condition="'$(Configuration)' == 'Debug'">测试环境</BuildEnvironmentName>
+    <BuildEnvironmentName Condition="'$(BuildEnvironmentName)' == ''">$(Configuration)</BuildEnvironmentName>
+    <OutputPath>$(SoftwareOutputRoot)\$(MSBuildProjectName)\$(BuildEnvironmentName)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+  </PropertyGroup>
+</Project>

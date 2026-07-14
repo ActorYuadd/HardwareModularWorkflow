@@ -38,12 +38,10 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
-        // 优雅停止运行时服务
-        if (_serviceProvider is not null)
+        var serviceProvider = Interlocked.Exchange(ref _serviceProvider, null);
+        if (serviceProvider is not null)
         {
-            var runtimeService = _serviceProvider.GetService<WorkflowRuntimeService>();
-            runtimeService?.StopAsync(TimeSpan.FromSeconds(5)).Wait(TimeSpan.FromSeconds(5));
-            _serviceProvider.Dispose();
+            serviceProvider.DisposeAsync().AsTask().GetAwaiter().GetResult();
         }
 
         base.OnExit(e);
