@@ -1,0 +1,138 @@
+{
+  "manifestVersion": "1.0",
+  "vendorId": "ZLG",
+  "vendorName": "周立功",
+  "controllerType": "Can",
+  "libraryType": "NativeDll",
+  "platform": "x64",
+  "libraries": [
+    {
+      "path": "zlgcan.dll",
+      "role": "Primary",
+      "description": "周立功 CAN 接口库 (x64)"
+    },
+    {
+      "path": "zlgcan_x64.dll",
+      "role": "Dependency",
+      "description": "周立功 CAN 接口库备用",
+      "optional": true
+    }
+  ],
+  "apis": [
+    {
+      "name": "OpenDevice",
+      "entryPoint": "ZCAN_OpenDevice",
+      "apiType": "Function",
+      "callingConvention": "StdCall",
+      "parameters": [
+        { "name": "deviceType", "type": "uint" },
+        { "name": "deviceIndex", "type": "uint" },
+        { "name": "reserved", "type": "uint" }
+      ],
+      "returnType": "IntPtr",
+      "description": "打开 CAN 设备"
+    },
+    {
+      "name": "CloseDevice",
+      "entryPoint": "ZCAN_CloseDevice",
+      "apiType": "Function",
+      "callingConvention": "StdCall",
+      "parameters": [
+        { "name": "deviceHandle", "type": "IntPtr" }
+      ],
+      "returnType": "uint",
+      "description": "关闭 CAN 设备"
+    },
+    {
+      "name": "InitCan",
+      "entryPoint": "ZCAN_InitCAN",
+      "apiType": "Function",
+      "callingConvention": "StdCall",
+      "parameters": [
+        { "name": "deviceHandle", "type": "IntPtr" },
+        { "name": "canIndex", "type": "uint" },
+        { "name": "initConfig", "type": "IntPtr" }
+      ],
+      "returnType": "IntPtr",
+      "hasRefParameter": true,
+      "description": "初始化 CAN 通道"
+    },
+    {
+      "name": "StartCan",
+      "entryPoint": "ZCAN_StartCAN",
+      "apiType": "Function",
+      "callingConvention": "StdCall",
+      "parameters": [
+        { "name": "channelHandle", "type": "IntPtr" }
+      ],
+      "returnType": "uint",
+      "description": "启动 CAN 通道"
+    },
+    {
+      "name": "Transmit",
+      "entryPoint": "ZCAN_Transmit",
+      "apiType": "Function",
+      "callingConvention": "StdCall",
+      "parameters": [
+        { "name": "channelHandle", "type": "IntPtr" },
+        { "name": "transmitData", "type": "IntPtr" },
+        { "name": "length", "type": "uint" }
+      ],
+      "returnType": "uint",
+      "description": "发送 CAN 数据帧"
+    },
+    {
+      "name": "Receive",
+      "entryPoint": "ZCAN_Receive",
+      "apiType": "Function",
+      "callingConvention": "StdCall",
+      "parameters": [
+        { "name": "channelHandle", "type": "IntPtr" },
+        { "name": "receiveData", "type": "IntPtr" },
+        { "name": "length", "type": "uint" },
+        { "name": "waitTime", "type": "int" }
+      ],
+      "returnType": "uint",
+      "hasRefParameter": true,
+      "description": "接收 CAN 数据帧"
+    },
+    {
+      "name": "GetReceiveNum",
+      "entryPoint": "ZCAN_GetReceiveNum",
+      "apiType": "Function",
+      "callingConvention": "StdCall",
+      "parameters": [
+        { "name": "channelHandle", "type": "IntPtr" },
+        { "name": "type", "type": "byte" }
+      ],
+      "returnType": "int",
+      "description": "获取接收缓冲区数据数量"
+    },
+    {
+      "name": "ClearBuffer",
+      "entryPoint": "ZCAN_ClearBuffer",
+      "apiType": "Function",
+      "callingConvention": "StdCall",
+      "parameters": [
+        { "name": "channelHandle", "type": "IntPtr" }
+      ],
+      "returnType": "uint",
+      "description": "清空接收缓冲区"
+    }
+  ],
+  "metadata": {
+    "supportedDevices": [
+      "USBCAN-2E-U",
+      "USBCAN-4E-U",
+      "USBCAN-8E-U",
+      "USBCANFD-200U",
+      "USBCANFD-100U",
+      "USBCANFD-MINI",
+      "PCIE-CANFD-100U",
+      "PCIE-CANFD-200U"
+    ],
+    "supportsCanFd": true,
+    "defaultDeviceType": 21,
+    "apiVersion": "zlgcan_v2.0"
+  }
+}

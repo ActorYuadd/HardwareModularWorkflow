@@ -1,0 +1,426 @@
+using Microsoft.EntityFrameworkCore;
+using HardwareModularWorkflow.Db.Entities;
+using HardwareModularWorkflow.Db.DbContext;
+
+namespace HardwareModularWorkflow.Db.Services;
+
+/// <summary>
+/// 控制器配置服务：增删改查控制器配置
+/// </summary>
+public class ControllerService
+{
+    private readonly HardwareModularWorkflowDbContext _context;
+
+    public ControllerService(HardwareModularWorkflowDbContext context)
+    {
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+    }
+
+    public async Task<List<ControllerEntity>> GetAllAsync(CancellationToken ct = default)
+    {
+        return await _context.Controllers
+            .AsNoTracking()
+            .OrderBy(c => c.Id)
+            .ToListAsync(ct);
+    }
+
+    public async Task<ControllerEntity?> GetByIdAsync(long id, CancellationToken ct = default)
+    {
+        return await _context.Controllers
+            .AsNoTracking()
+            .Include(c => c.HardwareInstances)
+            .FirstOrDefaultAsync(c => c.Id == id, ct);
+    }
+
+    public async Task<ControllerEntity> CreateAsync(ControllerEntity entity, CancellationToken ct = default)
+    {
+        entity.CreatedAt = DateTime.UtcNow;
+        entity.UpdatedAt = DateTime.UtcNow;
+        _context.Controllers.Add(entity);
+        await _context.SaveChangesAsync(ct);
+        return entity;
+    }
+
+    public async Task<ControllerEntity> UpdateAsync(ControllerEntity entity, CancellationToken ct = default)
+    {
+        entity.UpdatedAt = DateTime.UtcNow;
+        _context.Controllers.Update(entity);
+        await _context.SaveChangesAsync(ct);
+        return entity;
+    }
+
+    public async Task DeleteAsync(long id, CancellationToken ct = default)
+    {
+        var entity = await _context.Controllers.FindAsync(new object[] { id }, ct);
+        if (entity is not null)
+        {
+            _context.Controllers.Remove(entity);
+            await _context.SaveChangesAsync(ct);
+        }
+    }
+
+    public async Task<ControllerEntity?> GetDefaultAsync(string controllerType, CancellationToken ct = default)
+    {
+        return await _context.Controllers
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.ControllerType == controllerType && c.IsDefault && c.IsEnabled, ct);
+    }
+}
+
+/// <summary>
+/// 硬件定义服务：管理硬件模板（电机、制温、制冷、自定义）
+/// </summary>
+public class HardwareDefinitionService
+{
+    private readonly HardwareModularWorkflowDbContext _context;
+
+    public HardwareDefinitionService(HardwareModularWorkflowDbContext context)
+    {
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+    }
+
+    public async Task<List<HardwareDefinition>> GetAllAsync(CancellationToken ct = default)
+    {
+        return await _context.HardwareDefinitions
+            .AsNoTracking()
+            .OrderBy(h => h.Type).ThenBy(h => h.Name)
+            .ToListAsync(ct);
+    }
+
+    public async Task<HardwareDefinition?> GetByIdAsync(long id, CancellationToken ct = default)
+    {
+        return await _context.HardwareDefinitions
+            .AsNoTracking()
+            .Include(h => h.HardwareInstances)
+            .FirstOrDefaultAsync(h => h.Id == id, ct);
+    }
+
+    public async Task<HardwareDefinition> CreateAsync(HardwareDefinition entity, CancellationToken ct = default)
+    {
+        entity.CreatedAt = DateTime.UtcNow;
+        entity.UpdatedAt = DateTime.UtcNow;
+        _context.HardwareDefinitions.Add(entity);
+        await _context.SaveChangesAsync(ct);
+        return entity;
+    }
+
+    public async Task<HardwareDefinition> UpdateAsync(HardwareDefinition entity, CancellationToken ct = default)
+    {
+        entity.UpdatedAt = DateTime.UtcNow;
+        _context.HardwareDefinitions.Update(entity);
+        await _context.SaveChangesAsync(ct);
+        return entity;
+    }
+
+    public async Task DeleteAsync(long id, CancellationToken ct = default)
+    {
+        var entity = await _context.HardwareDefinitions.FindAsync(new object[] { id }, ct);
+        if (entity is not null && !entity.IsSystem)
+        {
+            _context.HardwareDefinitions.Remove(entity);
+            await _context.SaveChangesAsync(ct);
+        }
+    }
+
+    public async Task<List<HardwareDefinition>> GetByTypeAsync(string type, CancellationToken ct = default)
+    {
+        return await _context.HardwareDefinitions
+            .AsNoTracking()
+            .Where(h => h.Type == type)
+            .ToListAsync(ct);
+    }
+}
+
+/// <summary>
+/// 硬件实例服务：管理具体硬件设备配置
+/// </summary>
+public class HardwareInstanceService
+{
+    private readonly HardwareModularWorkflowDbContext _context;
+
+    public HardwareInstanceService(HardwareModularWorkflowDbContext context)
+    {
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+    }
+
+    public async Task<List<HardwareInstance>> GetAllAsync(CancellationToken ct = default)
+    {
+        return await _context.HardwareInstances
+            .AsNoTracking()
+            .Include(h => h.Definition)
+            .Include(h => h.Controller)
+            .OrderBy(h => h.Name)
+            .ToListAsync(ct);
+    }
+
+    public async Task<HardwareInstance?> GetByIdAsync(long id, CancellationToken ct = default)
+    {
+        return await _context.HardwareInstances
+            .AsNoTracking()
+            .Include(h => h.Definition)
+            .Include(h => h.Controller)
+            .FirstOrDefaultAsync(h => h.Id == id, ct);
+    }
+
+    public async Task<List<HardwareInstance>> GetByControllerIdAsync(long controllerId, CancellationToken ct = default)
+    {
+        return await _context.HardwareInstances
+            .AsNoTracking()
+            .Include(h => h.Definition)
+            .Where(h => h.ControllerId == controllerId)
+            .ToListAsync(ct);
+    }
+
+    public async Task<HardwareInstance> CreateAsync(HardwareInstance entity, CancellationToken ct = default)
+    {
+        entity.CreatedAt = DateTime.UtcNow;
+        entity.UpdatedAt = DateTime.UtcNow;
+        _context.HardwareInstances.Add(entity);
+        await _context.SaveChangesAsync(ct);
+        return entity;
+    }
+
+    public async Task<HardwareInstance> UpdateAsync(HardwareInstance entity, CancellationToken ct = default)
+    {
+        entity.UpdatedAt = DateTime.UtcNow;
+        _context.HardwareInstances.Update(entity);
+        await _context.SaveChangesAsync(ct);
+        return entity;
+    }
+
+    public async Task DeleteAsync(long id, CancellationToken ct = default)
+    {
+        var entity = await _context.HardwareInstances.FindAsync(new object[] { id }, ct);
+        if (entity is not null)
+        {
+            _context.HardwareInstances.Remove(entity);
+            await _context.SaveChangesAsync(ct);
+        }
+    }
+}
+
+/// <summary>
+/// 模块服务：管理模块定义和步骤
+/// </summary>
+public class ModuleService
+{
+    private readonly HardwareModularWorkflowDbContext _context;
+
+    public ModuleService(HardwareModularWorkflowDbContext context)
+    {
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+    }
+
+    public async Task<List<ModuleEntity>> GetAllAsync(CancellationToken ct = default)
+    {
+        return await _context.Modules
+            .AsNoTracking()
+            .Include(m => m.Steps)
+                .ThenInclude(s => s.HardwareInstance)
+                    .ThenInclude(h => h!.Definition)
+            .OrderBy(m => m.Name)
+            .ToListAsync(ct);
+    }
+
+    public async Task<ModuleEntity?> GetByIdAsync(long id, CancellationToken ct = default)
+    {
+        return await _context.Modules
+            .AsNoTracking()
+            .Include(m => m.Steps)
+                .ThenInclude(s => s.HardwareInstance)
+                    .ThenInclude(h => h!.Definition)
+            .FirstOrDefaultAsync(m => m.Id == id, ct);
+    }
+
+    public async Task<ModuleEntity> CreateAsync(ModuleEntity entity, CancellationToken ct = default)
+    {
+        entity.CreatedAt = DateTime.UtcNow;
+        entity.UpdatedAt = DateTime.UtcNow;
+        _context.Modules.Add(entity);
+        await _context.SaveChangesAsync(ct);
+        return entity;
+    }
+
+    public async Task<ModuleEntity> UpdateAsync(ModuleEntity entity, CancellationToken ct = default)
+    {
+        entity.UpdatedAt = DateTime.UtcNow;
+        _context.Modules.Update(entity);
+        await _context.SaveChangesAsync(ct);
+        return entity;
+    }
+
+    public async Task DeleteAsync(long id, CancellationToken ct = default)
+    {
+        var entity = await _context.Modules.FindAsync(new object[] { id }, ct);
+        if (entity is not null)
+        {
+            _context.Modules.Remove(entity);
+            await _context.SaveChangesAsync(ct);
+        }
+    }
+}
+
+/// <summary>
+/// 流服务：管理流定义、模块关系和子流引用
+/// </summary>
+public class FlowService
+{
+    private readonly HardwareModularWorkflowDbContext _context;
+
+    public FlowService(HardwareModularWorkflowDbContext context)
+    {
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+    }
+
+    public async Task<List<FlowEntity>> GetAllAsync(CancellationToken ct = default)
+    {
+        return await _context.Flows
+            .AsNoTracking()
+            .Include(f => f.ModuleRelations)
+                .ThenInclude(r => r.Module)
+            .Include(f => f.SubFlowReferences)
+                .ThenInclude(r => r.SubFlow)
+            .OrderBy(f => f.Name)
+            .ToListAsync(ct);
+    }
+
+    public async Task<FlowEntity?> GetByIdAsync(long id, CancellationToken ct = default)
+    {
+        return await _context.Flows
+            .AsNoTracking()
+            .Include(f => f.ModuleRelations)
+                .ThenInclude(r => r.Module)
+                    .ThenInclude(m => m!.Steps)
+                        .ThenInclude(s => s.HardwareInstance)
+                            .ThenInclude(h => h!.Definition)
+            .Include(f => f.SubFlowReferences)
+                .ThenInclude(r => r.SubFlow)
+            .FirstOrDefaultAsync(f => f.Id == id, ct);
+    }
+
+    public async Task<FlowEntity> CreateAsync(FlowEntity entity, CancellationToken ct = default)
+    {
+        entity.CreatedAt = DateTime.UtcNow;
+        entity.UpdatedAt = DateTime.UtcNow;
+        _context.Flows.Add(entity);
+        await _context.SaveChangesAsync(ct);
+        return entity;
+    }
+
+    public async Task<FlowEntity> UpdateAsync(FlowEntity entity, CancellationToken ct = default)
+    {
+        entity.UpdatedAt = DateTime.UtcNow;
+        _context.Flows.Update(entity);
+        await _context.SaveChangesAsync(ct);
+        return entity;
+    }
+
+    public async Task DeleteAsync(long id, CancellationToken ct = default)
+    {
+        var entity = await _context.Flows.FindAsync(new object[] { id }, ct);
+        if (entity is not null)
+        {
+            _context.Flows.Remove(entity);
+            await _context.SaveChangesAsync(ct);
+        }
+    }
+
+    public async Task<List<FlowEntity>> GetReusableFlowsAsync(CancellationToken ct = default)
+    {
+        return await _context.Flows
+            .AsNoTracking()
+            .Where(f => f.IsReusable)
+            .OrderBy(f => f.Name)
+            .ToListAsync(ct);
+    }
+}
+
+/// <summary>
+/// 执行日志服务：记录和查询执行日志
+/// </summary>
+public class ExecutionLogService
+{
+    private readonly HardwareModularWorkflowDbContext _context;
+
+    public ExecutionLogService(HardwareModularWorkflowDbContext context)
+    {
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+    }
+
+    public async Task<ExecutionLog> CreateAsync(ExecutionLog entity, CancellationToken ct = default)
+    {
+        _context.ExecutionLogs.Add(entity);
+        await _context.SaveChangesAsync(ct);
+        return entity;
+    }
+
+    public async Task CreateBatchAsync(IEnumerable<ExecutionLog> entities, CancellationToken ct = default)
+    {
+        _context.ExecutionLogs.AddRange(entities);
+        await _context.SaveChangesAsync(ct);
+    }
+
+    public async Task<List<ExecutionLog>> GetByExecutionIdAsync(Guid executionId, CancellationToken ct = default)
+    {
+        return await _context.ExecutionLogs
+            .AsNoTracking()
+            .Where(e => e.ExecutionId == executionId)
+            .OrderBy(e => e.ExecutedAt)
+            .ToListAsync(ct);
+    }
+
+    public async Task<List<ExecutionLog>> GetBySessionIdAsync(Guid sessionId, CancellationToken ct = default)
+    {
+        return await _context.ExecutionLogs
+            .AsNoTracking()
+            .Where(e => e.ExecutionId == sessionId)
+            .OrderBy(e => e.ExecutedAt)
+            .ToListAsync(ct);
+    }
+
+    public async Task<List<ExecutionLog>> GetByHardwareInstanceAsync(long hardwareInstanceId, int limit = 100, CancellationToken ct = default)
+    {
+        return await _context.ExecutionLogs
+            .AsNoTracking()
+            .Where(e => e.HardwareInstanceId == hardwareInstanceId)
+            .OrderByDescending(e => e.ExecutedAt)
+            .Take(limit)
+            .ToListAsync(ct);
+    }
+
+    public async Task<ExecutionSession> CreateSessionAsync(ExecutionSession session, CancellationToken ct = default)
+    {
+        _context.ExecutionSessions.Add(session);
+        await _context.SaveChangesAsync(ct);
+        return session;
+    }
+
+    public async Task<ExecutionSession?> GetSessionByIdAsync(Guid id, CancellationToken ct = default)
+    {
+        return await _context.ExecutionSessions
+            .AsNoTracking()
+            .Include(s => s.Logs)
+            .FirstOrDefaultAsync(s => s.Id == id, ct);
+    }
+
+    public async Task<List<ExecutionSession>> GetRecentSessionsAsync(int limit = 50, CancellationToken ct = default)
+    {
+        return await _context.ExecutionSessions
+            .AsNoTracking()
+            .OrderByDescending(s => s.StartedAt)
+            .Take(limit)
+            .ToListAsync(ct);
+    }
+
+    public async Task CompleteSessionAsync(Guid sessionId, bool isSuccess, long? totalDurationMs, CancellationToken ct = default)
+    {
+        var session = await _context.ExecutionSessions.FindAsync(new object[] { sessionId }, ct);
+        if (session is not null)
+        {
+            session.IsSuccess = isSuccess;
+            session.TotalDurationMs = totalDurationMs;
+            session.CompletedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync(ct);
+        }
+    }
+}

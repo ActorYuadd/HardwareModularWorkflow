@@ -1,0 +1,20 @@
+# 厂商库资源目录
+# 此目录用于存放各厂商的 DLL/.edz/编译库文件
+# 实际库文件不提交到版本控制，由用户根据实际硬件环境手动放置
+
+# 忽略所有二进制库文件
+*.dll
+*.lib
+*.so
+*.dylib
+*.edz
+*.compiled-library
+*.pdb
+*.exp
+
+# 忽略临时文件
+*.tmp
+*.bak
+
+# 保留清单文件（manifest.json 描述库的结构和 API）
+!manifest.json

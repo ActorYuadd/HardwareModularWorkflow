@@ -1,0 +1,293 @@
+<UserControl x:Class="HardwareModularWorkflow.Wpf.Views.ExecutionLogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vm="clr-namespace:HardwareModularWorkflow.Wpf.ViewModels"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="1100">
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 标题 -->
+        <TextBlock Grid.Row="0"
+                   Text="Execution Log"
+                   Style="{StaticResource PageTitleStyle}" />
+
+        <!-- 工具栏 -->
+        <ToolBarTray Grid.Row="1" Margin="0,0,0,12">
+            <ToolBar Style="{DynamicResource MaterialDesignToolBar}">
+                <Button Command="{Binding RefreshCommand}" ToolTip="Refresh">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Refresh" Width="20" Height="20" />
+                        <TextBlock Text="Refresh" Margin="4,0,0,0" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding ClearFiltersCommand}" ToolTip="Clear Filters">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="FilterRemove" Width="20" Height="20" />
+                        <TextBlock Text="Clear" Margin="4,0,0,0" />
+                    </StackPanel>
+                </Button>
+                <Separator />
+                <Button Command="{Binding ExportSessionsCsvCommand}" ToolTip="Export Sessions CSV">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="FileExport" Width="20" Height="20" />
+                        <TextBlock Text="Export Sessions" Margin="4,0,0,0" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding ExportCsvCommand}" ToolTip="Export Logs CSV">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="FileDelimited" Width="20" Height="20" />
+                        <TextBlock Text="Export CSV" Margin="4,0,0,0" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding ExportJsonCommand}" ToolTip="Export Logs JSON">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="CodeJson" Width="20" Height="20" />
+                        <TextBlock Text="Export JSON" Margin="4,0,0,0" />
+                    </StackPanel>
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+
+        <!-- 统计卡片行 -->
+        <Grid Grid.Row="2" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <materialDesign:Card Grid.Column="0" UniformCornerRadius="6" Padding="12">
+                <StackPanel>
+                    <TextBlock Text="Total Sessions" FontSize="11" Opacity="0.7" />
+                    <TextBlock Text="{Binding TotalSessions}" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource PrimaryHueMidBrush}" />
+                </StackPanel>
+            </materialDesign:Card>
+
+            <materialDesign:Card Grid.Column="2" UniformCornerRadius="6" Padding="12">
+                <StackPanel>
+                    <TextBlock Text="Success" FontSize="11" Opacity="0.7" />
+                    <TextBlock Text="{Binding SuccessCount}" FontSize="24" FontWeight="Bold" Foreground="#4CAF50" />
+                </StackPanel>
+            </materialDesign:Card>
+
+            <materialDesign:Card Grid.Column="4" UniformCornerRadius="6" Padding="12">
+                <StackPanel>
+                    <TextBlock Text="Failed" FontSize="11" Opacity="0.7" />
+                    <TextBlock Text="{Binding FailedCount}" FontSize="24" FontWeight="Bold" Foreground="#F44336" />
+                </StackPanel>
+            </materialDesign:Card>
+
+            <materialDesign:Card Grid.Column="6" UniformCornerRadius="6" Padding="12">
+                <StackPanel>
+                    <TextBlock Text="Success Rate" FontSize="11" Opacity="0.7" />
+                    <TextBlock FontSize="24" FontWeight="Bold" Foreground="{DynamicResource SecondaryHueMidBrush}">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0:F1}%">
+                                <Binding Path="SuccessRate" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <materialDesign:Card Grid.Column="8" UniformCornerRadius="6" Padding="12">
+                <StackPanel>
+                    <TextBlock Text="Avg Duration" FontSize="11" Opacity="0.7" />
+                    <TextBlock FontSize="24" FontWeight="Bold" Foreground="#FF9800">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0:F0}ms">
+                                <Binding Path="AvgDurationMs" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <materialDesign:Card Grid.Column="10" UniformCornerRadius="6" Padding="12">
+                <StackPanel>
+                    <TextBlock Text="Cancelled" FontSize="11" Opacity="0.7" />
+                    <TextBlock Text="{Binding CancelledCount}" FontSize="24" FontWeight="Bold" Foreground="#9E9E9E" />
+                </StackPanel>
+            </materialDesign:Card>
+        </Grid>
+
+        <!-- 主内容区域：左列会话 + 右列日志 -->
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="380" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- 左列：过滤 + 会话列表 -->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- 过滤面板 -->
+                <materialDesign:Card Grid.Row="0" Style="{StaticResource CardContainerStyle}" Margin="0,0,0,12">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                                   Text="Filter" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" Margin="0,0,0,8" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Search" VerticalAlignment="Center" Margin="0,0,8,4" />
+                        <TextBox Grid.Row="1" Grid.Column="1"
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                 materialDesign:TextFieldAssist.HasLeadingIcon="True"
+                                 materialDesign:TextFieldAssist.LeadingIcon="Magnify"
+                                 Margin="0,0,0,4" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="From" VerticalAlignment="Center" Margin="0,0,8,4" />
+                        <DatePicker Grid.Row="2" Grid.Column="1"
+                                    SelectedDate="{Binding DateFrom}"
+                                    Margin="0,0,0,4" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="To" VerticalAlignment="Center" Margin="0,0,8,4" />
+                        <DatePicker Grid.Row="3" Grid.Column="1"
+                                    SelectedDate="{Binding DateTo}"
+                                    Margin="0,0,0,4" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Status" VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <ComboBox Grid.Row="4" Grid.Column="1"
+                                  ItemsSource="{Binding SuccessFilterOptions}"
+                                  SelectedItem="{Binding FilterSuccessOption}" />
+                    </Grid>
+                </materialDesign:Card>
+
+                <!-- 会话列表 -->
+                <materialDesign:Card Grid.Row="1" Style="{StaticResource CardContainerStyle}" Margin="0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="Execution Sessions"
+                                   Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                   Margin="0,0,0,8" />
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredSessions}"
+                                  SelectedItem="{Binding SelectedSession}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  GridLinesVisibility="Horizontal"
+                                  HeadersVisibility="Column"
+                                  CanUserAddRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="120" />
+                                <DataGridTextColumn Header="Started"
+                                                    Binding="{Binding StartedAt, StringFormat='{}{0:MM-dd HH:mm}'}"
+                                                    Width="100" />
+                                <DataGridCheckBoxColumn Header="OK" Binding="{Binding IsSuccess}" Width="40" />
+                                <DataGridTextColumn Header="Duration"
+                                                    Binding="{Binding TotalDurationMs, StringFormat='{}{0}ms'}"
+                                                    Width="80" />
+                                <DataGridTextColumn Header="Flows" Binding="{Binding FlowCount}" Width="50" />
+                                <DataGridTextColumn Header="Steps" Binding="{Binding StepCount}" Width="50" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </materialDesign:Card>
+            </Grid>
+
+            <!-- 右列：日志详情 -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- 日志类型过滤 -->
+                <Grid Grid.Row="0" Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Log Type:" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <ComboBox Grid.Column="1"
+                              ItemsSource="{Binding LogTypeOptions}"
+                              SelectedItem="{Binding FilterLogType}"
+                              Width="120" HorizontalAlignment="Left" />
+                </Grid>
+
+                <!-- 日志表格 -->
+                <materialDesign:Card Grid.Row="1" Style="{StaticResource CardContainerStyle}" Margin="0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="Session Log Details"
+                                   Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                   Margin="0,0,0,8" />
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredSessionLogs}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  GridLinesVisibility="Horizontal"
+                                  HeadersVisibility="Column"
+                                  CanUserAddRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Time"
+                                                    Binding="{Binding ExecutedAt, StringFormat='{}{0:HH:mm:ss.fff}'}"
+                                                    Width="90" />
+                                <DataGridTextColumn Header="Type" Binding="{Binding LogType}" Width="80" />
+                                <DataGridTextColumn Header="Flow" Binding="{Binding FlowName}" Width="100" />
+                                <DataGridTextColumn Header="Module" Binding="{Binding ModuleName}" Width="100" />
+                                <DataGridTextColumn Header="Step" Binding="{Binding StepName}" Width="100" />
+                                <DataGridTextColumn Header="Hardware" Binding="{Binding HardwareName}" Width="100" />
+                                <DataGridTextColumn Header="Command" Binding="{Binding CommandName}" Width="100" />
+                                <DataGridCheckBoxColumn Header="OK" Binding="{Binding IsSuccess}" Width="40" />
+                                <DataGridTextColumn Header="Duration" Binding="{Binding DurationMs}" Width="70" />
+                                <DataGridTextColumn Header="Error" Binding="{Binding ErrorMessage}" Width="*" />
+                            </DataGrid.Columns>
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSuccess}" Value="False">
+                                            <Setter Property="Background" Value="#FFEBEE" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsCancelled}" Value="True">
+                                            <Setter Property="Background" Value="#FFF8E1" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+                        </DataGrid>
+                        <TextBlock Grid.Row="2" Text="{Binding StatusMessage}" Margin="0,8,0,0" Opacity="0.6" FontSize="11" />
+                    </Grid>
+                </materialDesign:Card>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

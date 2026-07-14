@@ -1,0 +1,273 @@
+<UserControl x:Class="HardwareModularWorkflow.Wpf.Views.MonitorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vm="clr-namespace:HardwareModularWorkflow.Wpf.ViewModels"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="900">
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 标题 -->
+        <TextBlock Grid.Row="0"
+                   Text="Execution Monitor"
+                   Style="{StaticResource PageTitleStyle}" />
+
+        <!-- 控制工具栏 -->
+        <ToolBarTray Grid.Row="1" Margin="0,0,0,16">
+            <ToolBar Style="{DynamicResource MaterialDesignToolBar}">
+                <Button Command="{Binding StartRuntimeCommand}" ToolTip="Start Runtime">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Play" Width="20" Height="20" />
+                        <TextBlock Text="Start" Margin="4,0,0,0" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding StopRuntimeCommand}" ToolTip="Stop Runtime">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Stop" Width="20" Height="20" />
+                        <TextBlock Text="Stop" Margin="4,0,0,0" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding CancelAllCommand}" ToolTip="Cancel All">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Cancel" Width="20" Height="20" />
+                        <TextBlock Text="Cancel All" Margin="4,0,0,0" />
+                    </StackPanel>
+                </Button>
+                <Separator />
+                <Button Command="{Binding RefreshCommand}" ToolTip="Refresh Data">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Refresh" Width="20" Height="20" />
+                        <TextBlock Text="Refresh" Margin="4,0,0,0" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding ClearLogsCommand}" ToolTip="Clear Live Logs">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="PlaylistRemove" Width="20" Height="20" />
+                        <TextBlock Text="Clear Logs" Margin="4,0,0,0" />
+                    </StackPanel>
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+
+        <!-- 内容区域 -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- 左列：实时日志 + 硬件状态 -->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="16" />
+                    <RowDefinition Height="1.2*" />
+                </Grid.RowDefinitions>
+
+                <!-- 实时日志流 -->
+                <materialDesign:Card Grid.Row="0" Style="{StaticResource CardContainerStyle}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="Live Event Log" 
+                                   Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                   Margin="0,0,0,8" />
+                        <ListView Grid.Row="1" ItemsSource="{Binding LiveLogs}" 
+                                  VirtualizingPanel.IsVirtualizing="True"
+                                  VirtualizingPanel.VirtualizationMode="Recycling">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition Width="110" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" 
+                                                   Text="{Binding Timestamp, StringFormat='{}{0:HH:mm:ss.fff}'}"
+                                                   FontFamily="Consolas" FontSize="11" 
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="1" 
+                                                   Text="{Binding EventType}"
+                                                   FontSize="11" FontWeight="Bold"
+                                                   VerticalAlignment="Center"
+                                                   Margin="8,0">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsError}" Value="True">
+                                                            <Setter Property="Foreground" Value="Red" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsError}" Value="False">
+                                                            <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <TextBlock Grid.Column="2" 
+                                                   Text="{Binding Message}"
+                                                   FontSize="12"
+                                                   TextWrapping="Wrap"
+                                                   VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsError}" Value="True">
+                                                            <Setter Property="Foreground" Value="Red" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsError}" Value="False">
+                                                            <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </materialDesign:Card>
+
+                <!-- 硬件状态看板 -->
+                <materialDesign:Card Grid.Row="2" Style="{StaticResource CardContainerStyle}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="Hardware Status" 
+                                   Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                   Margin="0,0,0,8" />
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding HardwareItems}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  GridLinesVisibility="Horizontal"
+                                  HeadersVisibility="Column"
+                                  CanUserAddRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="120" />
+                                <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="100" />
+                                <DataGridTextColumn Header="Controller" Binding="{Binding ControllerName}" Width="120" />
+                                <DataGridCheckBoxColumn Header="Enabled" Binding="{Binding IsEnabled}" Width="80" />
+                                <DataGridTextColumn Header="Port" Binding="{Binding Port}" Width="80" />
+                                <DataGridTextColumn Header="Address" Binding="{Binding Address}" Width="100" />
+                                <DataGridTextColumn Header="State" Binding="{Binding State}" Width="100" />
+                            </DataGrid.Columns>
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding State}" Value="Running">
+                                            <Setter Property="Background" Value="#E8F5E9" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding State}" Value="Error">
+                                            <Setter Property="Background" Value="#FFEBEE" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding State}" Value="Offline">
+                                            <Setter Property="Opacity" Value="0.5" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+                        </DataGrid>
+                    </Grid>
+                </materialDesign:Card>
+            </Grid>
+
+            <!-- 右列：执行会话 + 日志详情 -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1.5*" />
+                    <RowDefinition Height="16" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- 执行会话列表 -->
+                <materialDesign:Card Grid.Row="0" Style="{StaticResource CardContainerStyle}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="Recent Sessions" 
+                                   Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                   Margin="0,0,0,8" />
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding RecentSessions}"
+                                  SelectedItem="{Binding SelectedSession}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  GridLinesVisibility="Horizontal"
+                                  HeadersVisibility="Column"
+                                  CanUserAddRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="120" />
+                                <DataGridTextColumn Header="Started" 
+                                                    Binding="{Binding StartedAt, StringFormat='{}{0:MM-dd HH:mm}'}" 
+                                                    Width="100" />
+                                <DataGridCheckBoxColumn Header="Success" Binding="{Binding IsSuccess}" Width="70" />
+                                <DataGridTextColumn Header="Duration (ms)" Binding="{Binding TotalDurationMs}" Width="100" />
+                                <DataGridTextColumn Header="Flows" Binding="{Binding FlowCount}" Width="50" />
+                                <DataGridTextColumn Header="Steps" Binding="{Binding StepCount}" Width="50" />
+                                <DataGridTemplateColumn Header="Actions" Width="*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Command="{Binding DataContext.LoadSessionLogsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}"
+                                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                                    Padding="4">
+                                                <materialDesign:PackIcon Kind="FileDocument" />
+                                            </Button>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </materialDesign:Card>
+
+                <!-- 会话日志详情 -->
+                <materialDesign:Card Grid.Row="2" Style="{StaticResource CardContainerStyle}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="Session Logs" 
+                                   Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                   Margin="0,0,0,8" />
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding SelectedSessionLogs}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  GridLinesVisibility="Horizontal"
+                                  HeadersVisibility="Column"
+                                  CanUserAddRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Time" 
+                                                    Binding="{Binding ExecutedAt, StringFormat='{}{0:HH:mm:ss.fff}'}" 
+                                                    Width="90" />
+                                <DataGridTextColumn Header="Type" Binding="{Binding LogType}" Width="70" />
+                                <DataGridTextColumn Header="Step" Binding="{Binding StepName}" Width="90" />
+                                <DataGridTextColumn Header="Hardware" Binding="{Binding HardwareName}" Width="90" />
+                                <DataGridCheckBoxColumn Header="OK" Binding="{Binding IsSuccess}" Width="40" />
+                                <DataGridTextColumn Header="Duration" Binding="{Binding DurationMs}" Width="70" />
+                                <DataGridTextColumn Header="Error" Binding="{Binding ErrorMessage}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </materialDesign:Card>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,1286 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DeviceDescription xmlns="http://www.szleadtech.com.cn/" xmlns:ts="http://www.szleadtech.com.cn/" xmlns:xsi="http://www.szleadtech.com.cn/">
+  <!--** <Types namespace="std"></Types>**-->
+  <Strings namespace="local">
+    <Language lang="en">
+      <String identifier="ModelName">High Speed IO</String>
+      <String identifier="DeviceDescription" />
+      <String identifier="VendorName">Leadshine Technology Co., Ltd.</String>
+      <String identifier="typename">High Speed IO</String>
+      <String identifier="typedescription">Description of the Device</String>
+    </Language>
+  </Strings>
+  <!--**********************************************************************-->
+  <Types namespace="local">
+  
+ 
+	<BitfieldType basetype="std:DWORD" name="DWORDType">
+      <Component identifier="Bit0" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit0">Bit0</VisibleName>
+      </Component>
+      <Component identifier="Bit1" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit1">Bit1</VisibleName>
+      </Component>
+      <Component identifier="Bit2" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit2">Bit2</VisibleName>
+      </Component>
+      <Component identifier="Bit3" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit3">Bit3</VisibleName>
+      </Component>
+      <Component identifier="Bit4" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit4">Bit4</VisibleName>
+      </Component>
+      <Component identifier="Bit5" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit5">Bit5</VisibleName>
+      </Component>
+      <Component identifier="Bit6" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit6">Bit6</VisibleName>
+      </Component>
+      <Component identifier="Bit7" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit7">Bit7</VisibleName>
+      </Component>
+      <Component identifier="Bit8" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit8">Bit8</VisibleName>
+      </Component>
+      <Component identifier="Bit9" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit9">Bit9</VisibleName>
+      </Component>
+      <Component identifier="Bit10" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit10">Bit10</VisibleName>
+      </Component>
+      <Component identifier="Bit11" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit11">Bit11</VisibleName>
+      </Component>
+      <Component identifier="Bit12" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit12">Bit12</VisibleName>
+      </Component>
+      <Component identifier="Bit13" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit13">Bit13</VisibleName>
+      </Component>
+      <Component identifier="Bit14" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit14">Bit14</VisibleName>
+      </Component>
+      <Component identifier="Bit15" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit15">Bit15</VisibleName>
+      </Component>
+      <Component identifier="Bit16" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit16">Bit16</VisibleName>
+      </Component>
+      <Component identifier="Bit17" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit17">Bit17</VisibleName>
+      </Component>
+      <Component identifier="Bit18" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit18">Bit18</VisibleName>
+      </Component>
+      <Component identifier="Bit19" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit19">Bit19</VisibleName>
+      </Component>
+      <Component identifier="Bit20" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit20">Bit20</VisibleName>
+      </Component>
+      <Component identifier="Bit21" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit21">Bit21</VisibleName>
+      </Component>
+      <Component identifier="Bit22" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit22">Bit22</VisibleName>
+      </Component>
+      <Component identifier="Bit23" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit23">Bit23</VisibleName>
+      </Component>
+      <Component identifier="Bit24" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit24">Bit24</VisibleName>
+      </Component>
+      <Component identifier="Bit25" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit25">Bit25</VisibleName>
+      </Component>
+      <Component identifier="Bit26" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit26">Bit26</VisibleName>
+      </Component>
+      <Component identifier="Bit27" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit27">Bit27</VisibleName>
+      </Component>
+      <Component identifier="Bit28" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit28">Bit28</VisibleName>
+      </Component>
+      <Component identifier="Bit29" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit29">Bit29</VisibleName>
+      </Component>
+      <Component identifier="Bit30" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit30">Bit30</VisibleName>
+      </Component>
+      <Component identifier="Bit31" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit31">Bit31</VisibleName>
+      </Component>	  
+	  
+    </BitfieldType>
+  
+<!-- 高速比较 -->
+
+    <StructType name="DUT_CMP_Info">
+      <Component identifier="CMP_Chan" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:CMP_Chan">CMP_Chan</VisibleName>
+      </Component>	
+      <Component identifier="CMP_SetWorkPara" type="std:UDINT">
+        <Default>8</Default>
+        <VisibleName name="local:CMP_SetWorkPara">SetWorkPara</VisibleName>
+      </Component>
+	  
+      <Component identifier="SetWorkMode" type="std:UINT">
+        <Default>0</Default>
+        <VisibleName name="local:SetWorkMode">SetWorkMode</VisibleName>
+      </Component>
+      <Component identifier="SelAxisNum" type="std:UINT">
+        <Default>0</Default>
+        <VisibleName name="local:SelAxisNum">SelAxisNum</VisibleName>
+      </Component>
+      <Component identifier="SelCmpSour" type="std:UINT">
+        <Default>0</Default>
+        <VisibleName name="local:SelCmpSour">SelCmpSour</VisibleName>
+      </Component>	  
+      <Component identifier="SetOutState" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:SetOutState">SetOutState</VisibleName>
+      </Component>	 
+	  
+      <Component identifier="CMP_SetTrigTime" type="std:UDINT">
+        <Default>0</Default>
+        <VisibleName name="local:CMP_SetTrigTime">SetTrigTime</VisibleName>
+      </Component>
+      <Component identifier="CMP_SetLinerDelta" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:CMP_SetLinerDelta">SetLinerDelta</VisibleName>
+      </Component>
+      <Component identifier="CMP_SetLinerNum" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:CMP_SetLinerNum">SetLinerNum</VisibleName>
+      </Component>
+      <Component identifier="CMP_SetCMPPos" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:CMP_SetCMPPos">SetCMPPos</VisibleName>
+      </Component>
+      <Component identifier="CMP_SetFIFOCMPPos" type="std:ARRAY[0..127] OF DINT">
+        <VisibleName name="local:CMP_SetFIFOCMPPos">SetFIFOCMPPos</VisibleName>
+      </Component>
+      <Component identifier="CMP_GetFIFOCMPPos" type="std:UDINT">
+        <Default>0</Default>
+        <VisibleName name="local:CMP_GetFIFOCMPPos">GetFIFOCMPPos</VisibleName>
+      </Component>
+	  <Component identifier="CMP_GetCurrCMPPos" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:CMP_GetCurrCMPPos">GetCurrCMPPos</VisibleName>
+      </Component>
+	  <Component identifier="CMP_GetCMPPosCount" type="std:UDINT">
+        <Default>0</Default>
+        <VisibleName name="local:CMP_GetCMPPosCount">GetCMPPosCount</VisibleName>
+      </Component>
+	  <Component identifier="CMP_ClearPara" type="std:INT">
+        <Default>2</Default>
+        <VisibleName name="local:CMP_ClearPara">ClearPara</VisibleName>
+      </Component>
+      <Component identifier="CMP_Output_Signal" type="std:DINT">
+        <Default>-1</Default>
+        <VisibleName name="local:CMP_Output_Signal">CMP Output Signal</VisibleName>
+      </Component>
+    </StructType>
+
+<!-- 高速二维比较 -->
+    <StructType name="DUT_CMP_Info_2Deg">
+      <Component identifier="cmp_chan" type="std:BYTE">
+        <Default>0</Default>
+        <VisibleName name="local:cmp_chan">cmp_chan</VisibleName>
+      </Component>
+      <Component identifier="cmp_enable" type="std:BYTE">
+        <Default>0</Default>
+        <VisibleName name="local:cmp_enable">cmp_enable</VisibleName>
+      </Component>
+      <Component identifier="cmp_mode" type="std:BYTE">
+        <Default>0</Default>
+        <VisibleName name="local:cmp_mode">cmp_mode</VisibleName>
+      </Component>
+      <Component identifier="x_axis" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:x_axis">x_axis</VisibleName>
+      </Component>
+      <Component identifier="x_cmp_source" type="std:BYTE">
+        <Default>0</Default>
+        <VisibleName name="local:x_cmp_source">x_cmp_source</VisibleName>
+      </Component>
+      <Component identifier="x_allow_error" type="std:LREAL">
+        <Default>0</Default>
+        <VisibleName name="local:x_allow_error">x_allow_error</VisibleName>
+      </Component>
+      <Component identifier="y_axis" type="std:INT">
+        <Default>1</Default>
+        <VisibleName name="local:y_axis">y_axis</VisibleName>
+      </Component>	  
+      <Component identifier="y_cmp_source" type="std:BYTE">
+        <Default>0</Default>
+        <VisibleName name="local:y_cmp_source">y_cmp_source</VisibleName>
+      </Component>	 
+      <Component identifier="y_allow_error" type="std:LREAL">
+        <Default>0</Default>
+        <VisibleName name="local:y_allow_error">y_allow_error</VisibleName>
+      </Component>	 
+      <Component identifier="cmp_logic" type="std:BYTE">
+        <Default>0</Default>
+        <VisibleName name="local:cmp_logic">cmp_logic</VisibleName>
+      </Component>	 	
+      <Component identifier="cmp_time" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:cmp_time">cmp_time</VisibleName>
+      </Component>	
+      <Component identifier="x_cmp_pos" type="std:ARRAY [0..127] OF DINT">
+        <VisibleName name="local:x_cmp_pos">x_cmp_pos</VisibleName>
+      </Component>		
+      <Component identifier="y_cmp_pos" type="std:ARRAY [0..127] OF DINT">
+        <VisibleName name="local:y_cmp_pos">y_cmp_pos</VisibleName>
+      </Component>	
+      <Component identifier="port_sel" type="std:ARRAY [0..127] OF INT">
+        <VisibleName name="local:port_sel">port_sel</VisibleName>
+      </Component>	
+      <Component identifier="pwm_enable" type="std:BYTE">
+        <Default>0</Default>
+        <VisibleName name="local:pwm_enable">pwm_enable</VisibleName>
+      </Component>	
+      <Component identifier="pwm_fre" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:pwm_fre">pwm_fre</VisibleName>
+      </Component>	
+      <Component identifier="pwm_duty" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:pwm_duty">pwm_duty</VisibleName>
+      </Component>		
+      <Component identifier="pwm_number" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:pwm_number">pwm_number</VisibleName>
+      </Component>	
+      <Component identifier="remained_points" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:remained_points">remained_points</VisibleName>
+      </Component>	
+      <Component identifier="x_current_point" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:x_current_point">x_current_point</VisibleName>
+      </Component>		  
+	  <Component identifier="y_current_point" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:y_current_point">y_current_point</VisibleName>
+      </Component>	
+	  <Component identifier="runned_points" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:runned_points">runned_points</VisibleName>
+      </Component>	
+	  <Component identifier="current_state" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:current_state">current_state</VisibleName>
+      </Component>	
+	  <Component identifier="current_outbit" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:current_outbit">current_outbit</VisibleName>
+      </Component>		  
+    </StructType>
+<!-- 计数器 -->
+    <StructType name="DUT_Counter_Para">
+      <Component identifier="Counter_Channel" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:Counter_Channel">Counter_Channel</VisibleName>
+      </Component>
+	  <Component identifier="Counter_PresetInputNum" type="std:DINT">
+        <Default>-1</Default>
+        <VisibleName name="local:Counter_PresetInputNum">Counter_PresetInputNum</VisibleName>
+      </Component>
+	  	<Component identifier="Counter_SetWorkMode" type="std:UDINT">
+        <Default>0</Default>
+        <VisibleName name="local:Counter_SetWorkMode">Counter_SetWorkMode</VisibleName>
+      </Component>
+	  	<Component identifier="Counter_Dir" type="std:UDINT">
+        <Default>0</Default>
+        <VisibleName name="local:Counter_Dir">Counter_Dir</VisibleName>
+      </Component>
+      <Component identifier="Counter_CountMode" type="std:UDINT">
+        <Default>0</Default>
+        <VisibleName name="local:Counter_CountMode">Counter_CountMode</VisibleName>
+      </Component>
+      <Component identifier="Counter_MaxValue" type="std:DINT">
+        <Default>2147483647</Default>
+        <VisibleName name="local:Counter_MaxValue">Counter_MaxValue</VisibleName>
+      </Component>
+      <Component identifier="Counter_MinValue" type="std:DINT">
+        <Default>-2147483648</Default>
+        <VisibleName name="local:Counter_MinValue">Counter_MinValue</VisibleName>
+      </Component>
+    </StructType>
+<!-- EZ锁存清除 -->
+    <StructType name="DUT_EZ_Clear_Info">
+      <Component identifier="EnCode_EzClr_En" type="std:UDINT">
+        <Default>0</Default>
+        <VisibleName name="local:EnCode_EzClr_En">EnCode_EzClr_En</VisibleName>
+      </Component>
+	  <Component identifier="EnCode_EzClr_Follow" type="std:UDINT">
+        <Default>0</Default>
+        <VisibleName name="local:EnCode_EzClr_Follow">EnCode_EzClr_Follow</VisibleName>
+      </Component>
+	  <Component identifier="EnCode_EzClr_EnRead" type="std:UDINT">
+        <Default>0</Default>
+        <VisibleName name="local:EnCode_EzClr_EnRead">EnCode_EzClr_EnRead</VisibleName>
+      </Component>
+      <Component identifier="EnCode_EzClr_FollowRead" type="std:UDINT">
+        <Default>0</Default>
+        <VisibleName name="local:EnCode_EzClr_FollowRead">EnCode_EzClr_FollowRead</VisibleName>
+      </Component>
+	  <Component identifier="EnCode_EzSetFileterTime" type="std:UDINT">
+        <Default>400</Default>
+        <VisibleName name="local:EnCode_EzSetFileterTime">EnCode_EzSetFileterTime</VisibleName>
+      </Component>
+	  <Component identifier="EnCode_EzGetFileterTime" type="std:UDINT">
+        <Default>0</Default>
+        <VisibleName name="local:EnCode_EzGetFileterTime">EnCode_EzGetFileterTime</VisibleName>
+      </Component>
+    </StructType>
+<!-- 手轮 -->
+    <StructType name="DUT_Handle_Wheel_Counter_Para">
+      <Component identifier="HandWheel_Channel" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:HandWheel_Channel">HandWheel_Channel</VisibleName>
+      </Component>
+	  <Component identifier="HandWheel_SetWorkMode" type="std:UDINT">
+        <Default>0</Default>
+        <VisibleName name="local:HandWheel_SetWorkMode">HandWheel_SetWorkMode</VisibleName>
+      </Component>
+	  <Component identifier="HandWheel_Counter_Dir" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:HandWheel_Counter_Dir">HandWheel_Counter_Dir</VisibleName>
+      </Component>
+      <Component identifier="Counter_CountMode" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:HandWheel_CountMode">Counter_CountMode</VisibleName>
+      </Component>
+    </StructType>
+<!-- 高速锁存 -->
+    <StructType name="DUT_LTC_General_Info">
+      <Component identifier="LatchChannel" type="std:UINT">
+        <Default>0</Default>
+        <VisibleName name="local:LatchChannel">LatchChannel</VisibleName>
+      </Component>
+      <Component identifier="AxisNum" type="std:UINT">
+        <Default>0</Default>
+        <VisibleName name="local:AxisNum">AxisNum</VisibleName>
+      </Component>
+      <Component identifier="SetSource" type="std:UINT">
+        <Default>0</Default>
+        <VisibleName name="local:SetSource">SetSource</VisibleName>
+      </Component>
+      <Component identifier="SetMod" type="std:UINT">
+        <Default>0</Default>
+        <VisibleName name="local:SetMod">SetMod</VisibleName>
+      </Component>
+	  <Component identifier="SelFollow" type="std:UINT">
+        <Default>0</Default>
+        <VisibleName name="local:SelFollow">SelFollow</VisibleName>
+      </Component>
+      <Component identifier="SetFilterTime" type="std:UINT">
+        <Default>0</Default>
+        <VisibleName name="local:SetFilterTime">SetFilterTime</VisibleName>
+      </Component>
+      <Component identifier="LatchState" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:LatchState">LatchState</VisibleName>
+      </Component>
+      <Component identifier="ReadNum" type="std:UDINT">
+        <Default>0</Default>
+        <VisibleName name="local:ReadNum">ReadNum</VisibleName>
+      </Component>
+      <Component identifier="CurLatchPosition" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:CurLatchPosition">CurLatchPosition</VisibleName>
+      </Component>
+	  <Component identifier="LatchInputSignal" type="std:DINT">
+        <Default>-1</Default>
+        <VisibleName name="local:LatchInputSignal">LtcInputSignal</VisibleName>
+      </Component>
+    </StructType>
+<!-- PWM -->
+    <StructType name="DUT_PWM_Info">
+      <Component identifier="PWM_Channel" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:PWM_Channel">PWM_Channel</VisibleName>
+      </Component>
+      <Component identifier="PWM_Enable" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:PWM_Enable">PWM_Enable</VisibleName>
+      </Component>
+      <Component identifier="PWM_Frequency" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:PWM_Frequency">PWM_Frequency</VisibleName>
+      </Component>
+      <Component identifier="PWM_Ratio" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:PWM_Ratio">PWM_Ratio</VisibleName>
+      </Component>
+      <Component identifier="Port_Sel" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:Port_Sel">Port_Sel</VisibleName>
+      </Component>
+      <Component identifier="PWM_Number" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:PWM_Number">PWM_Number</VisibleName>
+      </Component>
+    </StructType>
+
+
+<!-- 轴锁存 -->
+    <StructType name="DUT_LTC_Info">
+      <Component identifier="Home_Ltc_Sour" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:Home_Ltc_Sour">Home Latch Source</VisibleName>
+      </Component>
+      <Component identifier="Home_Ltc_Sel" type="std:DINT">
+        <Default>1</Default>
+        <VisibleName name="local:Home_Ltc_Sel">Home Latch Trigger</VisibleName>
+      </Component>
+      <Component identifier="Home_Ltc_State" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:Home_Ltc_State">Home Latch State</VisibleName>
+      </Component>
+      <Component identifier="Home_Ltc_Pos" type="std:LREAL">
+        <Default>0</Default>
+        <VisibleName name="local:Home_Ltc_Pos">Home Latch Pos</VisibleName>
+      </Component>
+      <Component identifier="EZ_Ltc_Sour" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:EZ_Ltc_Sour">EZ Latch Source</VisibleName>
+      </Component>
+      <Component identifier="EZ_Ltc_Sel" type="std:DINT">
+        <Default>1</Default>
+        <VisibleName name="local:EZ_Ltc_Sel">EZ Latch Trigger</VisibleName>
+      </Component>
+      <Component identifier="EZ_Ltc_State" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:EZ_Ltc_State">EZ Latch State</VisibleName>
+      </Component>
+      <Component identifier="EZ_Ltc_Pos" type="std:LREAL">
+        <Default>0</Default>
+        <VisibleName name="local:EZ_Ltc_Pos">EZ Latch Pos</VisibleName>
+      </Component>
+    </StructType>
+    <!--** <IO模式参数>**-->
+    <StructType name="DUT_High_IO_Mode_Define">
+      <Component identifier="High_In_IO_Mode_0" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:High_In_IO_Mode_0">High In IO Mode 0</VisibleName>
+      </Component>
+      <Component identifier="High_Out_IO_Mode_0" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:High_Out_IO_Mode_0">High Out IO Mode 0</VisibleName>
+      </Component>
+      <Component identifier="High_In_IO_Mode_1" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:High_In_IO_Mode_1">High In IO Mode 1</VisibleName>
+      </Component>
+      <Component identifier="High_Out_IO_Mode_1" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:High_Out_IO_Mode_1">High Out IO Mode 1</VisibleName>
+      </Component>
+      <Component identifier="High_In_IO_Mode_2" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:High_In_IO_Mode_2">High In IO Mode 2</VisibleName>
+      </Component>
+      <Component identifier="High_Out_IO_Mode_2" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:High_Out_IO_Mode_2">High Out IO Mode 2</VisibleName>
+      </Component>
+      <Component identifier="High_In_IO_Mode_3" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:High_In_IO_Mode_3">High In IO Mode 3</VisibleName>
+      </Component>
+      <Component identifier="High_Out_IO_Mode_3" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:High_Out_IO_Mode_3">High Out IO Mode 3</VisibleName>
+      </Component>
+      <Component identifier="High_In_IO_Mode_4" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:High_In_IO_Mode_4">High In IO Mode 4</VisibleName>
+      </Component>
+      <Component identifier="High_Out_IO_Mode_4" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:High_Out_IO_Mode_4">High Out IO Mode 4</VisibleName>
+      </Component>
+      <Component identifier="High_In_IO_Mode_5" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:High_In_IO_Mode_5">High In IO Mode 5</VisibleName>
+      </Component>
+      <Component identifier="High_Out_IO_Mode_5" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:High_Out_IO_Mode_5">High Out IO Mode 5</VisibleName>
+      </Component>
+      <Component identifier="High_In_IO_Mode_6" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:High_In_IO_Mode_6">High In IO Mode 6</VisibleName>
+      </Component>
+      <Component identifier="High_Out_IO_Mode_6" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:High_Out_IO_Mode_6">High Out IO Mode 6</VisibleName>
+      </Component>
+      <Component identifier="High_In_IO_Mode_7" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:High_In_IO_Mode_7">High In IO Mode 7</VisibleName>
+      </Component>
+      <Component identifier="High_Out_IO_Mode_7" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:High_Out_IO_Mode_7">High Out IO Mode 7</VisibleName>
+      </Component>
+    </StructType>
+    <!--** <轴回零参数>**-->
+    <StructType name="DUT_Home_Info">		
+      <Component identifier="Home_Mode" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:Home_Mode">Home Mode</VisibleName>
+      </Component>
+      <Component identifier="Home_Dir" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:Home_Dir">Home Dir</VisibleName>
+      </Component>
+      <Component identifier="Home_Low_Speed" type="std:LREAL">
+        <Default>10</Default>
+        <VisibleName name="local:Home_Low_Speed">Home Slow Velocity</VisibleName>
+      </Component>
+      <Component identifier="Home_Fast_Speed" type="std:LREAL">
+        <Default>30</Default>
+        <VisibleName name="local:Home_Fast_Speed">Home Velocity</VisibleName>
+      </Component>
+      <Component identifier="Home_Acceleration" type="std:LREAL">
+        <Default>600</Default>
+        <VisibleName name="local:Home_Acceleration">Home Acc</VisibleName>
+      </Component>
+      <Component identifier="Home_Deceleration" type="std:LREAL">
+        <Default>600</Default>
+        <VisibleName name="local:Home_Deceleration">Home Dec</VisibleName>
+      </Component>
+      <Component identifier="HomePosition" type="std:LREAL">
+        <Default>1000</Default>
+        <VisibleName name="local:HomePosition">Home Pos</VisibleName>
+      </Component>
+      <Component identifier="HomeCompleteMode" type="std:INT">
+        <Default>1</Default>
+        <VisibleName name="local:HomeCompleteMode">Home complete mode</VisibleName>
+      </Component>
+      <Component identifier="HomeSwitchLevel" type="std:UINT">
+        <Default>0</Default>
+        <VisibleName name="local:HomeSwitchLevel">Home switch level</VisibleName>
+      </Component>
+      <Component identifier="HomeLatchLevel" type="std:UINT">
+        <Default>0</Default>
+        <VisibleName name="local:HomeLatchLevel">Home latch level</VisibleName>
+      </Component>
+      <Component identifier="EzLatchLevel" type="std:UINT">
+        <Default>0</Default>
+        <VisibleName name="local:EzLatchLevel">EZ latch level</VisibleName>
+      </Component>
+      <Component identifier="SetLatchPosType" type="std:UINT">
+        <Default>0</Default>
+        <VisibleName name="local:SetLatchPosType">Set latch pos type</VisibleName>
+      </Component>	  
+      <Component identifier="HomeElEnable" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:HomeElEnable">HomeElEnable</VisibleName>
+      </Component>	  
+      <Component identifier="HomeElPSwitchLevel" type="std:BOOL">
+        <Default>TRUE</Default>
+        <VisibleName name="local:HomeElPSwitchLevel">HomeElPSwitchLevel</VisibleName>
+      </Component>	  
+      <Component identifier="HomeElNSwitchlevel" type="std:BOOL">
+        <Default>TRUE</Default>
+        <VisibleName name="local:HomeElNSwitchlevel">HomeElNSwitchlevel</VisibleName>
+      </Component>	  
+      <Component identifier="ELStopMode" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:ELStopMode">ELStopMode</VisibleName>
+      </Component>	  
+      <Component identifier="DriverCounter" type="std:DINT">
+        <Default>200</Default>
+        <VisibleName name="local:DriverCounter">DriverCounter</VisibleName>
+      </Component>	  
+      <Component identifier="IsRevolveAxis" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:IsRevolveAxis">IsRevolveAxis</VisibleName>
+      </Component>	  	  
+      <Component identifier="RevolveAxisSafeAngel" type="std:REAL">
+        <Default>90</Default>
+        <VisibleName name="local:RevolveAxisSafeAngel">RevolveAxisSafeAngel</VisibleName>
+      </Component>	
+      <Component identifier="HomeSwitchNum" type="std:INT">
+        <Default>-1</Default>
+        <VisibleName name="local:HomeSwitchNum">Home Switch Num</VisibleName>
+      </Component>
+      <Component identifier="LimitSwitchNum" type="std:INT">
+        <Default>-1</Default>
+        <VisibleName name="local:LimitSwitchNum">Limit Switch Num</VisibleName>
+      </Component>	    
+    </StructType>
+
+
+    <!--** <RUN_TIME_PARA_STRUCT>**-->
+
+    <StructType name="DUT_Pulse_Axis_FPGA_Config">
+      <Component identifier="Pulse_Axis_Mode" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:Pulse_Axis_Mode">Pulse Axis Mode</VisibleName>
+      </Component>
+      <Component identifier="Encoder_SetWorkMode" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:Encoder_SetWorkMode">Encoder SetWork Mode</VisibleName>
+      </Component>
+      <Component identifier="Encoder_SetABPhase" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:Encoder_SetABPhase">Encoder ABPhase</VisibleName>
+      </Component>
+      <Component identifier="Axis_Ratio_Nume" type="std:DINT">
+        <Default>1</Default>
+        <VisibleName name="local:Axis_Ratio_Nume">Axis Ratio Nume</VisibleName>
+      </Component>
+      <Component identifier="Axis_Ratio_Denom" type="std:DINT">
+        <Default>1</Default>
+        <VisibleName name="local:Axis_Ratio_Denom">Axis Ratio Denom</VisibleName>
+      </Component>
+      <Component identifier="Axis_SetHardLimit" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Axis_SetHardLimit">Axis HardLimit</VisibleName>
+      </Component>
+      <Component identifier="Axis_SetELPFilter" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:Axis_SetELPFilter">Axis ELPFilter</VisibleName>
+      </Component>
+      <Component identifier="Axis_SetELNFilter" type="std:DINT">
+        <Default>0</Default>
+        <VisibleName name="local:Axis_SetELNFilter">Axis ELNFilter</VisibleName>
+      </Component>
+      <Component identifier="Axis_ServOn" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Axis_ServOn">Axis ServOn</VisibleName>
+      </Component>
+      <Component identifier="HomeConfig" type="local:DUT_Home_Info">
+        <VisibleName name="local:HomeConfig">Home Parameter</VisibleName>
+      </Component>
+      <Component identifier="LtcConfig" type="local:DUT_LTC_Info">
+        <VisibleName name="local:LtcConfig">Latch Parameter</VisibleName>
+      </Component>  
+      <Component identifier="EnCode_EzClr" type="local:DUT_EZ_Clear_Info">
+        <VisibleName name="local:EnCode_EzClr">EZ Clear</VisibleName>
+      </Component>	  
+    </StructType>
+    <!-- 滤波参数 -->
+    <StructType name="DUT_InputFilter_Para">
+      <Component identifier="Time_In0" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In0">Time_In0</VisibleName>
+      </Component>
+      <Component identifier="Time_In1" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In1">Time_In1</VisibleName>
+      </Component>
+      <Component identifier="Time_In2" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In2">Time_In2</VisibleName>
+      </Component>
+      <Component identifier="Time_In3" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In3">Time_In3</VisibleName>
+      </Component>
+      <Component identifier="Time_In4" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In4">Time_In4</VisibleName>
+      </Component>
+      <Component identifier="Time_In5" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In5">Time_In5</VisibleName>
+      </Component>
+      <Component identifier="Time_In6" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In6">Time_In6</VisibleName>
+      </Component>
+      <Component identifier="Time_In7" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In7">Time_In7</VisibleName>
+      </Component>
+      <Component identifier="Time_In8" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In8">Time_In8</VisibleName>
+      </Component>
+      <Component identifier="Time_In9" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In9">Time_In9</VisibleName>
+      </Component>
+      <Component identifier="Time_In10" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In10">Time_In10</VisibleName>
+      </Component>
+      <Component identifier="Time_In11" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In11">Time_In11</VisibleName>
+      </Component>
+      <Component identifier="Time_In12" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In12">Time_In12</VisibleName>
+      </Component>
+      <Component identifier="Time_In13" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In13">Time_In13</VisibleName>
+      </Component>
+      <Component identifier="Time_In14" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In14">Time_In14</VisibleName>
+      </Component>
+      <Component identifier="Time_In15" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In15">Time_In15</VisibleName>
+      </Component>
+      <Component identifier="Time_In16" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In16">Time_In16</VisibleName>
+      </Component>
+      <Component identifier="Time_In17" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In17">Time_In17</VisibleName>
+      </Component>
+      <Component identifier="Time_In18" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In18">Time_In18</VisibleName>
+      </Component>
+      <Component identifier="Time_In19" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In19">Time_In19</VisibleName>
+      </Component>
+      <Component identifier="Time_In20" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In20">Time_In20</VisibleName>
+      </Component>
+      <Component identifier="Time_In21" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In21">Time_In21</VisibleName>
+      </Component>
+      <Component identifier="Time_In22" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In22">Time_In22</VisibleName>
+      </Component>
+      <Component identifier="Time_In23" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In23">Time_In23</VisibleName>
+      </Component>
+      <Component identifier="Time_In24" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In24">Time_In24</VisibleName>
+      </Component>
+      <Component identifier="Time_In25" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In25">Time_In25</VisibleName>
+      </Component>
+      <Component identifier="Time_In26" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In26">Time_In26</VisibleName>
+      </Component>
+      <Component identifier="Time_In27" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In27">Time_In27</VisibleName>
+      </Component>
+      <Component identifier="Time_In28" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In28">Time_In28</VisibleName>
+      </Component>
+      <Component identifier="Time_In29" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In29">Time_In29</VisibleName>
+      </Component>
+      <Component identifier="Time_In30" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In30">Time_In30</VisibleName>
+      </Component>
+      <Component identifier="Time_In31" type="std:UDINT">
+        <Default>100000</Default>
+        <VisibleName name="local:Time_In31">Time_In31</VisibleName>
+      </Component>
+    </StructType>
+
+	<BitfieldType basetype="std:UINT" name="UINTType">
+      <Component identifier="Bit0" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit0">Bit0</VisibleName>
+      </Component>
+      <Component identifier="Bit1" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit1">Bit1</VisibleName>
+      </Component>
+      <Component identifier="Bit2" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit2">Bit2</VisibleName>
+      </Component>
+      <Component identifier="Bit3" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit3">Bit3</VisibleName>
+      </Component>
+      <Component identifier="Bit4" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit4">Bit4</VisibleName>
+      </Component>
+      <Component identifier="Bit5" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit5">Bit5</VisibleName>
+      </Component>
+      <Component identifier="Bit6" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit6">Bit6</VisibleName>
+      </Component>
+      <Component identifier="Bit7" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit7">Bit7</VisibleName>
+      </Component>
+      <Component identifier="Bit8" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit8">Bit8</VisibleName>
+      </Component>
+      <Component identifier="Bit9" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit9">Bit9</VisibleName>
+      </Component>
+      <Component identifier="Bit10" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit10">Bit10</VisibleName>
+      </Component>
+      <Component identifier="Bit11" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit11">Bit11</VisibleName>
+      </Component>
+      <Component identifier="Bit12" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit12">Bit12</VisibleName>
+      </Component>
+      <Component identifier="Bit13" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit13">Bit13</VisibleName>
+      </Component>
+      <Component identifier="Bit14" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit14">Bit14</VisibleName>
+      </Component>
+      <Component identifier="Bit15" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit15">Bit15</VisibleName>
+      </Component>
+    </BitfieldType>
+
+  </Types> 
+  <Device hideInCatalogue="false">
+    <DeviceIdentification>
+      <Type>40110</Type>
+      <Id>109d0001</Id>
+      <Version>3.5.15.40</Version>
+    </DeviceIdentification>
+    <DeviceInfo>
+      <Name name="local:ModelName">High Speed IO</Name>
+      <Description name="local:DeviceDescription">High Speed IO</Description>
+      <Vendor name="local:VendorName">Leadshine Technology Co., Ltd.</Vendor>
+      <OrderNumber>*</OrderNumber>
+    </DeviceInfo>
+    <Connector moduleType="257" interface="Common.PCI" role="child" explicit="false" connectorId="1" hostpath="-1" hideInStatusPage="true">
+      <InterfaceName name="local:PCI">PCI-Bus</InterfaceName>
+      <Slot count="1" allowEmpty="false" />
+    </Connector>
+    <Connector moduleType="40110" interface="MyCompany:Internal" role="parent" explicit="false" connectorId="2" hostpath="1" alwaysmapping="true" hideInStatusPage="false">
+      <InterfaceName name="local:DP">Internal</InterfaceName>
+      <Var max="125">
+      </Var>
+      <DriverInfo needsBusCycle="true">
+        
+      </DriverInfo>
+    <HostParameterSet>
+	  <!--
+		<Parameter ParameterId="1000" type="std:DWORD">
+			<Attributes channel="input" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite"/>
+			<Default>0</Default>
+			<Name name="local:in1">Genral_IO_IN</Name>
+		</Parameter>
+
+		<Parameter ParameterId="1001" type="std:DWORD">
+			<Attributes channel="output" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite"/>
+			<Default>0</Default>
+			<Name name="local:out1">Genral_IO_Out</Name>
+		</Parameter>	  
+	 --> 
+		<Parameter ParameterId="393218" type="std:STRING">
+			<Attributes channel="none" download="true" functional="false" offlineaccess="write" onlineaccess="read"/>
+			<Default>'Leadshine Technology Co., Ltd.'</Default>
+			<Name name="local:Id393218">Vendor</Name>
+			<Description name="local:Id393218.Desc">Vendor of the device</Description>
+		</Parameter>
+		<Parameter ParameterId="393219" type="std:STRING">
+			<Attributes channel="none" download="true" functional="false" offlineaccess="write" onlineaccess="read"/>
+			<Default>'High Speed IO'</Default>
+			<Name name="local:Id393219">Model Name</Name>
+			<Description name="local:Id393219.Desc">Description of the Device</Description>
+		</Parameter>
+        <!--*********************************************************************************************************************************-->
+
+		
+        <Parameter ParameterId="65100" type="local:DWORDType">
+          <Attributes channel="input" download="true" functional="false" offlineaccess="read" onlineaccess="read" />
+          <Default>0</Default>
+          <Name name="local:in1">Genral_IO_IN</Name>
+        </Parameter>
+        <Parameter ParameterId="65300" type="local:DWORDType">
+          <Attributes channel="output" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>0</Default>
+          <Name name="local:out1">Genral_IO_Out</Name>
+        </Parameter> 
+
+<!--	
+        <Parameter ParameterId="400007" type="local:UINTType">
+          <Attributes channel="input" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>0</Default>
+          <Name name="local:input">Genral_IO_IN</Name>
+        </Parameter>
+        <Parameter ParameterId="400008" type="local:UINTType">
+          <Attributes channel="output" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>0</Default>
+          <Name name="local:output">Genral_IO_Out</Name>
+        </Parameter>
+-->	
+        <Parameter ParameterId="400010" type="local:DUT_High_IO_Mode_Define">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS_IO_Mode_0</Name>
+        </Parameter>
+        <Parameter ParameterId="400011" type="local:DUT_High_IO_Mode_Define">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS_IO_Mode_1</Name>
+        </Parameter>
+        <Parameter ParameterId="400012" type="std:STRING">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>'LS_Axis_0'</Default>
+          <Name name="local:NONE">Axis_Name_0</Name>
+        </Parameter>
+        <Parameter ParameterId="400013" type="std:STRING">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>'LS_Axis_1'</Default>
+          <Name name="local:NONE">Axis_Name_1</Name>
+        </Parameter>
+        <Parameter ParameterId="400014" type="std:STRING">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>'LS_Axis_2'</Default>
+          <Name name="local:NONE">Axis_Name_2</Name>
+        </Parameter>
+        <Parameter ParameterId="400015" type="std:STRING">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>'LS_Axis_3'</Default>
+          <Name name="local:NONE">Axis_Name_3</Name>
+        </Parameter>
+				<Parameter ParameterId="400016" type="std:STRING">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>'LS_Axis_4'</Default>
+          <Name name="local:NONE">Axis_Name_4</Name>
+        </Parameter>
+        <Parameter ParameterId="400017" type="std:STRING">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>'LS_Axis_5'</Default>
+          <Name name="local:NONE">Axis_Name_5</Name>
+        </Parameter>
+	
+        <Parameter ParameterId="400020" type="std:UINT">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>0</Default>
+          <Name name="local:NONE">Axis_Mask</Name>
+        </Parameter>	
+        <Parameter ParameterId="400021" type="std:UINT">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>0</Default>
+          <Name name="local:NONE">Latch_Mask</Name>
+        </Parameter>
+        <Parameter ParameterId="400022" type="std:UINT">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>0</Default>
+          <Name name="local:NONE">Counter_Mask</Name>
+        </Parameter>	
+        <Parameter ParameterId="400023" type="std:UDINT">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>0</Default>
+          <Name name="local:NONE">Cmp_Mask</Name>
+        </Parameter>			
+        <Parameter ParameterId="400024" type="std:UDINT">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>0</Default>
+          <Name name="local:NONE">Pwm_Mask</Name>
+        </Parameter>
+		<Parameter ParameterId="400025" type="std:DWORD">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>0</Default>
+          <Name name="local:NONE">Ioin_Mask</Name>
+        </Parameter>
+		<Parameter ParameterId="400026" type="std:DWORD">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>0</Default>
+          <Name name="local:NONE">Ioout_Mask</Name>
+        </Parameter>
+
+	
+
+        <!-- <与外部库通讯参数> -->
+		<Parameter ParameterId="400100" type="local:DUT_Pulse_Axis_FPGA_Config">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">Axis_0_Pulse_FPGA_Config</Name>
+        </Parameter>
+        <Parameter ParameterId="400101" type="local:DUT_LTC_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">Axis_0_Special_IO_LTC_Info</Name>
+        </Parameter>
+        <Parameter ParameterId="400110" type="local:DUT_Pulse_Axis_FPGA_Config">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">Axis_1_Pulse_FPGA_Config</Name>
+        </Parameter>
+        <Parameter ParameterId="400111" type="local:DUT_LTC_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">Axis_1_Special_IO_LTC_Info</Name>
+        </Parameter>
+        <Parameter ParameterId="400120" type="local:DUT_Pulse_Axis_FPGA_Config">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">Axis_2_Pulse_FPGA_Config</Name>
+        </Parameter>
+        <Parameter ParameterId="400121" type="local:DUT_LTC_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">Axis_2_Special_IO_LTC_Info</Name>
+        </Parameter>
+        <Parameter ParameterId="400130" type="local:DUT_Pulse_Axis_FPGA_Config">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">Axis_3_Pulse_FPGA_Config</Name>
+        </Parameter>
+        <Parameter ParameterId="400131" type="local:DUT_LTC_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">Axis_3_Special_IO_LTC_Info</Name>
+        </Parameter>
+		
+        <Parameter ParameterId="400140" type="local:DUT_Pulse_Axis_FPGA_Config">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">Axis_4_Pulse_FPGA_Config</Name>
+        </Parameter>
+        <Parameter ParameterId="400141" type="local:DUT_LTC_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">Axis_4_Special_IO_LTC_Info</Name>
+        </Parameter>
+
+        <Parameter ParameterId="400150" type="local:DUT_Pulse_Axis_FPGA_Config">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">Axis_5_Pulse_FPGA_Config</Name>
+        </Parameter>
+        <Parameter ParameterId="400151" type="local:DUT_LTC_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">Axis_5_Special_IO_LTC_Info</Name>
+        </Parameter>		
+		
+		
+        <!-- <PWM> -->		
+        <Parameter ParameterId="400500" type="local:DUT_PWM_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS PWM 1</Name>
+        </Parameter>		
+        <Parameter ParameterId="400501" type="local:DUT_PWM_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS PWM 2</Name>
+        </Parameter>			
+        <Parameter ParameterId="400502" type="local:DUT_PWM_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS PWM 3</Name>
+        </Parameter>			
+        <Parameter ParameterId="400503" type="local:DUT_PWM_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS PWM 4</Name>
+        </Parameter>			
+		
+		<!--** < 轴高速锁存，软件锁存，这里定义为以后留下接口 >**-->
+        <!-- <高速比较> -->
+        <Parameter ParameterId="400510" type="local:DUT_CMP_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS CMP 1</Name>
+        </Parameter>
+        <Parameter ParameterId="400511" type="local:DUT_CMP_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS CMP 2</Name>
+        </Parameter>
+        <Parameter ParameterId="400512" type="local:DUT_CMP_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS CMP 3</Name>
+        </Parameter>
+        <Parameter ParameterId="400513" type="local:DUT_CMP_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS CMP 4</Name>
+        </Parameter>
+		<Parameter ParameterId="400514" type="local:DUT_CMP_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS CMP 5</Name>
+        </Parameter>
+        <Parameter ParameterId="400515" type="local:DUT_CMP_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS CMP 6</Name>
+        </Parameter>
+        <Parameter ParameterId="400516" type="local:DUT_CMP_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS CMP 7</Name>
+        </Parameter>
+        <Parameter ParameterId="400517" type="local:DUT_CMP_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS CMP 8</Name>
+        </Parameter>
+		<Parameter ParameterId="400518" type="local:DUT_CMP_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS CMP 9</Name>
+        </Parameter>
+        <!-- <高速二维比较器> -->
+        <Parameter ParameterId="400520" type="local:DUT_CMP_Info_2Deg">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS Cmp2d 1</Name>
+        </Parameter>	
+
+
+		
+        <!-- <计数器> -->
+        <Parameter ParameterId="400530" type="local:DUT_Counter_Para">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>
+						<Element name="Counter_Channel">0</Element>
+          </Default>
+          <Name name="local:NONE">HS counter 1</Name>
+        </Parameter>
+        <Parameter ParameterId="400531" type="local:DUT_Counter_Para">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>
+						<Element name="Counter_Channel">1</Element>
+          </Default>
+          <Name name="local:NONE">HS counter 2</Name>
+        </Parameter>
+        <Parameter ParameterId="400532" type="local:DUT_Counter_Para">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>
+						<Element name="Counter_Channel">2</Element>
+          </Default>
+          <Name name="local:NONE">HS counter 3</Name>
+        </Parameter>
+        <Parameter ParameterId="400533" type="local:DUT_Counter_Para">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>
+						<Element name="Counter_Channel">3</Element>
+          </Default>
+          <Name name="local:NONE">HS counter 4</Name>
+        </Parameter>
+        <Parameter ParameterId="400534" type="local:DUT_Counter_Para">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>
+						<Element name="Counter_Channel">4</Element>
+          </Default>
+          <Name name="local:NONE">HS counter 5</Name>
+        </Parameter>
+        <Parameter ParameterId="400535" type="local:DUT_Counter_Para">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>
+						<Element name="Counter_Channel">5</Element>
+          </Default>
+          <Name name="local:NONE">HS counter 6</Name>
+        </Parameter>
+
+        <!-- <高速锁存> -->
+        <Parameter ParameterId="400550" type="local:DUT_LTC_General_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS LTC 1</Name>
+        </Parameter>
+        <Parameter ParameterId="400551" type="local:DUT_LTC_General_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS LTC 2</Name>
+        </Parameter>		
+        <Parameter ParameterId="400552" type="local:DUT_LTC_General_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS LTC 3</Name>
+        </Parameter>
+        <Parameter ParameterId="400553" type="local:DUT_LTC_General_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS LTC 4</Name>
+        </Parameter>
+		<Parameter ParameterId="400554" type="local:DUT_LTC_General_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS LTC 5</Name>
+        </Parameter>
+        <Parameter ParameterId="400555" type="local:DUT_LTC_General_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS LTC 6</Name>
+        </Parameter>
+        <Parameter ParameterId="400556" type="local:DUT_LTC_General_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS LTC 7</Name>
+        </Parameter>
+        <Parameter ParameterId="400557" type="local:DUT_LTC_General_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS LTC 8</Name>
+        </Parameter>
+		<Parameter ParameterId="400558" type="local:DUT_LTC_General_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS LTC 9</Name>
+        </Parameter>
+        <!-- <差分编码器> -->
+        <Parameter ParameterId="400600" type="local:DUT_Counter_Para">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS Encoder 1</Name>
+        </Parameter>		
+        <Parameter ParameterId="400601" type="local:DUT_Counter_Para">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS Encoder 2</Name>
+        </Parameter>	
+        <Parameter ParameterId="400602" type="local:DUT_Counter_Para">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">HS Encoder 3</Name>
+        </Parameter>	
+        <!-- <输入滤波参数> -->
+        <Parameter ParameterId="400610" type="local:DUT_InputFilter_Para">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">InputFilter Para</Name>
+        </Parameter>		
+
+		
+      </HostParameterSet>
+    </Connector>
+	
+	<Functional>
+      <ChildObject>
+        <!-- HSC hidden object creation -->
+        <ObjectGuid>ac6c2cf6-0f2a-406d-aa33-4a25f48830df</ObjectGuid>
+        <ObjectName>HSIO</ObjectName>
+      </ChildObject>
+    </Functional>
+	
+  </Device>
+</DeviceDescription>

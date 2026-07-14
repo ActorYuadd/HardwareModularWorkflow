@@ -1,0 +1,89 @@
+{
+  "manifestVersion": "1.0",
+  "vendorId": "LeadSys",
+  "vendorName": "雷赛智能",
+  "controllerType": "Plc",
+  "libraryType": "NativeDll",
+  "platform": "x64",
+  "libraries": [
+    {
+      "path": "EPAN.dll",
+      "role": "Primary",
+      "description": "雷赛 MC500 系列 EPAN 库"
+    }
+  ],
+  "apis": [
+    {
+      "name": "OpenDevice",
+      "entryPoint": "EPAN_OpenDevice",
+      "apiType": "Function",
+      "callingConvention": "StdCall",
+      "parameters": [
+        { "name": "ipAddress", "type": "string" },
+        { "name": "port", "type": "int" },
+        { "name": "timeoutMs", "type": "int" }
+      ],
+      "returnType": "IntPtr",
+      "description": "打开 PLC 设备连接"
+    },
+    {
+      "name": "CloseDevice",
+      "entryPoint": "EPAN_CloseDevice",
+      "apiType": "Function",
+      "callingConvention": "StdCall",
+      "parameters": [
+        { "name": "handle", "type": "IntPtr" }
+      ],
+      "returnType": "int",
+      "description": "关闭 PLC 设备连接"
+    },
+    {
+      "name": "ReadRegister",
+      "entryPoint": "EPAN_ReadRegister",
+      "apiType": "Function",
+      "callingConvention": "StdCall",
+      "parameters": [
+        { "name": "handle", "type": "IntPtr" },
+        { "name": "registerType", "type": "byte" },
+        { "name": "offset", "type": "int" },
+        { "name": "count", "type": "int", "direction": "Out" }
+      ],
+      "returnType": "int",
+      "hasRefParameter": true,
+      "description": "读取 PLC 寄存器"
+    },
+    {
+      "name": "WriteRegister",
+      "entryPoint": "EPAN_WriteRegister",
+      "apiType": "Function",
+      "callingConvention": "StdCall",
+      "parameters": [
+        { "name": "handle", "type": "IntPtr" },
+        { "name": "registerType", "type": "byte" },
+        { "name": "offset", "type": "int" },
+        { "name": "value", "type": "int" }
+      ],
+      "returnType": "int",
+      "description": "写入 PLC 寄存器"
+    },
+    {
+      "name": "SendCommand",
+      "entryPoint": "EPAN_SendCommand",
+      "apiType": "Function",
+      "callingConvention": "StdCall",
+      "parameters": [
+        { "name": "handle", "type": "IntPtr" },
+        { "name": "data", "type": "byte[]" },
+        { "name": "length", "type": "int" }
+      ],
+      "returnType": "int",
+      "description": "发送命令"
+    }
+  ],
+  "metadata": {
+    "supportedModels": ["MC500", "MC300", "MC100"],
+    "protocolVersion": "EPAN_v2.1",
+    "defaultStationId": 1,
+    "defaultPort": 502
+  }
+}

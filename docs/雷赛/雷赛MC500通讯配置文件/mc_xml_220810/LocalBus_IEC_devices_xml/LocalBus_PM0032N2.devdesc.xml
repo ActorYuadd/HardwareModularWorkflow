@@ -1,0 +1,408 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DeviceDescription xmlns="http://www.szleadtech.com.cn/" xmlns:ts="http://www.szleadtech.com.cn/" xmlns:xsi="http://www.szleadtech.com.cn/">
+  <!--** <Types namespace="std"></Types>**-->
+  <Strings namespace="local">
+    <Language lang="en">
+      <String identifier="ModelName">PM0032N2</String>
+      <String identifier="DeviceDescription" />
+      <String identifier="VendorName">Leadshine Technology Co., Ltd.</String>
+      <String identifier="typename">PM0032N2</String>
+      <String identifier="typedescription">Description of the Device</String>
+    </Language>
+  </Strings>
+  <!--**********************************************************************-->
+  <Types namespace="local">
+  
+ 
+     <BitfieldType basetype="std:WORD" name="WORDType">
+      <Component identifier="Bit0" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit0">Bit0</VisibleName>
+      </Component>
+      <Component identifier="Bit1" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit1">Bit1</VisibleName>
+      </Component>
+      <Component identifier="Bit2" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit2">Bit2</VisibleName>
+      </Component>
+      <Component identifier="Bit3" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit3">Bit3</VisibleName>
+      </Component>
+      <Component identifier="Bit4" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit4">Bit4</VisibleName>
+      </Component>
+      <Component identifier="Bit5" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit5">Bit5</VisibleName>
+      </Component>
+      <Component identifier="Bit6" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit6">Bit6</VisibleName>
+      </Component>
+      <Component identifier="Bit7" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit7">Bit7</VisibleName>
+      </Component>
+      <Component identifier="Bit8" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit8">Bit8</VisibleName>
+      </Component>
+      <Component identifier="Bit9" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit9">Bit9</VisibleName>
+      </Component>
+      <Component identifier="Bit10" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit10">Bit10</VisibleName>
+      </Component>
+      <Component identifier="Bit11" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit11">Bit11</VisibleName>
+      </Component>
+      <Component identifier="Bit12" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit12">Bit12</VisibleName>
+      </Component>
+      <Component identifier="Bit13" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit13">Bit13</VisibleName>
+      </Component>
+      <Component identifier="Bit14" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit14">Bit14</VisibleName>
+      </Component>
+      <Component identifier="Bit15" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit15">Bit15</VisibleName>
+      </Component>
+      
+	  
+    </BitfieldType>
+    <BitfieldType basetype="std:USINT" name="USINTType">
+      <Component identifier="Bit0" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit0">Bit0</VisibleName>
+      </Component>
+      <Component identifier="Bit1" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit1">Bit1</VisibleName>
+      </Component>
+      <Component identifier="Bit2" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit2">Bit2</VisibleName>
+      </Component>
+      <Component identifier="Bit3" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit3">Bit3</VisibleName>
+      </Component>
+      <Component identifier="Bit4" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit4">Bit4</VisibleName>
+      </Component>
+      <Component identifier="Bit5" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit5">Bit5</VisibleName>
+      </Component>
+      <Component identifier="Bit6" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit6">Bit6</VisibleName>
+      </Component>
+      <Component identifier="Bit7" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit7">Bit7</VisibleName>
+      </Component>
+    </BitfieldType>
+
+    <BitfieldType basetype="std:INT" name="INTType">
+      <Component identifier="Bit0" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit0">Bit0</VisibleName>
+      </Component>
+      <Component identifier="Bit1" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit1">Bit1</VisibleName>
+      </Component>
+      <Component identifier="Bit2" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit2">Bit2</VisibleName>
+      </Component>
+      <Component identifier="Bit3" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit3">Bit3</VisibleName>
+      </Component>
+      <Component identifier="Bit4" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit4">Bit4</VisibleName>
+      </Component>
+      <Component identifier="Bit5" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit5">Bit5</VisibleName>
+      </Component>
+      <Component identifier="Bit6" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit6">Bit6</VisibleName>
+      </Component>
+      <Component identifier="Bit7" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit7">Bit7</VisibleName>
+      </Component>
+      <Component identifier="Bit8" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit8">Bit8</VisibleName>
+      </Component>
+      <Component identifier="Bit9" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit9">Bit9</VisibleName>
+      </Component>
+      <Component identifier="Bit10" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit10">Bit10</VisibleName>
+      </Component>
+      <Component identifier="Bit11" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit11">Bit11</VisibleName>
+      </Component>
+      <Component identifier="Bit12" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit12">Bit12</VisibleName>
+      </Component>
+      <Component identifier="Bit13" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit13">Bit13</VisibleName>
+      </Component>
+      <Component identifier="Bit14" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit14">Bit14</VisibleName>
+      </Component>
+      <Component identifier="Bit15" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit15">Bit15</VisibleName>
+      </Component>
+    </BitfieldType>
+    <BitfieldType basetype="std:UINT" name="UINTType">
+      <Component identifier="Bit0" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit0">Bit0</VisibleName>
+      </Component>
+      <Component identifier="Bit1" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit1">Bit1</VisibleName>
+      </Component>
+      <Component identifier="Bit2" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit2">Bit2</VisibleName>
+      </Component>
+      <Component identifier="Bit3" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit3">Bit3</VisibleName>
+      </Component>
+      <Component identifier="Bit4" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit4">Bit4</VisibleName>
+      </Component>
+      <Component identifier="Bit5" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit5">Bit5</VisibleName>
+      </Component>
+      <Component identifier="Bit6" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit6">Bit6</VisibleName>
+      </Component>
+      <Component identifier="Bit7" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit7">Bit7</VisibleName>
+      </Component>
+      <Component identifier="Bit8" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit8">Bit8</VisibleName>
+      </Component>
+      <Component identifier="Bit9" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit9">Bit9</VisibleName>
+      </Component>
+      <Component identifier="Bit10" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit10">Bit10</VisibleName>
+      </Component>
+      <Component identifier="Bit11" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit11">Bit11</VisibleName>
+      </Component>
+      <Component identifier="Bit12" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit12">Bit12</VisibleName>
+      </Component>
+      <Component identifier="Bit13" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit13">Bit13</VisibleName>
+      </Component>
+      <Component identifier="Bit14" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit14">Bit14</VisibleName>
+      </Component>
+      <Component identifier="Bit15" type="std:BOOL">
+        <Default>FALSE</Default>
+        <VisibleName name="local:Bit15">Bit15</VisibleName>
+      </Component>
+    </BitfieldType>
+    <StructType name="Struct_4DAChan_Value">
+      <Component identifier="DA_CH0" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:DA_CH0">DA_CH0</VisibleName>
+      </Component>
+       <Component identifier="DA_CH1" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:DA_CH1">DA_CH1</VisibleName>
+      </Component>
+       <Component identifier="DA_CH2" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:DA_CH2">DA_CH2</VisibleName>
+      </Component>
+       <Component identifier="DA_CH3" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:DA_CH3">DA_CH3</VisibleName>
+      </Component>
+    </StructType>
+    <StructType name="Struct_4ADChan_Value">
+      <Component identifier="AD_CH0" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:AD_CH0">AD_CH0</VisibleName>
+      </Component>
+       <Component identifier="AD_CH1" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:AD_CH1">AD_CH1</VisibleName>
+      </Component>
+       <Component identifier="AD_CH2" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:AD_CH2">AD_CH2</VisibleName>
+      </Component>
+       <Component identifier="AD_CH3" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:AD_CH3">AD_CH3</VisibleName>
+      </Component>
+    </StructType>
+    <StructType name="Struct_4AnlgDiagChan_Data">
+      <Component identifier="CH0_Diagnose" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:CH0_Diagnose">CH0_Diagnose</VisibleName>
+      </Component>
+      <Component identifier="CH1_Diagnose" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:CH1_Diagnose">CH1_Diagnose</VisibleName>
+      </Component>
+      <Component identifier="CH2_Diagnose" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:CH2_Diagnose">CH2_Diagnose</VisibleName>
+      </Component>
+      <Component identifier="CH3_Diagnose" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:CH3_Diagnose">CH3_Diagnose</VisibleName>
+      </Component>
+    </StructType>
+    <StructType name="Struct_LocalBusSlave_Info">
+      <Component identifier="SlaveAddr" type="std:BYTE">
+        <Default>0</Default>
+        <VisibleName name="local:SlaveAddr">SlaveAddr</VisibleName>
+      </Component>
+      <Component identifier="SlaveNodeID" type="std:dword">
+        <Default>1628447749</Default>
+        <VisibleName name="local:SlaveType">SlaveNodeID</VisibleName>
+      </Component>
+    </StructType>
+    <StructType name="Struct_SDO_Data">
+      <Component identifier="Index" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:Index">Index</VisibleName>
+      </Component>
+      <Component identifier="SubIndex" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:SubIndex">SubIndex</VisibleName>
+      </Component>
+      <Component identifier="Data_Buffer" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:Data_Buffer">Data_Buffer</VisibleName>
+      </Component>
+      <Component identifier="Data_Size" type="std:INT">
+        <Default>0</Default>
+        <VisibleName name="local:Data_Size">Data_Size</VisibleName>
+      </Component>
+    </StructType>
+		<StructType name="Struct_SDO_Data">
+      <Component identifier="Index" type="std:UINT">
+        <Default>0</Default>
+        <VisibleName name="local:Index">Index</VisibleName>
+      </Component>
+      <Component identifier="SubIndex" type="std:UINT">
+        <Default>0</Default>
+        <VisibleName name="local:SubIndex">SubIndex</VisibleName>
+      </Component>
+      <Component identifier="Data_Buffer" type="std:UINT">
+        <Default>0</Default>
+        <VisibleName name="local:Data_Buffer">Data_Buffer</VisibleName>
+      </Component>
+      <Component identifier="Data_Size" type="std:UINT">
+        <Default>0</Default>
+        <VisibleName name="local:Data_Size">Data_Size</VisibleName>
+      </Component>
+    </StructType>
+  </Types> 
+  <Device hideInCatalogue="false">
+    <DeviceIdentification>
+      <Type>40121</Type>
+      <Id>61102405</Id>
+      <Version>3.5.15.40</Version>
+    </DeviceIdentification>
+    <DeviceInfo>
+      <Name name="local:ModelName">PM0032N2</Name>
+      <Description name="local:DeviceDescription">PM0032N2</Description>
+      <Vendor name="local:VendorName">Leadshine Technology Co., Ltd.</Vendor>
+      <OrderNumber>*</OrderNumber>
+    </DeviceInfo>
+    <Connector moduleType="257" interface="Common.LocalBusMaster" role="child" explicit="false" connectorId="1" hostpath="-1" hideInStatusPage="true">
+      <InterfaceName name="local:LocalBusMaster">PCI-Bus</InterfaceName>
+      <Slot count="1" allowEmpty="false" />
+    </Connector>
+    <Connector moduleType="40121" interface="Common.PM0032N2" role="parent" explicit="false" connectorId="2" hostpath="1" alwaysmapping="true" hideInStatusPage="false">
+      <InterfaceName name="Common:PM0032N2">Internal</InterfaceName>
+      <Var max="32">
+      </Var>
+      <DriverInfo needsBusCycle="false">
+      </DriverInfo>
+    <HostParameterSet>
+
+		
+
+        <Parameter ParameterId="65050" type="local:WORDType">
+          <Attributes channel="input" download="true" functional="false" offlineaccess="read" onlineaccess="read" />
+          <Default>0</Default>
+          <Name name="local:NONE">ErrorCode</Name>
+	  			<Description name="local:in0">ErrorCode</Description>
+        </Parameter>
+        <Parameter ParameterId="65300" type="local:WORDType">
+          <Attributes channel="output" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>0</Default>
+          <Name name="local:out0">OUTPUT_0</Name>
+	  			<Description name="local:out0">OUT0-OUT15</Description>
+        </Parameter>
+        <Parameter ParameterId="65301" type="local:WORDType">
+          <Attributes channel="output" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Default>0</Default>
+          <Name name="local:out0">OUTPUT_1</Name>
+	  			<Description name="local:out0">OUT16-OUT31</Description>
+        </Parameter>
+        
+				<Parameter ParameterId="400010" type="local:Struct_LocalBusSlave_Info">
+          <Attributes channel="none" download="true" functional="false" offlineaccess="readwrite" onlineaccess="readwrite" />
+          <Name name="local:NONE">LocalBusSlave Info</Name>
+        </Parameter>
+
+
+		
+      </HostParameterSet>
+    </Connector>	
+  </Device>
+</DeviceDescription>
