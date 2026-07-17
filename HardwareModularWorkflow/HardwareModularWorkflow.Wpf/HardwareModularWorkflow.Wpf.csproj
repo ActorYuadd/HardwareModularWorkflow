@@ -6,18 +6,28 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <OutputPath>$(SoftwareOutputRoot)\$(MSBuildProjectName)\$(BuildEnvironmentName)\</OutputPath>
+    <SatelliteResourceLanguages>en;zh</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Antelcat.I18N.WPF" Version="1.0.0" />
-    <PackageReference Include="MahApps.Metro" Version="2.4.10" />
-    <PackageReference Include="MaterialDesignThemes.MahApps" Version="5.2.1" />
+    <PackageReference Include="Antelcat.I18N.WPF" Version="1.1.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.3.25171.5" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HardwareModularWorkflow.Lang\HardwareModularWorkflow.Lang.csproj" />
     <ProjectReference Include="..\HardwareModularWorkflow.Core\HardwareModularWorkflow.Core.csproj" />
   </ItemGroup>
+
+  <Target Name="RemoveWpfTempOutput" AfterTargets="AfterBuild">
+    <ItemGroup>
+      <WpfTempDirs Include="$([System.IO.Directory]::GetDirectories(&quot;$(SoftwareOutputRoot)&quot;, &quot;HardwareModularWorkflow.Wpf_*_wpftmp&quot;))" />
+    </ItemGroup>
+    <Message Text="Cleaning WPF temp output directories: @(WpfTempDirs)" Importance="high" Condition="'@(WpfTempDirs)' != ''" />
+    <RemoveDir Directories="@(WpfTempDirs)" />
+  </Target>
 
 </Project>

@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HardwareModularWorkflow.Db.Entities;
 using HardwareModularWorkflow.Db.Services;
+using HardwareModularWorkflow.Lang;
 
 namespace HardwareModularWorkflow.Wpf.ViewModels;
 
@@ -48,9 +49,9 @@ public partial class ExecutionLogViewModel : ObservableObject
     private bool? _filterSuccess = null; // null = all, true = success, false = failed
 
     [ObservableProperty]
-    private string _filterSuccessOption = "All"; // All, Success, Failed
+    private string _filterSuccessOption = LangKeys.FilterOption_All; // All, Success, Failed
     [ObservableProperty]
-    private string _filterLogType = "All"; // All, Flow, Module, Step, Controller
+    private string _filterLogType = LangKeys.FilterOption_All; // All, Flow, Module, Step, Controller
 
     // --- 统计 ---
     [ObservableProperty]
@@ -79,11 +80,11 @@ public partial class ExecutionLogViewModel : ObservableObject
     private bool _isLoading;
 
     [ObservableProperty]
-    private string _statusMessage = "Ready";
+    private string _statusMessage = LangKeys.Status_Ready;
 
     // 日志类型选项
-    public string[] LogTypeOptions { get; } = { "All", "Flow", "Module", "Step", "Controller" };
-    public string[] SuccessFilterOptions { get; } = { "All", "Success", "Failed" };
+    public string[] LogTypeOptions { get; } = { LangKeys.FilterOption_All, LangKeys.FilterOption_Flow, LangKeys.FilterOption_Module, LangKeys.FilterOption_Step, LangKeys.FilterOption_Controller };
+    public string[] SuccessFilterOptions { get; } = { LangKeys.FilterOption_All, LangKeys.FilterOption_Success, LangKeys.FilterOption_Failed };
 
     public ExecutionLogViewModel(ExecutionLogService logService)
     {
@@ -108,18 +109,18 @@ public partial class ExecutionLogViewModel : ObservableObject
     private async Task RefreshAsync()
     {
         IsLoading = true;
-        StatusMessage = "Loading execution logs...";
+        StatusMessage = LangKeys.Message_LoadingExecutionLogs;
         try
         {
             var sessions = await _logService.GetRecentSessionsAsync(200);
             Sessions = new ObservableCollection<ExecutionSession>(sessions);
             ApplySessionFilter();
             CalculateStatistics();
-            StatusMessage = $"Loaded {Sessions.Count} sessions";
+            StatusMessage = string.Format(LangKeys.Message_LoadedSessions, Sessions.Count);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to load: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToLoad, ex.Message);
         }
         finally
         {
@@ -134,8 +135,8 @@ public partial class ExecutionLogViewModel : ObservableObject
         DateFrom = null;
         DateTo = null;
         FilterSuccess = null;
-        FilterSuccessOption = "All";
-        FilterLogType = "All";
+        FilterSuccessOption = LangKeys.FilterOption_All;
+        FilterLogType = LangKeys.FilterOption_All;
         ApplySessionFilter();
     }
 
@@ -149,18 +150,18 @@ public partial class ExecutionLogViewModel : ObservableObject
             return;
         }
 
-        SelectedSession = session;
-        try
-        {
-            var logs = await _logService.GetBySessionIdAsync(session.Id);
-            SessionLogs = new ObservableCollection<ExecutionLog>(logs);
-            ApplyLogFilter();
-            StatusMessage = $"Loaded {logs.Count} logs for session '{session.Name}'";
-        }
-        catch (Exception ex)
-        {
-            StatusMessage = $"Failed to load logs: {ex.Message}";
-        }
+            SelectedSession = session;
+            try
+            {
+                var logs = await _logService.GetBySessionIdAsync(session.Id);
+                SessionLogs = new ObservableCollection<ExecutionLog>(logs);
+                ApplyLogFilter();
+                StatusMessage = string.Format(LangKeys.Message_LoadedLogsForSession, logs.Count, session.Name);
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = string.Format(LangKeys.Message_FailedToLoadLogs, ex.Message);
+            }
     }
 
     [RelayCommand]
@@ -169,14 +170,14 @@ public partial class ExecutionLogViewModel : ObservableObject
         var logsToExport = FilteredSessionLogs.Count > 0 ? FilteredSessionLogs : SessionLogs;
         if (logsToExport.Count == 0)
         {
-            StatusMessage = "No logs to export";
+            StatusMessage = LangKeys.Message_NoLogsToExport;
             return;
         }
 
         try
         {
             var sb = new StringBuilder();
-            sb.AppendLine("ExecutedAt,LogType,FlowName,ModuleName,StepName,HardwareName,CommandName,IsSuccess,DurationMs,ErrorMessage,IsCancelled");
+            sb.AppendLine(LangKeys.CsvHeader_ExecutionLogs);
             foreach (var log in logsToExport)
             {
                 sb.AppendLine($"" +
@@ -196,11 +197,11 @@ public partial class ExecutionLogViewModel : ObservableObject
             var fileName = $"execution_logs_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), fileName);
             await File.WriteAllTextAsync(path, sb.ToString(), Encoding.UTF8);
-            StatusMessage = $"Exported to {path}";
+            StatusMessage = string.Format(LangKeys.Message_ExportedToPath, path);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Export failed: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_ExportFailed, ex.Message);
         }
     }
 
@@ -210,7 +211,7 @@ public partial class ExecutionLogViewModel : ObservableObject
         var logsToExport = FilteredSessionLogs.Count > 0 ? FilteredSessionLogs : SessionLogs;
         if (logsToExport.Count == 0)
         {
-            StatusMessage = "No logs to export";
+            StatusMessage = LangKeys.Message_NoLogsToExport;
             return;
         }
 
@@ -237,11 +238,11 @@ public partial class ExecutionLogViewModel : ObservableObject
             var fileName = $"execution_logs_{DateTime.Now:yyyyMMdd_HHmmss}.json";
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), fileName);
             await File.WriteAllTextAsync(path, json, Encoding.UTF8);
-            StatusMessage = $"Exported to {path}";
+            StatusMessage = string.Format(LangKeys.Message_ExportedToPath, path);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Export failed: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_ExportFailed, ex.Message);
         }
     }
 
@@ -250,14 +251,14 @@ public partial class ExecutionLogViewModel : ObservableObject
     {
         if (FilteredSessions.Count == 0)
         {
-            StatusMessage = "No sessions to export";
+            StatusMessage = LangKeys.Message_NoSessionsToExport;
             return;
         }
 
         try
         {
             var sb = new StringBuilder();
-            sb.AppendLine("Name,StartedAt,CompletedAt,IsSuccess,TotalDurationMs,FlowCount,ModuleCount,StepCount,SuccessStepCount,FailedStepCount,IsCancelled,CancelReason");
+            sb.AppendLine(LangKeys.CsvHeader_ExecutionSessions);
             foreach (var session in FilteredSessions)
             {
                 sb.AppendLine($"" +
@@ -278,11 +279,11 @@ public partial class ExecutionLogViewModel : ObservableObject
             var fileName = $"execution_sessions_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), fileName);
             await File.WriteAllTextAsync(path, sb.ToString(), Encoding.UTF8);
-            StatusMessage = $"Exported to {path}";
+            StatusMessage = string.Format(LangKeys.Message_ExportedToPath, path);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Export failed: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_ExportFailed, ex.Message);
         }
     }
 
@@ -310,9 +311,9 @@ public partial class ExecutionLogViewModel : ObservableObject
             query = query.Where(s => s.StartedAt < toUtc);
         }
 
-        if (FilterSuccessOption != "All")
+        if (FilterSuccessOption != LangKeys.FilterOption_All)
         {
-            bool successValue = FilterSuccessOption == "Success";
+            bool successValue = FilterSuccessOption == LangKeys.FilterOption_Success;
             query = query.Where(s => s.IsSuccess == successValue);
         }
 
@@ -324,7 +325,7 @@ public partial class ExecutionLogViewModel : ObservableObject
     {
         var query = SessionLogs.AsEnumerable();
 
-        if (FilterLogType != "All")
+        if (FilterLogType != LangKeys.FilterOption_All)
         {
             query = query.Where(l => l.LogType == FilterLogType);
         }

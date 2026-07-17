@@ -7,6 +7,7 @@ using HardwareModularWorkflow.Core.Services;
 using HardwareModularWorkflow.Db.Entities;
 using HardwareModularWorkflow.Db.Services;
 using HardwareModularWorkflow.Hardware.Enums;
+using HardwareModularWorkflow.Lang;
 using HardwareModularWorkflow.Workflow.Events;
 
 namespace HardwareModularWorkflow.Wpf.ViewModels;
@@ -71,7 +72,7 @@ public partial class MonitorViewModel : ObservableObject
     private int _currentRunningTasks = 0;
 
     [ObservableProperty]
-    private string _statusMessage = "Ready";
+    private string _statusMessage = LangKeys.Status_Ready;
 
     [ObservableProperty]
     private bool _isLoading = false;
@@ -137,7 +138,7 @@ public partial class MonitorViewModel : ObservableObject
     private async Task RefreshAsync()
     {
         IsLoading = true;
-        StatusMessage = "Refreshing monitor data...";
+        StatusMessage = LangKeys.Message_RefreshingMonitorData;
         try
         {
             // 加载硬件实例 + 实时状态
@@ -148,7 +149,7 @@ public partial class MonitorViewModel : ObservableObject
             {
                 Id = i.Id,
                 Name = i.Name,
-                Type = i.Definition?.Type ?? "Unknown",
+                Type = i.Definition?.Type ?? LangKeys.Label_Unknown,
                 ControllerName = i.Controller?.Name,
                 IsEnabled = i.IsEnabled,
                 Port = i.Port ?? string.Empty,
@@ -164,11 +165,11 @@ public partial class MonitorViewModel : ObservableObject
             // 同步运行时状态
             SyncRuntimeStatus();
 
-            StatusMessage = $"Monitor refreshed: {items.Count} hardware, {sessions.Count} sessions";
+            StatusMessage = string.Format(LangKeys.Message_MonitorRefreshed, items.Count, sessions.Count);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to refresh: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToRefresh, ex.Message);
         }
         finally
         {
@@ -183,11 +184,11 @@ public partial class MonitorViewModel : ObservableObject
         {
             _runtimeService.Start();
             SyncRuntimeStatus();
-            StatusMessage = "Runtime started";
+            StatusMessage = LangKeys.Message_RuntimeStarted;
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to start runtime: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToStartRuntime, ex.Message);
         }
     }
 
@@ -198,11 +199,11 @@ public partial class MonitorViewModel : ObservableObject
         {
             await _runtimeService.StopAsync(TimeSpan.FromSeconds(5));
             SyncRuntimeStatus();
-            StatusMessage = "Runtime stopped";
+            StatusMessage = LangKeys.Message_RuntimeStopped;
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to stop runtime: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToStopRuntime, ex.Message);
         }
     }
 
@@ -213,11 +214,11 @@ public partial class MonitorViewModel : ObservableObject
         {
             _runtimeService.CancelAll();
             SyncRuntimeStatus();
-            StatusMessage = "All executions cancelled";
+            StatusMessage = LangKeys.Message_AllExecutionsCancelled;
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to cancel: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToCancel, ex.Message);
         }
     }
 
@@ -235,11 +236,11 @@ public partial class MonitorViewModel : ObservableObject
         {
             var logs = await _logService.GetBySessionIdAsync(session.Id);
             SelectedSessionLogs = new ObservableCollection<ExecutionLog>(logs);
-            StatusMessage = $"Loaded {logs.Count} logs for session '{session.Name}'";
+            StatusMessage = string.Format(LangKeys.Message_LoadedLogsForSession, logs.Count, session.Name);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to load logs: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToLoadLogs, ex.Message);
         }
     }
 
@@ -247,7 +248,7 @@ public partial class MonitorViewModel : ObservableObject
     private void ClearLogs()
     {
         LiveLogs.Clear();
-        StatusMessage = "Live logs cleared";
+        StatusMessage = LangKeys.Message_LiveLogsCleared;
     }
 
     /// <summary>

@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HardwareModularWorkflow.Db.Entities;
 using HardwareModularWorkflow.Db.Services;
+using HardwareModularWorkflow.Lang;
 
 namespace HardwareModularWorkflow.Wpf.ViewModels;
 
@@ -33,10 +34,10 @@ public partial class ControllerViewModel : ObservableObject
     private ControllerEditModel? _editModel;
 
     [ObservableProperty]
-    private string _editPanelTitle = "Add Controller";
+    private string _editPanelTitle = LangKeys.Title_AddController;
 
     [ObservableProperty]
-    private string _statusMessage = string.Empty;
+    private string _statusMessage = LangKeys.Status_Ready;
 
     public ControllerViewModel(ControllerService controllerService)
     {
@@ -76,16 +77,16 @@ public partial class ControllerViewModel : ObservableObject
     private async Task LoadControllersAsync()
     {
         IsLoading = true;
-        StatusMessage = "Loading controllers...";
+        StatusMessage = LangKeys.Message_LoadingControllers;
         try
         {
             var list = await _controllerService.GetAllAsync();
             Controllers = new ObservableCollection<ControllerEntity>(list);
-            StatusMessage = $"Loaded {list.Count} controllers";
+            StatusMessage = string.Format(LangKeys.Message_LoadedControllers, list.Count);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to load: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToLoad, ex.Message);
         }
         finally
         {
@@ -97,9 +98,9 @@ public partial class ControllerViewModel : ObservableObject
     private void AddController()
     {
         EditModel = new ControllerEditModel();
-        EditPanelTitle = "Add Controller";
+        EditPanelTitle = LangKeys.Title_AddController;
         IsEditing = true;
-        StatusMessage = "Adding new controller...";
+        StatusMessage = LangKeys.Message_AddingNewController;
     }
 
     [RelayCommand]
@@ -127,9 +128,9 @@ public partial class ControllerViewModel : ObservableObject
             IsDefault = controller.IsDefault,
             IsEnabled = controller.IsEnabled
         };
-        EditPanelTitle = $"Edit Controller (ID: {controller.Id})";
+        EditPanelTitle = string.Format(LangKeys.Title_EditController, controller.Id);
         IsEditing = true;
-        StatusMessage = $"Editing {controller.Name}...";
+        StatusMessage = string.Format(LangKeys.Message_EditingName, controller.Name);
     }
 
     [RelayCommand]
@@ -139,19 +140,19 @@ public partial class ControllerViewModel : ObservableObject
 
         if (string.IsNullOrWhiteSpace(EditModel.Name))
         {
-            StatusMessage = "Name is required";
+            StatusMessage = LangKeys.Validation_NameRequired;
             return;
         }
 
         if (string.IsNullOrWhiteSpace(EditModel.ControllerType))
         {
-            StatusMessage = "Controller type is required";
+            StatusMessage = LangKeys.Validation_ControllerTypeRequired;
             return;
         }
 
         if (string.IsNullOrWhiteSpace(EditModel.VendorName))
         {
-            StatusMessage = "Vendor name is required";
+            StatusMessage = LangKeys.Validation_VendorNameRequired;
             return;
         }
 
@@ -162,7 +163,7 @@ public partial class ControllerViewModel : ObservableObject
         }
         catch (JsonException)
         {
-            StatusMessage = "Invalid JSON in connection config";
+            StatusMessage = LangKeys.Validation_InvalidConnectionConfigJson;
             return;
         }
 
@@ -182,7 +183,7 @@ public partial class ControllerViewModel : ObservableObject
                     IsEnabled = EditModel.IsEnabled
                 };
                 await _controllerService.CreateAsync(entity);
-                StatusMessage = $"Controller '{entity.Name}' created";
+                StatusMessage = string.Format(LangKeys.Message_ControllerCreated, entity.Name);
             }
             else
             {
@@ -198,7 +199,7 @@ public partial class ControllerViewModel : ObservableObject
                     IsEnabled = EditModel.IsEnabled
                 };
                 await _controllerService.UpdateAsync(entity);
-                StatusMessage = $"Controller '{entity.Name}' updated";
+                StatusMessage = string.Format(LangKeys.Message_ControllerUpdated, entity.Name);
             }
 
             IsEditing = false;
@@ -207,7 +208,7 @@ public partial class ControllerViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to save: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToSave, ex.Message);
         }
         finally
         {
@@ -220,7 +221,7 @@ public partial class ControllerViewModel : ObservableObject
     {
         IsEditing = false;
         EditModel = null;
-        StatusMessage = "Edit cancelled";
+        StatusMessage = LangKeys.Message_EditCancelled;
     }
 
     [RelayCommand]
@@ -232,12 +233,12 @@ public partial class ControllerViewModel : ObservableObject
         try
         {
             await _controllerService.DeleteAsync(controller.Id);
-            StatusMessage = $"Controller '{controller.Name}' deleted";
+            StatusMessage = string.Format(LangKeys.Message_ControllerDeleted, controller.Name);
             await LoadControllersAsync();
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to delete: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToDelete, ex.Message);
         }
         finally
         {
@@ -249,7 +250,7 @@ public partial class ControllerViewModel : ObservableObject
     private void TestConnection(ControllerEntity? controller)
     {
         if (controller is null) return;
-        StatusMessage = $"Testing connection to '{controller.Name}'... (placeholder)";
+        StatusMessage = string.Format(LangKeys.Message_TestingConnectionPlaceholder, controller.Name);
     }
 }
 

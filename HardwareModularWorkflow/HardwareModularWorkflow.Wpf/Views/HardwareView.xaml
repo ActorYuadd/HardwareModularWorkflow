@@ -1,4 +1,4 @@
-<UserControl x:Class="HardwareModularWorkflow.Wpf.Views.HardwareView"
+﻿<UserControl x:Class="HardwareModularWorkflow.Wpf.Views.HardwareView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,8 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:vm="clr-namespace:HardwareModularWorkflow.Wpf.ViewModels"
              mc:Ignorable="d"
-             d:DesignHeight="600" d:DesignWidth="900">
+             d:DesignHeight="600" d:DesignWidth="900"
+    xmlns:r="clr-namespace:HardwareModularWorkflow.Lang;assembly=HardwareModularWorkflow.Lang">
 
     <Grid Margin="16">
         <Grid.RowDefinitions>
@@ -17,7 +18,7 @@
 
         <!-- 标题 -->
         <TextBlock Grid.Row="0" 
-                   Text="Hardware Management" 
+                   Text="{I18N {x:Static r:LangKeys.PageTitle_HardwareManagement}}" 
                    Style="{StaticResource PageTitleStyle}" />
 
         <!-- 工具栏 -->
@@ -29,7 +30,7 @@
 
             <TextBox Grid.Column="0"
                      Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                     materialDesign:HintAssist.Hint="Search hardware..."
+                     materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_SearchHardware}}"
                      materialDesign:TextFieldAssist.HasLeadingIcon="True"
                      materialDesign:TextFieldAssist.LeadingIcon="Magnify"
                      Width="300"
@@ -40,14 +41,14 @@
                         Style="{StaticResource ActionButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Refresh" Margin="0,0,4,0" />
-                        <TextBlock Text="Refresh" />
+                        <TextBlock Text="{I18N {x:Static r:LangKeys.Button_Refresh}}" />
                     </StackPanel>
                 </Button>
                 <Button Command="{Binding AddHardwareCommand}"
                         Style="{StaticResource ActionButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Plus" Margin="0,0,4,0" />
-                        <TextBlock Text="Add" />
+                        <TextBlock Text="{I18N {x:Static r:LangKeys.Button_Add}}" />
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -70,15 +71,15 @@
                           HeadersVisibility="Column"
                           CanUserAddRows="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="150" />
-                        <DataGridTextColumn Header="Alias" Binding="{Binding Alias}" Width="120" />
-                        <DataGridTextColumn Header="Category" Binding="{Binding Definition.Category.Name}" Width="110" />
-                        <DataGridTextColumn Header="Control Profile" Binding="{Binding Definition.ControlProfile.Name}" Width="130" />
-                        <DataGridTextColumn Header="Controller" Binding="{Binding Controller.Name}" Width="120" />
-                        <DataGridTextColumn Header="Port" Binding="{Binding Port}" Width="80" />
-                        <DataGridTextColumn Header="Address" Binding="{Binding Address}" Width="100" />
-                        <DataGridCheckBoxColumn Header="Enabled" Binding="{Binding IsEnabled}" Width="80" />
-                        <DataGridTemplateColumn Header="Actions" Width="*">
+                        <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Name}}" Binding="{Binding Name}" Width="150" />
+                        <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Alias}}" Binding="{Binding Alias}" Width="120" />
+                        <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Category}}" Binding="{Binding Definition.Category.Name}" Width="110" />
+                        <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_ControlProfile}}" Binding="{Binding Definition.ControlProfile.Name}" Width="130" />
+                        <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Controller}}" Binding="{Binding Controller.Name}" Width="120" />
+                        <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Port}}" Binding="{Binding Port}" Width="80" />
+                        <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Address}}" Binding="{Binding Address}" Width="100" />
+                        <DataGridCheckBoxColumn Header="{I18N {x:Static r:LangKeys.Header_Enabled}}" Binding="{Binding IsEnabled}" Width="80" />
+                        <DataGridTemplateColumn Header="{I18N {x:Static r:LangKeys.Header_Actions}}" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -134,58 +135,62 @@
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                         <StackPanel>
                             <TextBox Text="{Binding EditModel.Name}"
-                                     materialDesign:HintAssist.Hint="Name *"
+                                     materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_NameRequired}}"
                                      Margin="0,0,0,8" />
 
                             <TextBox Text="{Binding EditModel.Alias}"
-                                     materialDesign:HintAssist.Hint="Alias"
+                                     materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_Alias}}"
                                      Margin="0,0,0,8" />
 
                             <TextBox Text="{Binding EditModel.Note}"
-                                     materialDesign:HintAssist.Hint="Note"
+                                     materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_Note}}"
                                      Margin="0,0,0,8" />
 
                             <ComboBox ItemsSource="{Binding HardwareCategories}"
                                       SelectedValue="{Binding SelectedCategoryId}"
                                       SelectedValuePath="Id"
                                       DisplayMemberPath="Name"
-                                      materialDesign:HintAssist.Hint="Hardware Category *"
+                                      materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_HardwareCategoryRequired}}"
                                       Margin="0,0,0,8" />
 
                             <ComboBox ItemsSource="{Binding AvailableDefinitions}"
                                       SelectedValue="{Binding SelectedDefinitionId}"
                                       SelectedValuePath="Id"
                                       DisplayMemberPath="Name"
-                                      materialDesign:HintAssist.Hint="Hardware Definition *"
+                                      materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_HardwareDefinitionRequired}}"
                                       Margin="0,0,0,8" />
 
                             <TextBox Text="{Binding EditModel.Port}"
-                                     materialDesign:HintAssist.Hint="Port / Channel"
+                                     materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_PortChannel}}"
                                      Margin="0,0,0,8" />
 
                             <TextBox Text="{Binding EditModel.Address}"
-                                     materialDesign:HintAssist.Hint="Address"
+                                     materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_Address}}"
                                      Margin="0,0,0,8" />
 
                             <ComboBox ItemsSource="{Binding CompatibleControllers}"
                                       SelectedValue="{Binding EditModel.ControllerId}"
                                       SelectedValuePath="Id"
-                                      materialDesign:HintAssist.Hint="Controller"
+                                      materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.ComboBox_Controller}}"
                                       Margin="0,0,0,8">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Name}" />
-                                            <TextBlock Text=" (" />
-                                            <TextBlock Text="{Binding ControllerType}" />
-                                            <TextBlock Text=")" />
+                                            <TextBlock>
+                                                <TextBlock.Text>
+                                                    <I18N Key="{x:Static r:LangKeys.Format_NameWithDetail}">
+                                                        <Binding Path="Name" />
+                                                        <Binding Path="ControllerType" />
+                                                    </I18N>
+                                                </TextBlock.Text>
+                                            </TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
 
                             <TextBox Text="{Binding EditModel.ParametersJson}"
-                                     materialDesign:HintAssist.Hint="Parameters JSON"
+                                     materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_ParametersJson}}"
                                      TextWrapping="Wrap"
                                      AcceptsReturn="True"
                                      Height="100"
@@ -193,7 +198,7 @@
                                      Margin="0,0,0,8" />
 
                             <CheckBox IsChecked="{Binding EditModel.IsEnabled}"
-                                      Content="Enabled"
+                                      Content="{I18N {x:Static r:LangKeys.CheckBox_Enabled}}"
                                       Margin="0,0,0,8" />
                         </StackPanel>
                     </ScrollViewer>
@@ -203,14 +208,14 @@
                                 Style="{StaticResource ActionButtonStyle}">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="ContentSave" Margin="0,0,4,0" />
-                                <TextBlock Text="Save" />
+                                <TextBlock Text="{I18N {x:Static r:LangKeys.Button_Save}}" />
                             </StackPanel>
                         </Button>
                         <Button Command="{Binding CancelEditCommand}"
                                 Style="{StaticResource ActionButtonStyle}">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="Cancel" Margin="0,0,4,0" />
-                                <TextBlock Text="Cancel" />
+                                <TextBlock Text="{I18N {x:Static r:LangKeys.Button_Cancel}}" />
                             </StackPanel>
                         </Button>
                     </StackPanel>

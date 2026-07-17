@@ -1,0 +1,1098 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Title_HardwareModularWorkflow" xml:space="preserve">
+    <value>Hardware Modular Workflow</value>
+  </data>
+  <data name="Tooltip_Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Tooltip_StartRuntime" xml:space="preserve">
+    <value>Start Runtime</value>
+  </data>
+  <data name="Tooltip_StopRuntime" xml:space="preserve">
+    <value>Stop Runtime</value>
+  </data>
+  <data name="Tooltip_RefreshHardware" xml:space="preserve">
+    <value>Refresh Hardware</value>
+  </data>
+  <data name="Tooltip_Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Label_Navigation" xml:space="preserve">
+    <value>Navigation</value>
+  </data>
+  <data name="Navigation_Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Navigation_Hardware" xml:space="preserve">
+    <value>Hardware</value>
+  </data>
+  <data name="Navigation_HardwareDefinitions" xml:space="preserve">
+    <value>Hardware Definitions</value>
+  </data>
+  <data name="Navigation_Controller" xml:space="preserve">
+    <value>Controller</value>
+  </data>
+  <data name="Navigation_Module" xml:space="preserve">
+    <value>Module</value>
+  </data>
+  <data name="Navigation_Workflow" xml:space="preserve">
+    <value>Workflow</value>
+  </data>
+  <data name="Navigation_Monitor" xml:space="preserve">
+    <value>Monitor</value>
+  </data>
+  <data name="Navigation_ExecutionLog" xml:space="preserve">
+    <value>Execution Log</value>
+  </data>
+  <data name="Navigation_Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="PageTitle_Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Button_Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="Status_RuntimeRunning" xml:space="preserve">
+    <value>Runtime is running</value>
+  </data>
+  <data name="Status_RuntimeStopped" xml:space="preserve">
+    <value>Runtime is stopped</value>
+  </data>
+  <data name="CardTitle_Hardware" xml:space="preserve">
+    <value>Hardware</value>
+  </data>
+  <data name="Format_MotorCount" xml:space="preserve">
+    <value>Motor: {0}</value>
+  </data>
+  <data name="Format_TemperatureCount" xml:space="preserve">
+    <value>Temp: {0}</value>
+  </data>
+  <data name="Format_CoolingCount" xml:space="preserve">
+    <value>Cool: {0}</value>
+  </data>
+  <data name="Format_CustomCount" xml:space="preserve">
+    <value>Custom: {0}</value>
+  </data>
+  <data name="CardTitle_Controllers" xml:space="preserve">
+    <value>Controllers</value>
+  </data>
+  <data name="Format_PlcCount" xml:space="preserve">
+    <value>PLC: {0}</value>
+  </data>
+  <data name="Format_CanCount" xml:space="preserve">
+    <value>CAN: {0}</value>
+  </data>
+  <data name="CardTitle_Today" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="Format_SuccessCount" xml:space="preserve">
+    <value>Success: {0}</value>
+  </data>
+  <data name="Format_FailedCount" xml:space="preserve">
+    <value>Failed: {0}</value>
+  </data>
+  <data name="CardTitle_Workflows" xml:space="preserve">
+    <value>Workflows</value>
+  </data>
+  <data name="Format_ReusableCount" xml:space="preserve">
+    <value>Reusable: {0}</value>
+  </data>
+  <data name="Section_RecentEvents" xml:space="preserve">
+    <value>Recent Events</value>
+  </data>
+  <data name="Section_QuickAccess" xml:space="preserve">
+    <value>Quick Access</value>
+  </data>
+  <data name="Button_NavigateHardware" xml:space="preserve">
+    <value>Hardware</value>
+  </data>
+  <data name="Button_NavigateController" xml:space="preserve">
+    <value>Controller</value>
+  </data>
+  <data name="Button_NavigateModule" xml:space="preserve">
+    <value>Module</value>
+  </data>
+  <data name="Button_NavigateWorkflow" xml:space="preserve">
+    <value>Workflow</value>
+  </data>
+  <data name="Button_NavigateMonitor" xml:space="preserve">
+    <value>Monitor</value>
+  </data>
+  <data name="PageTitle_ControllerManagement" xml:space="preserve">
+    <value>Controller Management</value>
+  </data>
+  <data name="Hint_SearchControllers" xml:space="preserve">
+    <value>Search controllers...</value>
+  </data>
+  <data name="Button_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Header_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Header_Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Header_Vendor" xml:space="preserve">
+    <value>Vendor</value>
+  </data>
+  <data name="Header_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Header_Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="Header_Enabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="Header_Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Tooltip_TestConnection" xml:space="preserve">
+    <value>Test Connection</value>
+  </data>
+  <data name="Hint_NameRequired" xml:space="preserve">
+    <value>Name *</value>
+  </data>
+  <data name="Hint_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Hint_ControllerTypeRequired" xml:space="preserve">
+    <value>Controller Type *</value>
+  </data>
+  <data name="ComboBoxItem_Plc" xml:space="preserve">
+    <value>Plc</value>
+  </data>
+  <data name="ComboBoxItem_Can" xml:space="preserve">
+    <value>Can</value>
+  </data>
+  <data name="Hint_VendorNameRequired" xml:space="preserve">
+    <value>Vendor Name *</value>
+  </data>
+  <data name="ComboBoxItem_LeadSys" xml:space="preserve">
+    <value>LeadSys</value>
+  </data>
+  <data name="ComboBoxItem_Zlg" xml:space="preserve">
+    <value>ZLG</value>
+  </data>
+  <data name="ComboBoxItem_Siemens" xml:space="preserve">
+    <value>Siemens</value>
+  </data>
+  <data name="ComboBoxItem_Beckhoff" xml:space="preserve">
+    <value>Beckhoff</value>
+  </data>
+  <data name="Hint_ConnectionConfigJsonRequired" xml:space="preserve">
+    <value>Connection Config JSON *</value>
+  </data>
+  <data name="CheckBox_SetAsDefault" xml:space="preserve">
+    <value>Set as Default</value>
+  </data>
+  <data name="CheckBox_Enabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="Button_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Title_AddController" xml:space="preserve">
+    <value>Add Controller</value>
+  </data>
+  <data name="Message_LoadingControllers" xml:space="preserve">
+    <value>Loading controllers...</value>
+  </data>
+  <data name="Message_LoadedControllers" xml:space="preserve">
+    <value>Loaded {0} controllers</value>
+  </data>
+  <data name="Message_FailedToLoad" xml:space="preserve">
+    <value>Failed to load: {0}</value>
+  </data>
+  <data name="Message_AddingNewController" xml:space="preserve">
+    <value>Adding new controller...</value>
+  </data>
+  <data name="Title_EditController" xml:space="preserve">
+    <value>Edit Controller (ID: {0})</value>
+  </data>
+  <data name="Message_EditingName" xml:space="preserve">
+    <value>Editing {0}...</value>
+  </data>
+  <data name="Validation_NameRequired" xml:space="preserve">
+    <value>Name is required</value>
+  </data>
+  <data name="Validation_ControllerTypeRequired" xml:space="preserve">
+    <value>Controller type is required</value>
+  </data>
+  <data name="Validation_VendorNameRequired" xml:space="preserve">
+    <value>Vendor name is required</value>
+  </data>
+  <data name="Validation_InvalidConnectionConfigJson" xml:space="preserve">
+    <value>Invalid JSON in connection config</value>
+  </data>
+  <data name="Message_ControllerCreated" xml:space="preserve">
+    <value>Controller '{0}' created</value>
+  </data>
+  <data name="Message_ControllerUpdated" xml:space="preserve">
+    <value>Controller '{0}' updated</value>
+  </data>
+  <data name="Message_FailedToSave" xml:space="preserve">
+    <value>Failed to save: {0}</value>
+  </data>
+  <data name="Message_EditCancelled" xml:space="preserve">
+    <value>Edit cancelled</value>
+  </data>
+  <data name="Message_ControllerDeleted" xml:space="preserve">
+    <value>Controller '{0}' deleted</value>
+  </data>
+  <data name="Message_FailedToDelete" xml:space="preserve">
+    <value>Failed to delete: {0}</value>
+  </data>
+  <data name="Message_TestingConnectionPlaceholder" xml:space="preserve">
+    <value>Testing connection to '{0}'...</value>
+  </data>
+  <data name="PageTitle_WorkflowEditor" xml:space="preserve">
+    <value>Workflow Editor</value>
+  </data>
+  <data name="Hint_SearchWorkflows" xml:space="preserve">
+    <value>Search workflows...</value>
+  </data>
+  <data name="Button_AddWorkflow" xml:space="preserve">
+    <value>Add Workflow</value>
+  </data>
+  <data name="Header_Alias" xml:space="preserve">
+    <value>Alias</value>
+  </data>
+  <data name="Header_Mode" xml:space="preserve">
+    <value>Mode</value>
+  </data>
+  <data name="Header_Nodes" xml:space="preserve">
+    <value>Nodes</value>
+  </data>
+  <data name="Header_Reusable" xml:space="preserve">
+    <value>Reusable</value>
+  </data>
+  <data name="Header_ContinueOnFail" xml:space="preserve">
+    <value>ContinueOnFail</value>
+  </data>
+  <data name="Hint_WorkflowNameRequired" xml:space="preserve">
+    <value>Workflow Name *</value>
+  </data>
+  <data name="Hint_Alias" xml:space="preserve">
+    <value>Alias</value>
+  </data>
+  <data name="Hint_Note" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="Hint_TagsCommaSeparated" xml:space="preserve">
+    <value>Tags (comma separated)</value>
+  </data>
+  <data name="Hint_ExecutionMode" xml:space="preserve">
+    <value>Execution Mode</value>
+  </data>
+  <data name="ComboBoxItem_Sequential" xml:space="preserve">
+    <value>Sequential</value>
+  </data>
+  <data name="ComboBoxItem_Parallel" xml:space="preserve">
+    <value>Parallel</value>
+  </data>
+  <data name="Hint_TimeoutMs" xml:space="preserve">
+    <value>Timeout (ms)</value>
+  </data>
+  <data name="CheckBox_Reusable" xml:space="preserve">
+    <value>Reusable</value>
+  </data>
+  <data name="CheckBox_ContinueOnFailure" xml:space="preserve">
+    <value>Continue on Failure</value>
+  </data>
+  <data name="Section_FlowNodes" xml:space="preserve">
+    <value>Flow Nodes</value>
+  </data>
+  <data name="Hint_SelectModuleToAdd" xml:space="preserve">
+    <value>Select Module to Add</value>
+  </data>
+  <data name="Button_AddModule" xml:space="preserve">
+    <value>Add Module</value>
+  </data>
+  <data name="Hint_SelectSubFlowToAdd" xml:space="preserve">
+    <value>Select Sub-Flow to Add</value>
+  </data>
+  <data name="Button_AddSubFlow" xml:space="preserve">
+    <value>Add Sub-Flow</value>
+  </data>
+  <data name="Button_Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Section_EditSelectedNode" xml:space="preserve">
+    <value>Edit Selected Node</value>
+  </data>
+  <data name="Format_NameLabel" xml:space="preserve">
+    <value>Name: {0}</value>
+  </data>
+  <data name="Format_TypeLabel" xml:space="preserve">
+    <value>Type: {0}</value>
+  </data>
+  <data name="Hint_Condition" xml:space="preserve">
+    <value>Condition</value>
+  </data>
+  <data name="Title_AddWorkflow" xml:space="preserve">
+    <value>Add Workflow</value>
+  </data>
+  <data name="Message_LoadingWorkflows" xml:space="preserve">
+    <value>Loading workflows...</value>
+  </data>
+  <data name="Message_LoadedWorkflows" xml:space="preserve">
+    <value>Loaded {0} workflows</value>
+  </data>
+  <data name="Message_AddingNewWorkflow" xml:space="preserve">
+    <value>Adding new workflow...</value>
+  </data>
+  <data name="Format_ModuleReference" xml:space="preserve">
+    <value>Module #{0}</value>
+  </data>
+  <data name="Label_Module" xml:space="preserve">
+    <value>Module</value>
+  </data>
+  <data name="Format_FlowReference" xml:space="preserve">
+    <value>Flow #{0}</value>
+  </data>
+  <data name="Label_SubFlow" xml:space="preserve">
+    <value>SubFlow</value>
+  </data>
+  <data name="Title_EditWorkflow" xml:space="preserve">
+    <value>Edit Workflow (ID: {0})</value>
+  </data>
+  <data name="Validation_WorkflowNameRequired" xml:space="preserve">
+    <value>Workflow name is required</value>
+  </data>
+  <data name="Validation_CannotReferenceSelfAsSubFlow" xml:space="preserve">
+    <value>Cannot reference itself as a sub-flow</value>
+  </data>
+  <data name="Validation_CircularReferenceDetected" xml:space="preserve">
+    <value>Circular reference detected through sub-flow '{0}'</value>
+  </data>
+  <data name="Message_WorkflowCreatedWithNodes" xml:space="preserve">
+    <value>Workflow '{0}' created with {1} nodes</value>
+  </data>
+  <data name="Message_WorkflowUpdatedWithNodes" xml:space="preserve">
+    <value>Workflow '{0}' updated with {1} nodes</value>
+  </data>
+  <data name="Message_WorkflowDeleted" xml:space="preserve">
+    <value>Workflow '{0}' deleted</value>
+  </data>
+  <data name="Message_ModuleAddedToWorkflow" xml:space="preserve">
+    <value>Module '{0}' added to workflow</value>
+  </data>
+  <data name="Message_CannotReferenceWorkflowItself" xml:space="preserve">
+    <value>Cannot reference the workflow itself</value>
+  </data>
+  <data name="Message_SubFlowAddedToWorkflow" xml:space="preserve">
+    <value>Sub-flow '{0}' added to workflow</value>
+  </data>
+  <data name="Message_NodeRemoved" xml:space="preserve">
+    <value>Node removed</value>
+  </data>
+  <data name="PageTitle_ModuleEditor" xml:space="preserve">
+    <value>Module Editor</value>
+  </data>
+  <data name="Hint_SearchModules" xml:space="preserve">
+    <value>Search modules...</value>
+  </data>
+  <data name="Header_Steps" xml:space="preserve">
+    <value>Steps</value>
+  </data>
+  <data name="Header_Tags" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="Hint_ModuleNameRequired" xml:space="preserve">
+    <value>Module Name *</value>
+  </data>
+  <data name="Hint_DefaultExecutionMode" xml:space="preserve">
+    <value>Default Execution Mode</value>
+  </data>
+  <data name="Section_Steps" xml:space="preserve">
+    <value>Steps</value>
+  </data>
+  <data name="Button_AddStep" xml:space="preserve">
+    <value>Add Step</value>
+  </data>
+  <data name="Header_Number" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="Header_Hardware" xml:space="preserve">
+    <value>Hardware</value>
+  </data>
+  <data name="Header_Command" xml:space="preserve">
+    <value>Command</value>
+  </data>
+  <data name="Section_EditSelectedStep" xml:space="preserve">
+    <value>Edit Selected Step</value>
+  </data>
+  <data name="Hint_StepNameRequired" xml:space="preserve">
+    <value>Step Name *</value>
+  </data>
+  <data name="Hint_HardwareInstanceRequired" xml:space="preserve">
+    <value>Hardware Instance *</value>
+  </data>
+  <data name="Hint_CommandRequired" xml:space="preserve">
+    <value>Command *</value>
+  </data>
+  <data name="Hint_CommandParametersJson" xml:space="preserve">
+    <value>Command Parameters JSON</value>
+  </data>
+  <data name="Hint_StepTimeoutMs" xml:space="preserve">
+    <value>Step Timeout (ms)</value>
+  </data>
+  <data name="CheckBox_Async" xml:space="preserve">
+    <value>Async</value>
+  </data>
+  <data name="Title_AddModule" xml:space="preserve">
+    <value>Add Module</value>
+  </data>
+  <data name="Message_LoadingModules" xml:space="preserve">
+    <value>Loading modules...</value>
+  </data>
+  <data name="Message_LoadedModules" xml:space="preserve">
+    <value>Loaded {0} modules</value>
+  </data>
+  <data name="Message_AddingNewModule" xml:space="preserve">
+    <value>Adding new module...</value>
+  </data>
+  <data name="Title_EditModule" xml:space="preserve">
+    <value>Edit Module (ID: {0})</value>
+  </data>
+  <data name="Validation_ModuleNameRequired" xml:space="preserve">
+    <value>Module name is required</value>
+  </data>
+  <data name="Format_StepName" xml:space="preserve">
+    <value>Step {0}</value>
+  </data>
+  <data name="Message_StepAdded" xml:space="preserve">
+    <value>Step added</value>
+  </data>
+  <data name="Message_StepRemoved" xml:space="preserve">
+    <value>Step removed</value>
+  </data>
+  <data name="Message_HardwareProfileDoesNotSupportCommand" xml:space="preserve">
+    <value>The selected hardware profile does not support the previous command</value>
+  </data>
+  <data name="Validation_StepRequiresHardwareInstanceWithProfile" xml:space="preserve">
+    <value>Step '{0}' requires a hardware instance with a control profile</value>
+  </data>
+  <data name="Validation_StepInvalidCommandParametersJson" xml:space="preserve">
+    <value>Step '{0}' has invalid command parameters JSON</value>
+  </data>
+  <data name="Format_StepValidationError" xml:space="preserve">
+    <value>Step '{0}': {1}</value>
+  </data>
+  <data name="Message_ModuleCreatedWithSteps" xml:space="preserve">
+    <value>Module '{0}' created with {1} steps</value>
+  </data>
+  <data name="Message_ModuleUpdatedWithSteps" xml:space="preserve">
+    <value>Module '{0}' updated with {1} steps</value>
+  </data>
+  <data name="Message_ModuleDeleted" xml:space="preserve">
+    <value>Module '{0}' deleted</value>
+  </data>
+  <data name="PageTitle_HardwareManagement" xml:space="preserve">
+    <value>Hardware Management</value>
+  </data>
+  <data name="Hint_SearchHardware" xml:space="preserve">
+    <value>Search hardware...</value>
+  </data>
+  <data name="Header_Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="Header_ControlProfile" xml:space="preserve">
+    <value>Control Profile</value>
+  </data>
+  <data name="Header_Controller" xml:space="preserve">
+    <value>Controller</value>
+  </data>
+  <data name="Header_Port" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="Header_Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="Hint_Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="Hint_HardwareCategoryRequired" xml:space="preserve">
+    <value>Hardware Category *</value>
+  </data>
+  <data name="Hint_HardwareDefinitionRequired" xml:space="preserve">
+    <value>Hardware Definition *</value>
+  </data>
+  <data name="Hint_PortChannel" xml:space="preserve">
+    <value>Port / Channel</value>
+  </data>
+  <data name="Hint_ParametersJson" xml:space="preserve">
+    <value>Parameters JSON</value>
+  </data>
+  <data name="Title_AddHardware" xml:space="preserve">
+    <value>Add Hardware</value>
+  </data>
+  <data name="Message_LoadingHardware" xml:space="preserve">
+    <value>Loading hardware...</value>
+  </data>
+  <data name="Message_LoadedHardwareInstances" xml:space="preserve">
+    <value>Loaded {0} hardware instances</value>
+  </data>
+  <data name="Message_AddingNewHardware" xml:space="preserve">
+    <value>Adding new hardware...</value>
+  </data>
+  <data name="Title_EditHardware" xml:space="preserve">
+    <value>Edit Hardware (ID: {0})</value>
+  </data>
+  <data name="Validation_HardwareDefinitionRequired" xml:space="preserve">
+    <value>Please select a hardware definition</value>
+  </data>
+  <data name="Message_HardwareDefinitionUnavailable" xml:space="preserve">
+    <value>The selected hardware definition is unavailable</value>
+  </data>
+  <data name="Message_ControllerNotCompatible" xml:space="preserve">
+    <value>The selected controller is not compatible with this definition</value>
+  </data>
+  <data name="Message_HardwareCreated" xml:space="preserve">
+    <value>Hardware '{0}' created</value>
+  </data>
+  <data name="Message_HardwareUpdated" xml:space="preserve">
+    <value>Hardware '{0}' updated</value>
+  </data>
+  <data name="Message_HardwareDeleted" xml:space="preserve">
+    <value>Hardware '{0}' deleted</value>
+  </data>
+  <data name="PageTitle_HardwareDefinitions" xml:space="preserve">
+    <value>Hardware Definitions</value>
+  </data>
+  <data name="Hint_SearchHardwareDefinitions" xml:space="preserve">
+    <value>Search hardware definitions...</value>
+  </data>
+  <data name="Button_AddDefinition" xml:space="preserve">
+    <value>Add Definition</value>
+  </data>
+  <data name="Header_Note" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="Header_System" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="Hint_ControlProfileRequired" xml:space="preserve">
+    <value>Control Profile *</value>
+  </data>
+  <data name="Hint_DefaultParametersJson" xml:space="preserve">
+    <value>Default Parameters JSON</value>
+  </data>
+  <data name="Hint_CustomSchemaJson" xml:space="preserve">
+    <value>Custom Schema JSON</value>
+  </data>
+  <data name="Title_AddHardwareDefinition" xml:space="preserve">
+    <value>Add Hardware Definition</value>
+  </data>
+  <data name="Message_LoadingHardwareDefinitions" xml:space="preserve">
+    <value>Loading hardware definitions...</value>
+  </data>
+  <data name="Message_LoadedHardwareDefinitions" xml:space="preserve">
+    <value>Loaded {0} hardware definitions</value>
+  </data>
+  <data name="Message_AddingHardwareDefinition" xml:space="preserve">
+    <value>Adding hardware definition...</value>
+  </data>
+  <data name="Title_EditHardwareDefinition" xml:space="preserve">
+    <value>Edit Hardware Definition (ID: {0})</value>
+  </data>
+  <data name="Validation_HardwareCategoryRequired" xml:space="preserve">
+    <value>Hardware category is required</value>
+  </data>
+  <data name="Validation_ControlProfileRequired" xml:space="preserve">
+    <value>Control profile is required</value>
+  </data>
+  <data name="Message_HardwareCategoryUnavailable" xml:space="preserve">
+    <value>The selected hardware category is unavailable</value>
+  </data>
+  <data name="Message_HardwareDefinitionCreated" xml:space="preserve">
+    <value>Hardware definition '{0}' created</value>
+  </data>
+  <data name="Message_HardwareDefinitionUpdated" xml:space="preserve">
+    <value>Hardware definition '{0}' updated</value>
+  </data>
+  <data name="Message_HardwareDefinitionDeleted" xml:space="preserve">
+    <value>Hardware definition '{0}' deleted</value>
+  </data>
+  <data name="Message_InvalidJsonInField" xml:space="preserve">
+    <value>Invalid JSON in {0}</value>
+  </data>
+  <data name="PageTitle_ExecutionMonitor" xml:space="preserve">
+    <value>Execution Monitor</value>
+  </data>
+  <data name="Button_Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="Button_Stop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="Tooltip_CancelAll" xml:space="preserve">
+    <value>Cancel All</value>
+  </data>
+  <data name="Button_CancelAll" xml:space="preserve">
+    <value>Cancel All</value>
+  </data>
+  <data name="Tooltip_RefreshData" xml:space="preserve">
+    <value>Refresh Data</value>
+  </data>
+  <data name="Tooltip_ClearLiveLogs" xml:space="preserve">
+    <value>Clear Live Logs</value>
+  </data>
+  <data name="Button_ClearLogs" xml:space="preserve">
+    <value>Clear Logs</value>
+  </data>
+  <data name="Section_LiveEventLog" xml:space="preserve">
+    <value>Live Event Log</value>
+  </data>
+  <data name="Section_HardwareStatus" xml:space="preserve">
+    <value>Hardware Status</value>
+  </data>
+  <data name="Header_State" xml:space="preserve">
+    <value>State</value>
+  </data>
+  <data name="Section_RecentSessions" xml:space="preserve">
+    <value>Recent Sessions</value>
+  </data>
+  <data name="Header_Started" xml:space="preserve">
+    <value>Started</value>
+  </data>
+  <data name="Header_Success" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="Header_DurationMs" xml:space="preserve">
+    <value>Duration (ms)</value>
+  </data>
+  <data name="Header_Flows" xml:space="preserve">
+    <value>Flows</value>
+  </data>
+  <data name="Section_SessionLogs" xml:space="preserve">
+    <value>Session Logs</value>
+  </data>
+  <data name="Header_Time" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="Header_Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Message_RefreshingMonitorData" xml:space="preserve">
+    <value>Refreshing monitor data...</value>
+  </data>
+  <data name="Label_Unknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="Message_MonitorRefreshed" xml:space="preserve">
+    <value>Monitor refreshed: {0} hardware, {1} sessions</value>
+  </data>
+  <data name="Message_FailedToRefresh" xml:space="preserve">
+    <value>Failed to refresh: {0}</value>
+  </data>
+  <data name="Message_RuntimeStarted" xml:space="preserve">
+    <value>Runtime started</value>
+  </data>
+  <data name="Message_FailedToStartRuntime" xml:space="preserve">
+    <value>Failed to start runtime: {0}</value>
+  </data>
+  <data name="Message_RuntimeStopped" xml:space="preserve">
+    <value>Runtime stopped</value>
+  </data>
+  <data name="Message_FailedToStopRuntime" xml:space="preserve">
+    <value>Failed to stop runtime: {0}</value>
+  </data>
+  <data name="Message_AllExecutionsCancelled" xml:space="preserve">
+    <value>All executions cancelled</value>
+  </data>
+  <data name="Message_FailedToCancel" xml:space="preserve">
+    <value>Failed to cancel: {0}</value>
+  </data>
+  <data name="Message_LoadedLogsForSession" xml:space="preserve">
+    <value>Loaded {0} logs for session '{1}'</value>
+  </data>
+  <data name="Message_FailedToLoadLogs" xml:space="preserve">
+    <value>Failed to load logs: {0}</value>
+  </data>
+  <data name="Message_LiveLogsCleared" xml:space="preserve">
+    <value>Live logs cleared</value>
+  </data>
+  <data name="PageTitle_ExecutionLog" xml:space="preserve">
+    <value>Execution Log</value>
+  </data>
+  <data name="Tooltip_Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="Tooltip_ClearFilters" xml:space="preserve">
+    <value>Clear Filters</value>
+  </data>
+  <data name="Button_Clear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Tooltip_ExportSessionsCsv" xml:space="preserve">
+    <value>Export Sessions CSV</value>
+  </data>
+  <data name="Button_ExportSessions" xml:space="preserve">
+    <value>Export Sessions</value>
+  </data>
+  <data name="Tooltip_ExportLogsCsv" xml:space="preserve">
+    <value>Export Logs CSV</value>
+  </data>
+  <data name="Button_ExportCsv" xml:space="preserve">
+    <value>Export CSV</value>
+  </data>
+  <data name="Tooltip_ExportLogsJson" xml:space="preserve">
+    <value>Export Logs JSON</value>
+  </data>
+  <data name="Button_ExportJson" xml:space="preserve">
+    <value>Export JSON</value>
+  </data>
+  <data name="CardTitle_TotalSessions" xml:space="preserve">
+    <value>Total Sessions</value>
+  </data>
+  <data name="CardTitle_Success" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="CardTitle_Failed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="CardTitle_SuccessRate" xml:space="preserve">
+    <value>Success Rate</value>
+  </data>
+  <data name="CardTitle_AvgDuration" xml:space="preserve">
+    <value>Avg Duration</value>
+  </data>
+  <data name="CardTitle_Cancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="Section_Filter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="Label_Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Label_From" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="Label_To" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="Label_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Section_ExecutionSessions" xml:space="preserve">
+    <value>Execution Sessions</value>
+  </data>
+  <data name="Label_LogType" xml:space="preserve">
+    <value>Log Type:</value>
+  </data>
+  <data name="Section_SessionLogDetails" xml:space="preserve">
+    <value>Session Log Details</value>
+  </data>
+  <data name="Header_Flow" xml:space="preserve">
+    <value>Flow</value>
+  </data>
+  <data name="Header_Module" xml:space="preserve">
+    <value>Module</value>
+  </data>
+  <data name="Header_Step" xml:space="preserve">
+    <value>Step</value>
+  </data>
+  <data name="Header_Duration" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <data name="Header_Ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="FilterOption_All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="FilterOption_Flow" xml:space="preserve">
+    <value>Flow</value>
+  </data>
+  <data name="FilterOption_Module" xml:space="preserve">
+    <value>Module</value>
+  </data>
+  <data name="FilterOption_Step" xml:space="preserve">
+    <value>Step</value>
+  </data>
+  <data name="FilterOption_Controller" xml:space="preserve">
+    <value>Controller</value>
+  </data>
+  <data name="FilterOption_Success" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="FilterOption_Failed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="Message_LoadingExecutionLogs" xml:space="preserve">
+    <value>Loading execution logs...</value>
+  </data>
+  <data name="Message_LoadedSessions" xml:space="preserve">
+    <value>Loaded {0} sessions</value>
+  </data>
+  <data name="Message_NoLogsToExport" xml:space="preserve">
+    <value>No logs to export</value>
+  </data>
+  <data name="Message_ExportedToPath" xml:space="preserve">
+    <value>Exported to {0}</value>
+  </data>
+  <data name="Message_ExportFailed" xml:space="preserve">
+    <value>Export failed: {0}</value>
+  </data>
+  <data name="Message_NoSessionsToExport" xml:space="preserve">
+    <value>No sessions to export</value>
+  </data>
+  <data name="CsvHeader_ExecutionLogs" xml:space="preserve">
+    <value>ExecutedAt,LogType,FlowName,ModuleName,StepName,HardwareName,CommandName,IsSuccess,DurationMs,ErrorMessage,IsCancelled</value>
+  </data>
+  <data name="CsvHeader_ExecutionSessions" xml:space="preserve">
+    <value>Name,StartedAt,CompletedAt,IsSuccess,TotalDurationMs,FlowCount,ModuleCount,StepCount,SuccessStepCount,FailedStepCount,IsCancelled,CancelReason</value>
+  </data>
+  <data name="PageTitle_Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Label_Unsaved" xml:space="preserve">
+    <value>Unsaved</value>
+  </data>
+  <data name="Button_Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="Button_Reload" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="Section_General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="Label_Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Label_DarkTheme" xml:space="preserve">
+    <value>Dark Theme</value>
+  </data>
+  <data name="Section_Database" xml:space="preserve">
+    <value>Database</value>
+  </data>
+  <data name="Hint_SqliteDatabasePath" xml:space="preserve">
+    <value>SQLite database file path</value>
+  </data>
+  <data name="Section_Scheduler" xml:space="preserve">
+    <value>Scheduler</value>
+  </data>
+  <data name="Format_MaxConcurrentSlots" xml:space="preserve">
+    <value>Max Concurrent Slots: {0}</value>
+  </data>
+  <data name="Section_Logs" xml:space="preserve">
+    <value>Logs</value>
+  </data>
+  <data name="Format_LogRetentionDays" xml:space="preserve">
+    <value>Log Retention (days): {0}</value>
+  </data>
+  <data name="Section_DllPaths" xml:space="preserve">
+    <value>DLL Paths</value>
+  </data>
+  <data name="Hint_PlcDllPath" xml:space="preserve">
+    <value>PLC DLL path (e.g., EPAN.dll)</value>
+  </data>
+  <data name="Hint_CanDllPath" xml:space="preserve">
+    <value>CAN DLL path (e.g., zlgcan.dll)</value>
+  </data>
+  <data name="Section_About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="About_ApplicationName" xml:space="preserve">
+    <value>Hardware Modular Workflow</value>
+  </data>
+  <data name="About_Description" xml:space="preserve">
+    <value>A hardware-centric modular workflow automation platform.</value>
+  </data>
+  <data name="About_SettingsLocation" xml:space="preserve">
+    <value>Settings are saved to app_settings.json in the application directory.</value>
+  </data>
+  <data name="Language_ZhCn" xml:space="preserve">
+    <value>zh-CN</value>
+  </data>
+  <data name="Language_EnUs" xml:space="preserve">
+    <value>en-US</value>
+  </data>
+  <data name="Default_DatabasePath" xml:space="preserve">
+    <value>hardware_workflow.db</value>
+  </data>
+  <data name="Message_SettingsLoaded" xml:space="preserve">
+    <value>Settings loaded</value>
+  </data>
+  <data name="Message_FailedToLoadSettings" xml:space="preserve">
+    <value>Failed to load settings: {0}</value>
+  </data>
+  <data name="Message_SettingsSavedSuccessfully" xml:space="preserve">
+    <value>Settings saved successfully</value>
+  </data>
+  <data name="Message_FailedToSaveSettings" xml:space="preserve">
+    <value>Failed to save settings: {0}</value>
+  </data>
+  <data name="Message_SettingsResetToDefaults" xml:space="preserve">
+    <value>Settings reset to defaults</value>
+  </data>
+  <data name="DialogFilter_SqliteDatabase" xml:space="preserve">
+    <value>SQLite Database (*.db)|*.db|All Files (*.*)|*.*</value>
+  </data>
+  <data name="DialogFilter_DllFiles" xml:space="preserve">
+    <value>DLL Files (*.dll)|*.dll|All Files (*.*)|*.*</value>
+  </data>
+  <data name="DialogTitle_SelectPlcDll" xml:space="preserve">
+    <value>Select PLC DLL</value>
+  </data>
+  <data name="DialogTitle_SelectCanDll" xml:space="preserve">
+    <value>Select CAN DLL</value>
+  </data>
+  <data name="Status_Ready" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="Status_NoHardwareConnected" xml:space="preserve">
+    <value>No hardware connected</value>
+  </data>
+  <data name="Message_HardwareRefreshed" xml:space="preserve">
+    <value>Hardware refreshed</value>
+  </data>
+  <data name="Message_RefreshingDashboard" xml:space="preserve">
+    <value>Refreshing dashboard...</value>
+  </data>
+  <data name="Message_DashboardRefreshedAt" xml:space="preserve">
+    <value>Dashboard refreshed at {0}</value>
+  </data>
+  <data name="Message_FailedToRefreshDashboard" xml:space="preserve">
+    <value>Failed to refresh: {0}</value>
+  </data>
+  <data name="Format_NameWithDetail" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="Format_ModuleItem" xml:space="preserve">
+    <value>{0} ({1} - {2} steps)</value>
+  </data>
+  <data name="ComboBox_Controller" xml:space="preserve">
+    <value>Selected Controller Type *</value>
+  </data>
+  <data name="ComboBox_SelectLanguage" xml:space="preserve">
+    <value>Select Language</value>
+  </data>
+</root>
