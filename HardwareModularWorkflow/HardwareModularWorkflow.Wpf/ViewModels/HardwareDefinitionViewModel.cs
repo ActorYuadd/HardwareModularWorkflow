@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HardwareModularWorkflow.Db.Entities;
 using HardwareModularWorkflow.Db.Services;
+using HardwareModularWorkflow.Lang;
 
 namespace HardwareModularWorkflow.Wpf.ViewModels;
 
@@ -49,10 +50,10 @@ public partial class HardwareDefinitionViewModel : ObservableObject
     private HardwareDefinitionEditModel? _editModel;
 
     [ObservableProperty]
-    private string _editPanelTitle = "Add Hardware Definition";
+    private string _editPanelTitle = LangKeys.Title_AddHardwareDefinition;
 
     [ObservableProperty]
-    private string _statusMessage = string.Empty;
+    private string _statusMessage = LangKeys.Status_Ready;
 
     public HardwareDefinitionViewModel(
         HardwareDefinitionService definitionService,
@@ -114,7 +115,7 @@ public partial class HardwareDefinitionViewModel : ObservableObject
     private async Task LoadDefinitionsAsync()
     {
         IsLoading = true;
-        StatusMessage = "Loading hardware definitions...";
+        StatusMessage = LangKeys.Message_LoadingHardwareDefinitions;
         try
         {
             var categories = await _catalogService.GetCategoriesAsync();
@@ -127,11 +128,11 @@ public partial class HardwareDefinitionViewModel : ObservableObject
             var definitions = await _definitionService.GetAllAsync();
             HardwareDefinitions =
                 new ObservableCollection<HardwareDefinition>(definitions);
-            StatusMessage = $"Loaded {definitions.Count} hardware definitions";
+            StatusMessage = string.Format(LangKeys.Message_LoadedHardwareDefinitions, definitions.Count);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to load: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToLoad, ex.Message);
         }
         finally
         {
@@ -146,9 +147,9 @@ public partial class HardwareDefinitionViewModel : ObservableObject
         SelectedCategoryId = null;
         SelectedControlProfileId = null;
         AvailableControlProfiles = new ObservableCollection<HardwareControlProfile>();
-        EditPanelTitle = "Add Hardware Definition";
+        EditPanelTitle = LangKeys.Title_AddHardwareDefinition;
         IsEditing = true;
-        StatusMessage = "Adding hardware definition...";
+        StatusMessage = LangKeys.Message_AddingHardwareDefinition;
     }
 
     [RelayCommand]
@@ -173,9 +174,9 @@ public partial class HardwareDefinitionViewModel : ObservableObject
         };
         SelectedCategoryId = definition.CategoryId;
         SelectedControlProfileId = definition.ControlProfileId;
-        EditPanelTitle = $"Edit Hardware Definition (ID: {definition.Id})";
+        EditPanelTitle = string.Format(LangKeys.Title_EditHardwareDefinition, definition.Id);
         IsEditing = true;
-        StatusMessage = $"Editing {definition.Name}...";
+        StatusMessage = string.Format(LangKeys.Message_EditingName, definition.Name);
     }
 
     [RelayCommand]
@@ -188,19 +189,19 @@ public partial class HardwareDefinitionViewModel : ObservableObject
 
         if (string.IsNullOrWhiteSpace(EditModel.Name))
         {
-            StatusMessage = "Name is required";
+            StatusMessage = LangKeys.Validation_NameRequired;
             return;
         }
 
         if (!SelectedCategoryId.HasValue)
         {
-            StatusMessage = "Hardware category is required";
+            StatusMessage = LangKeys.Validation_HardwareCategoryRequired;
             return;
         }
 
         if (!SelectedControlProfileId.HasValue)
         {
-            StatusMessage = "Control profile is required";
+            StatusMessage = LangKeys.Validation_ControlProfileRequired;
             return;
         }
 
@@ -217,7 +218,7 @@ public partial class HardwareDefinitionViewModel : ObservableObject
                 item => item.Id == SelectedCategoryId.Value);
             if (category is null)
             {
-                StatusMessage = "The selected hardware category is unavailable";
+                StatusMessage = LangKeys.Message_HardwareCategoryUnavailable;
                 return;
             }
 
@@ -238,12 +239,12 @@ public partial class HardwareDefinitionViewModel : ObservableObject
             if (entity.Id == 0)
             {
                 await _definitionService.CreateAsync(entity);
-                StatusMessage = $"Hardware definition '{entity.Name}' created";
+                StatusMessage = string.Format(LangKeys.Message_HardwareDefinitionCreated, entity.Name);
             }
             else
             {
                 await _definitionService.UpdateAsync(entity);
-                StatusMessage = $"Hardware definition '{entity.Name}' updated";
+                StatusMessage = string.Format(LangKeys.Message_HardwareDefinitionUpdated, entity.Name);
             }
 
             IsEditing = false;
@@ -252,7 +253,7 @@ public partial class HardwareDefinitionViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to save: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToSave, ex.Message);
         }
         finally
         {
@@ -265,7 +266,7 @@ public partial class HardwareDefinitionViewModel : ObservableObject
     {
         IsEditing = false;
         EditModel = null;
-        StatusMessage = "Edit cancelled";
+        StatusMessage = LangKeys.Message_EditCancelled;
     }
 
     [RelayCommand]
@@ -280,12 +281,12 @@ public partial class HardwareDefinitionViewModel : ObservableObject
         try
         {
             await _definitionService.DeleteAsync(definition.Id);
-            StatusMessage = $"Hardware definition '{definition.Name}' deleted";
+            StatusMessage = string.Format(LangKeys.Message_HardwareDefinitionDeleted, definition.Name);
             await LoadDefinitionsAsync();
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to delete: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToDelete, ex.Message);
         }
         finally
         {
@@ -307,7 +308,7 @@ public partial class HardwareDefinitionViewModel : ObservableObject
         }
         catch (JsonException)
         {
-            StatusMessage = $"Invalid JSON in {fieldName}";
+            StatusMessage = string.Format(LangKeys.Message_InvalidJsonInField, fieldName);
             return false;
         }
     }

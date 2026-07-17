@@ -1,0 +1,1098 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Title_HardwareModularWorkflow" xml:space="preserve">
+    <value>硬件模块化工作流</value>
+  </data>
+  <data name="Tooltip_Home" xml:space="preserve">
+    <value>首页</value>
+  </data>
+  <data name="Tooltip_StartRuntime" xml:space="preserve">
+    <value>启动运行时</value>
+  </data>
+  <data name="Tooltip_StopRuntime" xml:space="preserve">
+    <value>停止运行时</value>
+  </data>
+  <data name="Tooltip_RefreshHardware" xml:space="preserve">
+    <value>刷新硬件</value>
+  </data>
+  <data name="Tooltip_Settings" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="Label_Navigation" xml:space="preserve">
+    <value>导航</value>
+  </data>
+  <data name="Navigation_Dashboard" xml:space="preserve">
+    <value>仪表盘</value>
+  </data>
+  <data name="Navigation_Hardware" xml:space="preserve">
+    <value>硬件</value>
+  </data>
+  <data name="Navigation_HardwareDefinitions" xml:space="preserve">
+    <value>硬件定义</value>
+  </data>
+  <data name="Navigation_Controller" xml:space="preserve">
+    <value>控制器</value>
+  </data>
+  <data name="Navigation_Module" xml:space="preserve">
+    <value>模块</value>
+  </data>
+  <data name="Navigation_Workflow" xml:space="preserve">
+    <value>工作流</value>
+  </data>
+  <data name="Navigation_Monitor" xml:space="preserve">
+    <value>监控</value>
+  </data>
+  <data name="Navigation_ExecutionLog" xml:space="preserve">
+    <value>执行日志</value>
+  </data>
+  <data name="Navigation_Settings" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="PageTitle_Dashboard" xml:space="preserve">
+    <value>仪表盘</value>
+  </data>
+  <data name="Button_Refresh" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="Status_RuntimeRunning" xml:space="preserve">
+    <value>运行中</value>
+  </data>
+  <data name="Status_RuntimeStopped" xml:space="preserve">
+    <value>运行已停止</value>
+  </data>
+  <data name="CardTitle_Hardware" xml:space="preserve">
+    <value>硬件</value>
+  </data>
+  <data name="Format_MotorCount" xml:space="preserve">
+    <value>电机: {0}</value>
+  </data>
+  <data name="Format_TemperatureCount" xml:space="preserve">
+    <value>温度: {0}</value>
+  </data>
+  <data name="Format_CoolingCount" xml:space="preserve">
+    <value>冷却: {0}</value>
+  </data>
+  <data name="Format_CustomCount" xml:space="preserve">
+    <value>自定义: {0}</value>
+  </data>
+  <data name="CardTitle_Controllers" xml:space="preserve">
+    <value>控制器</value>
+  </data>
+  <data name="Format_PlcCount" xml:space="preserve">
+    <value>PLC: {0}</value>
+  </data>
+  <data name="Format_CanCount" xml:space="preserve">
+    <value>CAN: {0}</value>
+  </data>
+  <data name="CardTitle_Today" xml:space="preserve">
+    <value>今日</value>
+  </data>
+  <data name="Format_SuccessCount" xml:space="preserve">
+    <value>成功: {0}</value>
+  </data>
+  <data name="Format_FailedCount" xml:space="preserve">
+    <value>失败: {0}</value>
+  </data>
+  <data name="CardTitle_Workflows" xml:space="preserve">
+    <value>工作流</value>
+  </data>
+  <data name="Format_ReusableCount" xml:space="preserve">
+    <value>可复用: {0}</value>
+  </data>
+  <data name="Section_RecentEvents" xml:space="preserve">
+    <value>最近事件</value>
+  </data>
+  <data name="Section_QuickAccess" xml:space="preserve">
+    <value>快速访问</value>
+  </data>
+  <data name="Button_NavigateHardware" xml:space="preserve">
+    <value>硬件</value>
+  </data>
+  <data name="Button_NavigateController" xml:space="preserve">
+    <value>控制器</value>
+  </data>
+  <data name="Button_NavigateModule" xml:space="preserve">
+    <value>模块</value>
+  </data>
+  <data name="Button_NavigateWorkflow" xml:space="preserve">
+    <value>工作流</value>
+  </data>
+  <data name="Button_NavigateMonitor" xml:space="preserve">
+    <value>监控</value>
+  </data>
+  <data name="PageTitle_ControllerManagement" xml:space="preserve">
+    <value>控制器管理</value>
+  </data>
+  <data name="Hint_SearchControllers" xml:space="preserve">
+    <value>搜索控制器...</value>
+  </data>
+  <data name="Button_Add" xml:space="preserve">
+    <value>添加</value>
+  </data>
+  <data name="Header_Name" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="Header_Type" xml:space="preserve">
+    <value>类型</value>
+  </data>
+  <data name="Header_Vendor" xml:space="preserve">
+    <value>厂商</value>
+  </data>
+  <data name="Header_Description" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="Header_Default" xml:space="preserve">
+    <value>默认</value>
+  </data>
+  <data name="Header_Enabled" xml:space="preserve">
+    <value>启用</value>
+  </data>
+  <data name="Header_Actions" xml:space="preserve">
+    <value>操作</value>
+  </data>
+  <data name="Tooltip_TestConnection" xml:space="preserve">
+    <value>测试连接</value>
+  </data>
+  <data name="Hint_NameRequired" xml:space="preserve">
+    <value>名称 *</value>
+  </data>
+  <data name="Hint_Description" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="Hint_ControllerTypeRequired" xml:space="preserve">
+    <value>控制器类型 *</value>
+  </data>
+  <data name="ComboBoxItem_Plc" xml:space="preserve">
+    <value>PLC</value>
+  </data>
+  <data name="ComboBoxItem_Can" xml:space="preserve">
+    <value>CAN</value>
+  </data>
+  <data name="Hint_VendorNameRequired" xml:space="preserve">
+    <value>厂商名称 *</value>
+  </data>
+  <data name="ComboBoxItem_LeadSys" xml:space="preserve">
+    <value>LeadSys</value>
+  </data>
+  <data name="ComboBoxItem_Zlg" xml:space="preserve">
+    <value>ZLG</value>
+  </data>
+  <data name="ComboBoxItem_Siemens" xml:space="preserve">
+    <value>西门子</value>
+  </data>
+  <data name="ComboBoxItem_Beckhoff" xml:space="preserve">
+    <value>Beckhoff</value>
+  </data>
+  <data name="Hint_ConnectionConfigJsonRequired" xml:space="preserve">
+    <value>连接配置 JSON *</value>
+  </data>
+  <data name="CheckBox_SetAsDefault" xml:space="preserve">
+    <value>设为默认</value>
+  </data>
+  <data name="CheckBox_Enabled" xml:space="preserve">
+    <value>启用</value>
+  </data>
+  <data name="Button_Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Title_AddController" xml:space="preserve">
+    <value>添加控制器</value>
+  </data>
+  <data name="Message_LoadingControllers" xml:space="preserve">
+    <value>正在加载控制器...</value>
+  </data>
+  <data name="Message_LoadedControllers" xml:space="preserve">
+    <value>已加载 {0} 个控制器</value>
+  </data>
+  <data name="Message_FailedToLoad" xml:space="preserve">
+    <value>加载失败: {0}</value>
+  </data>
+  <data name="Message_AddingNewController" xml:space="preserve">
+    <value>正在添加新控制器...</value>
+  </data>
+  <data name="Title_EditController" xml:space="preserve">
+    <value>编辑控制器 (ID: {0})</value>
+  </data>
+  <data name="Message_EditingName" xml:space="preserve">
+    <value>正在编辑 {0}...</value>
+  </data>
+  <data name="Validation_NameRequired" xml:space="preserve">
+    <value>名称为必填项</value>
+  </data>
+  <data name="Validation_ControllerTypeRequired" xml:space="preserve">
+    <value>控制器类型为必填项</value>
+  </data>
+  <data name="Validation_VendorNameRequired" xml:space="preserve">
+    <value>厂商名称为必填项</value>
+  </data>
+  <data name="Validation_InvalidConnectionConfigJson" xml:space="preserve">
+    <value>连接配置中的 JSON 无效</value>
+  </data>
+  <data name="Message_ControllerCreated" xml:space="preserve">
+    <value>控制器 '{0}' 已创建</value>
+  </data>
+  <data name="Message_ControllerUpdated" xml:space="preserve">
+    <value>控制器 '{0}' 已更新</value>
+  </data>
+  <data name="Message_FailedToSave" xml:space="preserve">
+    <value>保存失败: {0}</value>
+  </data>
+  <data name="Message_EditCancelled" xml:space="preserve">
+    <value>编辑已取消</value>
+  </data>
+  <data name="Message_ControllerDeleted" xml:space="preserve">
+    <value>控制器 '{0}' 已删除</value>
+  </data>
+  <data name="Message_FailedToDelete" xml:space="preserve">
+    <value>删除失败: {0}</value>
+  </data>
+  <data name="Message_TestingConnectionPlaceholder" xml:space="preserve">
+    <value>正在测试 '{0}' 的连接...</value>
+  </data>
+  <data name="PageTitle_WorkflowEditor" xml:space="preserve">
+    <value>工作流编辑器</value>
+  </data>
+  <data name="Hint_SearchWorkflows" xml:space="preserve">
+    <value>搜索工作流...</value>
+  </data>
+  <data name="Button_AddWorkflow" xml:space="preserve">
+    <value>添加工作流</value>
+  </data>
+  <data name="Header_Alias" xml:space="preserve">
+    <value>别名</value>
+  </data>
+  <data name="Header_Mode" xml:space="preserve">
+    <value>模式</value>
+  </data>
+  <data name="Header_Nodes" xml:space="preserve">
+    <value>节点</value>
+  </data>
+  <data name="Header_Reusable" xml:space="preserve">
+    <value>可复用</value>
+  </data>
+  <data name="Header_ContinueOnFail" xml:space="preserve">
+    <value>失败继续</value>
+  </data>
+  <data name="Hint_WorkflowNameRequired" xml:space="preserve">
+    <value>工作流名称 *</value>
+  </data>
+  <data name="Hint_Alias" xml:space="preserve">
+    <value>别名</value>
+  </data>
+  <data name="Hint_Note" xml:space="preserve">
+    <value>备注</value>
+  </data>
+  <data name="Hint_TagsCommaSeparated" xml:space="preserve">
+    <value>标签（逗号分隔）</value>
+  </data>
+  <data name="Hint_ExecutionMode" xml:space="preserve">
+    <value>执行模式</value>
+  </data>
+  <data name="ComboBoxItem_Sequential" xml:space="preserve">
+    <value>顺序</value>
+  </data>
+  <data name="ComboBoxItem_Parallel" xml:space="preserve">
+    <value>并行</value>
+  </data>
+  <data name="Hint_TimeoutMs" xml:space="preserve">
+    <value>超时（毫秒）</value>
+  </data>
+  <data name="CheckBox_Reusable" xml:space="preserve">
+    <value>可复用</value>
+  </data>
+  <data name="CheckBox_ContinueOnFailure" xml:space="preserve">
+    <value>失败时继续</value>
+  </data>
+  <data name="Section_FlowNodes" xml:space="preserve">
+    <value>流程节点</value>
+  </data>
+  <data name="Hint_SelectModuleToAdd" xml:space="preserve">
+    <value>选择要添加的模块</value>
+  </data>
+  <data name="Button_AddModule" xml:space="preserve">
+    <value>添加模块</value>
+  </data>
+  <data name="Hint_SelectSubFlowToAdd" xml:space="preserve">
+    <value>选择要添加的子流</value>
+  </data>
+  <data name="Button_AddSubFlow" xml:space="preserve">
+    <value>添加子流</value>
+  </data>
+  <data name="Button_Remove" xml:space="preserve">
+    <value>移除</value>
+  </data>
+  <data name="Section_EditSelectedNode" xml:space="preserve">
+    <value>编辑选中节点</value>
+  </data>
+  <data name="Format_NameLabel" xml:space="preserve">
+    <value>名称: {0}</value>
+  </data>
+  <data name="Format_TypeLabel" xml:space="preserve">
+    <value>类型: {0}</value>
+  </data>
+  <data name="Hint_Condition" xml:space="preserve">
+    <value>条件</value>
+  </data>
+  <data name="Title_AddWorkflow" xml:space="preserve">
+    <value>添加工作流</value>
+  </data>
+  <data name="Message_LoadingWorkflows" xml:space="preserve">
+    <value>正在加载工作流...</value>
+  </data>
+  <data name="Message_LoadedWorkflows" xml:space="preserve">
+    <value>已加载 {0} 个工作流</value>
+  </data>
+  <data name="Message_AddingNewWorkflow" xml:space="preserve">
+    <value>正在添加新工作流...</value>
+  </data>
+  <data name="Format_ModuleReference" xml:space="preserve">
+    <value>模块 #{0}</value>
+  </data>
+  <data name="Label_Module" xml:space="preserve">
+    <value>模块</value>
+  </data>
+  <data name="Format_FlowReference" xml:space="preserve">
+    <value>流程 #{0}</value>
+  </data>
+  <data name="Label_SubFlow" xml:space="preserve">
+    <value>子流</value>
+  </data>
+  <data name="Title_EditWorkflow" xml:space="preserve">
+    <value>编辑工作流 (ID: {0})</value>
+  </data>
+  <data name="Validation_WorkflowNameRequired" xml:space="preserve">
+    <value>工作流名称为必填项</value>
+  </data>
+  <data name="Validation_CannotReferenceSelfAsSubFlow" xml:space="preserve">
+    <value>不能引用自身作为子流</value>
+  </data>
+  <data name="Validation_CircularReferenceDetected" xml:space="preserve">
+    <value>通过子流 '{0}' 检测到循环引用</value>
+  </data>
+  <data name="Message_WorkflowCreatedWithNodes" xml:space="preserve">
+    <value>工作流 '{0}' 已创建，包含 {1} 个节点</value>
+  </data>
+  <data name="Message_WorkflowUpdatedWithNodes" xml:space="preserve">
+    <value>工作流 '{0}' 已更新，包含 {1} 个节点</value>
+  </data>
+  <data name="Message_WorkflowDeleted" xml:space="preserve">
+    <value>工作流 '{0}' 已删除</value>
+  </data>
+  <data name="Message_ModuleAddedToWorkflow" xml:space="preserve">
+    <value>模块 '{0}' 已添加到工作流</value>
+  </data>
+  <data name="Message_CannotReferenceWorkflowItself" xml:space="preserve">
+    <value>不能引用工作流本身</value>
+  </data>
+  <data name="Message_SubFlowAddedToWorkflow" xml:space="preserve">
+    <value>子流 '{0}' 已添加到工作流</value>
+  </data>
+  <data name="Message_NodeRemoved" xml:space="preserve">
+    <value>节点已移除</value>
+  </data>
+  <data name="PageTitle_ModuleEditor" xml:space="preserve">
+    <value>模块编辑器</value>
+  </data>
+  <data name="Hint_SearchModules" xml:space="preserve">
+    <value>搜索模块...</value>
+  </data>
+  <data name="Header_Steps" xml:space="preserve">
+    <value>步骤</value>
+  </data>
+  <data name="Header_Tags" xml:space="preserve">
+    <value>标签</value>
+  </data>
+  <data name="Hint_ModuleNameRequired" xml:space="preserve">
+    <value>模块名称 *</value>
+  </data>
+  <data name="Hint_DefaultExecutionMode" xml:space="preserve">
+    <value>默认执行模式</value>
+  </data>
+  <data name="Section_Steps" xml:space="preserve">
+    <value>步骤</value>
+  </data>
+  <data name="Button_AddStep" xml:space="preserve">
+    <value>添加步骤</value>
+  </data>
+  <data name="Header_Number" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="Header_Hardware" xml:space="preserve">
+    <value>硬件</value>
+  </data>
+  <data name="Header_Command" xml:space="preserve">
+    <value>命令</value>
+  </data>
+  <data name="Section_EditSelectedStep" xml:space="preserve">
+    <value>编辑选中步骤</value>
+  </data>
+  <data name="Hint_StepNameRequired" xml:space="preserve">
+    <value>步骤名称 *</value>
+  </data>
+  <data name="Hint_HardwareInstanceRequired" xml:space="preserve">
+    <value>硬件实例 *</value>
+  </data>
+  <data name="Hint_CommandRequired" xml:space="preserve">
+    <value>命令 *</value>
+  </data>
+  <data name="Hint_CommandParametersJson" xml:space="preserve">
+    <value>命令参数 JSON</value>
+  </data>
+  <data name="Hint_StepTimeoutMs" xml:space="preserve">
+    <value>步骤超时（毫秒）</value>
+  </data>
+  <data name="CheckBox_Async" xml:space="preserve">
+    <value>异步</value>
+  </data>
+  <data name="Title_AddModule" xml:space="preserve">
+    <value>添加模块</value>
+  </data>
+  <data name="Message_LoadingModules" xml:space="preserve">
+    <value>正在加载模块...</value>
+  </data>
+  <data name="Message_LoadedModules" xml:space="preserve">
+    <value>已加载 {0} 个模块</value>
+  </data>
+  <data name="Message_AddingNewModule" xml:space="preserve">
+    <value>正在添加新模块...</value>
+  </data>
+  <data name="Title_EditModule" xml:space="preserve">
+    <value>编辑模块 (ID: {0})</value>
+  </data>
+  <data name="Validation_ModuleNameRequired" xml:space="preserve">
+    <value>模块名称为必填项</value>
+  </data>
+  <data name="Format_StepName" xml:space="preserve">
+    <value>步骤 {0}</value>
+  </data>
+  <data name="Message_StepAdded" xml:space="preserve">
+    <value>步骤已添加</value>
+  </data>
+  <data name="Message_StepRemoved" xml:space="preserve">
+    <value>步骤已移除</value>
+  </data>
+  <data name="Message_HardwareProfileDoesNotSupportCommand" xml:space="preserve">
+    <value>选中的硬件配置不支持之前的命令</value>
+  </data>
+  <data name="Validation_StepRequiresHardwareInstanceWithProfile" xml:space="preserve">
+    <value>步骤 '{0}' 需要具有控制配置的硬件实例</value>
+  </data>
+  <data name="Validation_StepInvalidCommandParametersJson" xml:space="preserve">
+    <value>步骤 '{0}' 的命令参数 JSON 无效</value>
+  </data>
+  <data name="Format_StepValidationError" xml:space="preserve">
+    <value>步骤 '{0}': {1}</value>
+  </data>
+  <data name="Message_ModuleCreatedWithSteps" xml:space="preserve">
+    <value>模块 '{0}' 已创建，包含 {1} 个步骤</value>
+  </data>
+  <data name="Message_ModuleUpdatedWithSteps" xml:space="preserve">
+    <value>模块 '{0}' 已更新，包含 {1} 个步骤</value>
+  </data>
+  <data name="Message_ModuleDeleted" xml:space="preserve">
+    <value>模块 '{0}' 已删除</value>
+  </data>
+  <data name="PageTitle_HardwareManagement" xml:space="preserve">
+    <value>硬件管理</value>
+  </data>
+  <data name="Hint_SearchHardware" xml:space="preserve">
+    <value>搜索硬件...</value>
+  </data>
+  <data name="Header_Category" xml:space="preserve">
+    <value>类别</value>
+  </data>
+  <data name="Header_ControlProfile" xml:space="preserve">
+    <value>控制配置</value>
+  </data>
+  <data name="Header_Controller" xml:space="preserve">
+    <value>控制器</value>
+  </data>
+  <data name="Header_Port" xml:space="preserve">
+    <value>端口</value>
+  </data>
+  <data name="Header_Address" xml:space="preserve">
+    <value>地址</value>
+  </data>
+  <data name="Hint_Address" xml:space="preserve">
+    <value>地址</value>
+  </data>
+  <data name="Hint_HardwareCategoryRequired" xml:space="preserve">
+    <value>硬件类别 *</value>
+  </data>
+  <data name="Hint_HardwareDefinitionRequired" xml:space="preserve">
+    <value>硬件定义 *</value>
+  </data>
+  <data name="Hint_PortChannel" xml:space="preserve">
+    <value>端口 / 通道</value>
+  </data>
+  <data name="Hint_ParametersJson" xml:space="preserve">
+    <value>参数 JSON</value>
+  </data>
+  <data name="Title_AddHardware" xml:space="preserve">
+    <value>添加硬件</value>
+  </data>
+  <data name="Message_LoadingHardware" xml:space="preserve">
+    <value>正在加载硬件...</value>
+  </data>
+  <data name="Message_LoadedHardwareInstances" xml:space="preserve">
+    <value>已加载 {0} 个硬件实例</value>
+  </data>
+  <data name="Message_AddingNewHardware" xml:space="preserve">
+    <value>正在添加新硬件...</value>
+  </data>
+  <data name="Title_EditHardware" xml:space="preserve">
+    <value>编辑硬件 (ID: {0})</value>
+  </data>
+  <data name="Validation_HardwareDefinitionRequired" xml:space="preserve">
+    <value>请选择硬件定义</value>
+  </data>
+  <data name="Message_HardwareDefinitionUnavailable" xml:space="preserve">
+    <value>选中的硬件定义不可用</value>
+  </data>
+  <data name="Message_ControllerNotCompatible" xml:space="preserve">
+    <value>选中的控制器与此定义不兼容</value>
+  </data>
+  <data name="Message_HardwareCreated" xml:space="preserve">
+    <value>硬件 '{0}' 已创建</value>
+  </data>
+  <data name="Message_HardwareUpdated" xml:space="preserve">
+    <value>硬件 '{0}' 已更新</value>
+  </data>
+  <data name="Message_HardwareDeleted" xml:space="preserve">
+    <value>硬件 '{0}' 已删除</value>
+  </data>
+  <data name="PageTitle_HardwareDefinitions" xml:space="preserve">
+    <value>硬件定义</value>
+  </data>
+  <data name="Hint_SearchHardwareDefinitions" xml:space="preserve">
+    <value>搜索硬件定义...</value>
+  </data>
+  <data name="Button_AddDefinition" xml:space="preserve">
+    <value>添加定义</value>
+  </data>
+  <data name="Header_Note" xml:space="preserve">
+    <value>备注</value>
+  </data>
+  <data name="Header_System" xml:space="preserve">
+    <value>系统</value>
+  </data>
+  <data name="Hint_ControlProfileRequired" xml:space="preserve">
+    <value>控制配置 *</value>
+  </data>
+  <data name="Hint_DefaultParametersJson" xml:space="preserve">
+    <value>默认参数 JSON</value>
+  </data>
+  <data name="Hint_CustomSchemaJson" xml:space="preserve">
+    <value>自定义 Schema JSON</value>
+  </data>
+  <data name="Title_AddHardwareDefinition" xml:space="preserve">
+    <value>添加硬件定义</value>
+  </data>
+  <data name="Message_LoadingHardwareDefinitions" xml:space="preserve">
+    <value>正在加载硬件定义...</value>
+  </data>
+  <data name="Message_LoadedHardwareDefinitions" xml:space="preserve">
+    <value>已加载 {0} 个硬件定义</value>
+  </data>
+  <data name="Message_AddingHardwareDefinition" xml:space="preserve">
+    <value>正在添加硬件定义...</value>
+  </data>
+  <data name="Title_EditHardwareDefinition" xml:space="preserve">
+    <value>编辑硬件定义 (ID: {0})</value>
+  </data>
+  <data name="Validation_HardwareCategoryRequired" xml:space="preserve">
+    <value>硬件类别为必填项</value>
+  </data>
+  <data name="Validation_ControlProfileRequired" xml:space="preserve">
+    <value>控制配置为必填项</value>
+  </data>
+  <data name="Message_HardwareCategoryUnavailable" xml:space="preserve">
+    <value>选中的硬件类别不可用</value>
+  </data>
+  <data name="Message_HardwareDefinitionCreated" xml:space="preserve">
+    <value>硬件定义 '{0}' 已创建</value>
+  </data>
+  <data name="Message_HardwareDefinitionUpdated" xml:space="preserve">
+    <value>硬件定义 '{0}' 已更新</value>
+  </data>
+  <data name="Message_HardwareDefinitionDeleted" xml:space="preserve">
+    <value>硬件定义 '{0}' 已删除</value>
+  </data>
+  <data name="Message_InvalidJsonInField" xml:space="preserve">
+    <value>{0} 中的 JSON 无效</value>
+  </data>
+  <data name="PageTitle_ExecutionMonitor" xml:space="preserve">
+    <value>执行监控</value>
+  </data>
+  <data name="Button_Start" xml:space="preserve">
+    <value>启动</value>
+  </data>
+  <data name="Button_Stop" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="Tooltip_CancelAll" xml:space="preserve">
+    <value>全部取消</value>
+  </data>
+  <data name="Button_CancelAll" xml:space="preserve">
+    <value>全部取消</value>
+  </data>
+  <data name="Tooltip_RefreshData" xml:space="preserve">
+    <value>刷新数据</value>
+  </data>
+  <data name="Tooltip_ClearLiveLogs" xml:space="preserve">
+    <value>清空实时日志</value>
+  </data>
+  <data name="Button_ClearLogs" xml:space="preserve">
+    <value>清空日志</value>
+  </data>
+  <data name="Section_LiveEventLog" xml:space="preserve">
+    <value>实时事件日志</value>
+  </data>
+  <data name="Section_HardwareStatus" xml:space="preserve">
+    <value>硬件状态</value>
+  </data>
+  <data name="Header_State" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="Section_RecentSessions" xml:space="preserve">
+    <value>最近会话</value>
+  </data>
+  <data name="Header_Started" xml:space="preserve">
+    <value>开始时间</value>
+  </data>
+  <data name="Header_Success" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="Header_DurationMs" xml:space="preserve">
+    <value>耗时（毫秒）</value>
+  </data>
+  <data name="Header_Flows" xml:space="preserve">
+    <value>流程</value>
+  </data>
+  <data name="Section_SessionLogs" xml:space="preserve">
+    <value>会话日志</value>
+  </data>
+  <data name="Header_Time" xml:space="preserve">
+    <value>时间</value>
+  </data>
+  <data name="Header_Error" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="Message_RefreshingMonitorData" xml:space="preserve">
+    <value>正在刷新监控数据...</value>
+  </data>
+  <data name="Label_Unknown" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="Message_MonitorRefreshed" xml:space="preserve">
+    <value>监控已刷新: {0} 个硬件, {1} 个会话</value>
+  </data>
+  <data name="Message_FailedToRefresh" xml:space="preserve">
+    <value>刷新失败: {0}</value>
+  </data>
+  <data name="Message_RuntimeStarted" xml:space="preserve">
+    <value>运行时已启动</value>
+  </data>
+  <data name="Message_FailedToStartRuntime" xml:space="preserve">
+    <value>启动运行时失败: {0}</value>
+  </data>
+  <data name="Message_RuntimeStopped" xml:space="preserve">
+    <value>运行时已停止</value>
+  </data>
+  <data name="Message_FailedToStopRuntime" xml:space="preserve">
+    <value>停止运行时失败: {0}</value>
+  </data>
+  <data name="Message_AllExecutionsCancelled" xml:space="preserve">
+    <value>所有执行已取消</value>
+  </data>
+  <data name="Message_FailedToCancel" xml:space="preserve">
+    <value>取消失败: {0}</value>
+  </data>
+  <data name="Message_LoadedLogsForSession" xml:space="preserve">
+    <value>已加载会话 '{1}' 的 {0} 条日志</value>
+  </data>
+  <data name="Message_FailedToLoadLogs" xml:space="preserve">
+    <value>加载日志失败: {0}</value>
+  </data>
+  <data name="Message_LiveLogsCleared" xml:space="preserve">
+    <value>实时日志已清空</value>
+  </data>
+  <data name="PageTitle_ExecutionLog" xml:space="preserve">
+    <value>执行日志</value>
+  </data>
+  <data name="Tooltip_Refresh" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="Tooltip_ClearFilters" xml:space="preserve">
+    <value>清除筛选</value>
+  </data>
+  <data name="Button_Clear" xml:space="preserve">
+    <value>清除</value>
+  </data>
+  <data name="Tooltip_ExportSessionsCsv" xml:space="preserve">
+    <value>导出会话 CSV</value>
+  </data>
+  <data name="Button_ExportSessions" xml:space="preserve">
+    <value>导出会话</value>
+  </data>
+  <data name="Tooltip_ExportLogsCsv" xml:space="preserve">
+    <value>导出日志 CSV</value>
+  </data>
+  <data name="Button_ExportCsv" xml:space="preserve">
+    <value>导出 CSV</value>
+  </data>
+  <data name="Tooltip_ExportLogsJson" xml:space="preserve">
+    <value>导出日志 JSON</value>
+  </data>
+  <data name="Button_ExportJson" xml:space="preserve">
+    <value>导出 JSON</value>
+  </data>
+  <data name="CardTitle_TotalSessions" xml:space="preserve">
+    <value>总会话</value>
+  </data>
+  <data name="CardTitle_Success" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="CardTitle_Failed" xml:space="preserve">
+    <value>失败</value>
+  </data>
+  <data name="CardTitle_SuccessRate" xml:space="preserve">
+    <value>成功率</value>
+  </data>
+  <data name="CardTitle_AvgDuration" xml:space="preserve">
+    <value>平均耗时</value>
+  </data>
+  <data name="CardTitle_Cancelled" xml:space="preserve">
+    <value>已取消</value>
+  </data>
+  <data name="Section_Filter" xml:space="preserve">
+    <value>筛选</value>
+  </data>
+  <data name="Label_Search" xml:space="preserve">
+    <value>搜索</value>
+  </data>
+  <data name="Label_From" xml:space="preserve">
+    <value>开始</value>
+  </data>
+  <data name="Label_To" xml:space="preserve">
+    <value>结束</value>
+  </data>
+  <data name="Label_Status" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="Section_ExecutionSessions" xml:space="preserve">
+    <value>执行会话</value>
+  </data>
+  <data name="Label_LogType" xml:space="preserve">
+    <value>日志类型:</value>
+  </data>
+  <data name="Section_SessionLogDetails" xml:space="preserve">
+    <value>会话日志详情</value>
+  </data>
+  <data name="Header_Flow" xml:space="preserve">
+    <value>流程</value>
+  </data>
+  <data name="Header_Module" xml:space="preserve">
+    <value>模块</value>
+  </data>
+  <data name="Header_Step" xml:space="preserve">
+    <value>步骤</value>
+  </data>
+  <data name="Header_Duration" xml:space="preserve">
+    <value>耗时</value>
+  </data>
+  <data name="Header_Ok" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="FilterOption_All" xml:space="preserve">
+    <value>全部</value>
+  </data>
+  <data name="FilterOption_Flow" xml:space="preserve">
+    <value>流程</value>
+  </data>
+  <data name="FilterOption_Module" xml:space="preserve">
+    <value>模块</value>
+  </data>
+  <data name="FilterOption_Step" xml:space="preserve">
+    <value>步骤</value>
+  </data>
+  <data name="FilterOption_Controller" xml:space="preserve">
+    <value>控制器</value>
+  </data>
+  <data name="FilterOption_Success" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="FilterOption_Failed" xml:space="preserve">
+    <value>失败</value>
+  </data>
+  <data name="Message_LoadingExecutionLogs" xml:space="preserve">
+    <value>正在加载执行日志...</value>
+  </data>
+  <data name="Message_LoadedSessions" xml:space="preserve">
+    <value>已加载 {0} 个会话</value>
+  </data>
+  <data name="Message_NoLogsToExport" xml:space="preserve">
+    <value>没有日志可导出</value>
+  </data>
+  <data name="Message_ExportedToPath" xml:space="preserve">
+    <value>已导出到 {0}</value>
+  </data>
+  <data name="Message_ExportFailed" xml:space="preserve">
+    <value>导出失败: {0}</value>
+  </data>
+  <data name="Message_NoSessionsToExport" xml:space="preserve">
+    <value>没有会话可导出</value>
+  </data>
+  <data name="CsvHeader_ExecutionLogs" xml:space="preserve">
+    <value>执行时间,日志类型,流程名,模块名,步骤名,硬件名,命令名,是否成功,耗时毫秒,错误信息,是否取消</value>
+  </data>
+  <data name="CsvHeader_ExecutionSessions" xml:space="preserve">
+    <value>名称,开始时间,完成时间,是否成功,总耗时毫秒,流程数,模块数,步骤数,成功步骤数,失败步骤数,是否取消,取消原因</value>
+  </data>
+  <data name="PageTitle_Settings" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="Label_Unsaved" xml:space="preserve">
+    <value>未保存</value>
+  </data>
+  <data name="Button_Reset" xml:space="preserve">
+    <value>重置</value>
+  </data>
+  <data name="Button_Reload" xml:space="preserve">
+    <value>重新加载</value>
+  </data>
+  <data name="Section_General" xml:space="preserve">
+    <value>常规</value>
+  </data>
+  <data name="Label_Language" xml:space="preserve">
+    <value>语言</value>
+  </data>
+  <data name="Label_DarkTheme" xml:space="preserve">
+    <value>深色主题</value>
+  </data>
+  <data name="Section_Database" xml:space="preserve">
+    <value>数据库</value>
+  </data>
+  <data name="Hint_SqliteDatabasePath" xml:space="preserve">
+    <value>SQLite 数据库文件路径</value>
+  </data>
+  <data name="Section_Scheduler" xml:space="preserve">
+    <value>调度器</value>
+  </data>
+  <data name="Format_MaxConcurrentSlots" xml:space="preserve">
+    <value>最大并发槽数: {0}</value>
+  </data>
+  <data name="Section_Logs" xml:space="preserve">
+    <value>日志</value>
+  </data>
+  <data name="Format_LogRetentionDays" xml:space="preserve">
+    <value>日志保留天数: {0}</value>
+  </data>
+  <data name="Section_DllPaths" xml:space="preserve">
+    <value>DLL 路径</value>
+  </data>
+  <data name="Hint_PlcDllPath" xml:space="preserve">
+    <value>PLC DLL 路径（例如 EPAN.dll）</value>
+  </data>
+  <data name="Hint_CanDllPath" xml:space="preserve">
+    <value>CAN DLL 路径（例如 zlgcan.dll）</value>
+  </data>
+  <data name="Section_About" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="About_ApplicationName" xml:space="preserve">
+    <value>硬件模块化工作流</value>
+  </data>
+  <data name="About_Description" xml:space="preserve">
+    <value>一个以硬件为中心的模块化工作流自动化平台。</value>
+  </data>
+  <data name="About_SettingsLocation" xml:space="preserve">
+    <value>设置保存在应用程序目录的 app_settings.json 中。</value>
+  </data>
+  <data name="Language_ZhCn" xml:space="preserve">
+    <value>zh-CN</value>
+  </data>
+  <data name="Language_EnUs" xml:space="preserve">
+    <value>en-US</value>
+  </data>
+  <data name="Default_DatabasePath" xml:space="preserve">
+    <value>hardware_workflow.db</value>
+  </data>
+  <data name="Message_SettingsLoaded" xml:space="preserve">
+    <value>设置已加载</value>
+  </data>
+  <data name="Message_FailedToLoadSettings" xml:space="preserve">
+    <value>加载设置失败: {0}</value>
+  </data>
+  <data name="Message_SettingsSavedSuccessfully" xml:space="preserve">
+    <value>设置保存成功</value>
+  </data>
+  <data name="Message_FailedToSaveSettings" xml:space="preserve">
+    <value>保存设置失败: {0}</value>
+  </data>
+  <data name="Message_SettingsResetToDefaults" xml:space="preserve">
+    <value>设置已重置为默认值</value>
+  </data>
+  <data name="DialogFilter_SqliteDatabase" xml:space="preserve">
+    <value>SQLite 数据库 (*.db)|*.db|所有文件 (*.*)|*.*</value>
+  </data>
+  <data name="DialogFilter_DllFiles" xml:space="preserve">
+    <value>DLL 文件 (*.dll)|*.dll|所有文件 (*.*)|*.*</value>
+  </data>
+  <data name="DialogTitle_SelectPlcDll" xml:space="preserve">
+    <value>选择 PLC DLL</value>
+  </data>
+  <data name="DialogTitle_SelectCanDll" xml:space="preserve">
+    <value>选择 CAN DLL</value>
+  </data>
+  <data name="Status_Ready" xml:space="preserve">
+    <value>就绪</value>
+  </data>
+  <data name="Status_NoHardwareConnected" xml:space="preserve">
+    <value>无硬件连接</value>
+  </data>
+  <data name="Message_HardwareRefreshed" xml:space="preserve">
+    <value>硬件已刷新</value>
+  </data>
+  <data name="Message_RefreshingDashboard" xml:space="preserve">
+    <value>正在刷新仪表盘...</value>
+  </data>
+  <data name="Message_DashboardRefreshedAt" xml:space="preserve">
+    <value>仪表盘于 {0} 刷新</value>
+  </data>
+  <data name="Message_FailedToRefreshDashboard" xml:space="preserve">
+    <value>刷新失败: {0}</value>
+  </data>
+  <data name="Format_NameWithDetail" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="Format_ModuleItem" xml:space="preserve">
+    <value>{0} ({1} - {2} 步骤)</value>
+  </data>
+  <data name="ComboBox_Controller" xml:space="preserve">
+    <value>选择控制器类型 *</value>
+  </data>
+  <data name="ComboBox_SelectLanguage" xml:space="preserve">
+    <value>选择 语言</value>
+  </data>
+</root>

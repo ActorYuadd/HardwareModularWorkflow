@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HardwareModularWorkflow.Db.Entities;
 using HardwareModularWorkflow.Db.Services;
+using HardwareModularWorkflow.Lang;
 
 namespace HardwareModularWorkflow.Wpf.ViewModels;
 
@@ -56,10 +57,10 @@ public partial class HardwareViewModel : ObservableObject
     private HardwareEditModel? _editModel;
 
     [ObservableProperty]
-    private string _editPanelTitle = "Add Hardware";
+    private string _editPanelTitle = LangKeys.Title_AddHardware;
 
     [ObservableProperty]
-    private string _statusMessage = string.Empty;
+    private string _statusMessage = LangKeys.Status_Ready;
 
     public HardwareViewModel(
         HardwareInstanceService instanceService,
@@ -143,7 +144,7 @@ public partial class HardwareViewModel : ObservableObject
     private async Task LoadHardwareAsync()
     {
         IsLoading = true;
-        StatusMessage = "Loading hardware...";
+        StatusMessage = LangKeys.Message_LoadingHardware;
         try
         {
             var instances = await _instanceService.GetAllAsync();
@@ -160,11 +161,11 @@ public partial class HardwareViewModel : ObservableObject
             Controllers = new ObservableCollection<ControllerEntity>(controllers);
             OnSelectedDefinitionIdChanged(SelectedDefinitionId);
 
-            StatusMessage = $"Loaded {instances.Count} hardware instances";
+            StatusMessage = string.Format(LangKeys.Message_LoadedHardwareInstances, instances.Count);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to load: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToLoad, ex.Message);
         }
         finally
         {
@@ -181,9 +182,9 @@ public partial class HardwareViewModel : ObservableObject
         AvailableDefinitions = new ObservableCollection<HardwareDefinition>();
         CompatibleControllers = new ObservableCollection<ControllerEntity>(
             Controllers.Where(controller => controller.IsEnabled));
-        EditPanelTitle = "Add Hardware";
+        EditPanelTitle = LangKeys.Title_AddHardware;
         IsEditing = true;
-        StatusMessage = "Adding new hardware...";
+        StatusMessage = LangKeys.Message_AddingNewHardware;
     }
 
     [RelayCommand]
@@ -206,9 +207,9 @@ public partial class HardwareViewModel : ObservableObject
         };
         SelectedCategoryId = instance.Definition.CategoryId;
         SelectedDefinitionId = instance.DefinitionId;
-        EditPanelTitle = $"Edit Hardware (ID: {instance.Id})";
+        EditPanelTitle = string.Format(LangKeys.Title_EditHardware, instance.Id);
         IsEditing = true;
-        StatusMessage = $"Editing {instance.Name}...";
+        StatusMessage = string.Format(LangKeys.Message_EditingName, instance.Name);
     }
 
     [RelayCommand]
@@ -218,13 +219,13 @@ public partial class HardwareViewModel : ObservableObject
 
         if (string.IsNullOrWhiteSpace(EditModel.Name))
         {
-            StatusMessage = "Name is required";
+            StatusMessage = LangKeys.Validation_NameRequired;
             return;
         }
 
         if (EditModel.DefinitionId == 0)
         {
-            StatusMessage = "Please select a hardware definition";
+            StatusMessage = LangKeys.Validation_HardwareDefinitionRequired;
             return;
         }
 
@@ -235,7 +236,7 @@ public partial class HardwareViewModel : ObservableObject
                 item => item.Id == EditModel.DefinitionId);
             if (definition is null)
             {
-                StatusMessage = "The selected hardware definition is unavailable";
+                StatusMessage = LangKeys.Message_HardwareDefinitionUnavailable;
                 return;
             }
 
@@ -251,7 +252,7 @@ public partial class HardwareViewModel : ObservableObject
                             requiredControllerType,
                             StringComparison.OrdinalIgnoreCase)))
                 {
-                    StatusMessage = "The selected controller is not compatible with this definition";
+                    StatusMessage = LangKeys.Message_ControllerNotCompatible;
                     return;
                 }
 
@@ -278,7 +279,7 @@ public partial class HardwareViewModel : ObservableObject
                     IsEnabled = EditModel.IsEnabled
                 };
                 await _instanceService.CreateAsync(entity);
-                StatusMessage = $"Hardware '{entity.Name}' created";
+                StatusMessage = string.Format(LangKeys.Message_HardwareCreated, entity.Name);
             }
             else
             {
@@ -297,7 +298,7 @@ public partial class HardwareViewModel : ObservableObject
                     IsEnabled = EditModel.IsEnabled
                 };
                 await _instanceService.UpdateAsync(entity);
-                StatusMessage = $"Hardware '{entity.Name}' updated";
+                StatusMessage = string.Format(LangKeys.Message_HardwareUpdated, entity.Name);
             }
 
             IsEditing = false;
@@ -306,7 +307,7 @@ public partial class HardwareViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to save: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToSave, ex.Message);
         }
         finally
         {
@@ -319,7 +320,7 @@ public partial class HardwareViewModel : ObservableObject
     {
         IsEditing = false;
         EditModel = null;
-        StatusMessage = "Edit cancelled";
+        StatusMessage = LangKeys.Message_EditCancelled;
     }
 
     [RelayCommand]
@@ -331,12 +332,12 @@ public partial class HardwareViewModel : ObservableObject
         try
         {
             await _instanceService.DeleteAsync(instance.Id);
-            StatusMessage = $"Hardware '{instance.Name}' deleted";
+            StatusMessage = string.Format(LangKeys.Message_HardwareDeleted, instance.Name);
             await LoadHardwareAsync();
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to delete: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToDelete, ex.Message);
         }
         finally
         {

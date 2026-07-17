@@ -1,13 +1,12 @@
 using System.Windows;
-using MahApps.Metro.Controls;
 using HardwareModularWorkflow.Wpf.ViewModels;
 
 namespace HardwareModularWorkflow.Wpf;
 
 /// <summary>
-/// 主窗口：MetroWindow + MaterialDesign 风格
+/// 主窗口
 /// </summary>
-public partial class MainWindow : MetroWindow
+public partial class MainWindow : Window
 {
     public MainWindow(MainWindowViewModel viewModel)
     {

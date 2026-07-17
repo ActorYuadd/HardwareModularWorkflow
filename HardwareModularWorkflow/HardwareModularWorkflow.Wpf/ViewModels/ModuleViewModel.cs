@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HardwareModularWorkflow.Db.Entities;
 using HardwareModularWorkflow.Db.Services;
+using HardwareModularWorkflow.Lang;
 using Microsoft.EntityFrameworkCore;
 using AppDbContext = HardwareModularWorkflow.Db.DbContext.HardwareModularWorkflowDbContext;
 
@@ -49,10 +50,10 @@ public partial class ModuleViewModel : ObservableObject
     private ObservableCollection<HardwareCommandDefinition> _availableCommands = new();
 
     [ObservableProperty]
-    private string _editPanelTitle = "Add Module";
+    private string _editPanelTitle = LangKeys.Title_AddModule;
 
     [ObservableProperty]
-    private string _statusMessage = string.Empty;
+    private string _statusMessage = LangKeys.Status_Ready;
 
     public ModuleViewModel(
         ModuleService moduleService,
@@ -101,7 +102,7 @@ public partial class ModuleViewModel : ObservableObject
     private async Task LoadModulesAsync()
     {
         IsLoading = true;
-        StatusMessage = "Loading modules...";
+        StatusMessage = LangKeys.Message_LoadingModules;
         try
         {
             var list = await _moduleService.GetAllAsync();
@@ -110,11 +111,11 @@ public partial class ModuleViewModel : ObservableObject
             var instances = await _hardwareInstanceService.GetAllAsync();
             HardwareInstances = new ObservableCollection<HardwareInstance>(instances);
 
-            StatusMessage = $"Loaded {list.Count} modules";
+            StatusMessage = string.Format(LangKeys.Message_LoadedModules, list.Count);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to load: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToLoad, ex.Message);
         }
         finally
         {
@@ -128,9 +129,9 @@ public partial class ModuleViewModel : ObservableObject
         EditModel = new ModuleEditModel();
         Steps.Clear();
         SelectedStep = null;
-        EditPanelTitle = "Add Module";
+        EditPanelTitle = LangKeys.Title_AddModule;
         IsEditing = true;
-        StatusMessage = "Adding new module...";
+        StatusMessage = LangKeys.Message_AddingNewModule;
     }
 
     [RelayCommand]
@@ -175,9 +176,9 @@ public partial class ModuleViewModel : ObservableObject
         }
 
         SelectedStep = null;
-        EditPanelTitle = $"Edit Module (ID: {module.Id})";
+        EditPanelTitle = string.Format(LangKeys.Title_EditModule, module.Id);
         IsEditing = true;
-        StatusMessage = $"Editing {module.Name}...";
+        StatusMessage = string.Format(LangKeys.Message_EditingName, module.Name);
     }
 
     [RelayCommand]
@@ -187,7 +188,7 @@ public partial class ModuleViewModel : ObservableObject
 
         if (string.IsNullOrWhiteSpace(EditModel.Name))
         {
-            StatusMessage = "Module name is required";
+            StatusMessage = LangKeys.Validation_ModuleNameRequired;
             return;
         }
 
@@ -234,7 +235,7 @@ public partial class ModuleViewModel : ObservableObject
 
                 _dbContext.Modules.Add(entity);
                 await _dbContext.SaveChangesAsync();
-                StatusMessage = $"Module '{entity.Name}' created with {Steps.Count} steps";
+                StatusMessage = string.Format(LangKeys.Message_ModuleCreatedWithSteps, entity.Name, Steps.Count);
             }
             else
             {
@@ -275,7 +276,7 @@ public partial class ModuleViewModel : ObservableObject
                 }
 
                 await _dbContext.SaveChangesAsync();
-                StatusMessage = $"Module '{entity.Name}' updated with {Steps.Count} steps";
+                StatusMessage = string.Format(LangKeys.Message_ModuleUpdatedWithSteps, entity.Name, Steps.Count);
             }
 
             IsEditing = false;
@@ -286,7 +287,7 @@ public partial class ModuleViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to save: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToSave, ex.Message);
         }
         finally
         {
@@ -301,7 +302,7 @@ public partial class ModuleViewModel : ObservableObject
         EditModel = null;
         Steps.Clear();
         SelectedStep = null;
-        StatusMessage = "Edit cancelled";
+        StatusMessage = LangKeys.Message_EditCancelled;
     }
 
     [RelayCommand]
@@ -313,12 +314,12 @@ public partial class ModuleViewModel : ObservableObject
         try
         {
             await _moduleService.DeleteAsync(module.Id);
-            StatusMessage = $"Module '{module.Name}' deleted";
+            StatusMessage = string.Format(LangKeys.Message_ModuleDeleted, module.Name);
             await LoadModulesAsync();
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to delete: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToDelete, ex.Message);
         }
         finally
         {
@@ -333,7 +334,7 @@ public partial class ModuleViewModel : ObservableObject
     {
         var step = new StepEditModel
         {
-            Name = $"Step {Steps.Count + 1}",
+            Name = string.Format(LangKeys.Format_StepName, Steps.Count + 1),
             OrderIndex = Steps.Count,
             ExecutionMode = EditModel?.DefaultExecutionMode ?? "Sequential",
             IsAsync = true
@@ -341,7 +342,7 @@ public partial class ModuleViewModel : ObservableObject
         ConfigureStep(step);
         Steps.Add(step);
         SelectedStep = step;
-        StatusMessage = "Step added";
+        StatusMessage = LangKeys.Message_StepAdded;
     }
 
     [RelayCommand]
@@ -351,7 +352,7 @@ public partial class ModuleViewModel : ObservableObject
         Steps.Remove(step);
         RecalculateOrderIndices();
         SelectedStep = null;
-        StatusMessage = "Step removed";
+        StatusMessage = LangKeys.Message_StepRemoved;
     }
 
     [RelayCommand]
@@ -420,7 +421,7 @@ public partial class ModuleViewModel : ObservableObject
         {
             SelectedStep.CommandName = string.Empty;
             SelectedStep.CommandParametersJson = null;
-            StatusMessage = "The selected hardware profile does not support the previous command";
+            StatusMessage = LangKeys.Message_HardwareProfileDoesNotSupportCommand;
         }
         else if (selectedCommand is not null)
         {
@@ -437,7 +438,7 @@ public partial class ModuleViewModel : ObservableObject
                 ?.Definition.ControlProfile;
             if (profile is null)
             {
-                StatusMessage = $"Step '{step.Name}' requires a hardware instance with a control profile";
+                StatusMessage = string.Format(LangKeys.Validation_StepRequiresHardwareInstanceWithProfile, step.Name);
                 return false;
             }
 
@@ -451,7 +452,7 @@ public partial class ModuleViewModel : ObservableObject
                 }
                 catch (JsonException)
                 {
-                    StatusMessage = $"Step '{step.Name}' has invalid command parameters JSON";
+                    StatusMessage = string.Format(LangKeys.Validation_StepInvalidCommandParametersJson, step.Name);
                     return false;
                 }
             }
@@ -462,7 +463,7 @@ public partial class ModuleViewModel : ObservableObject
             }
             catch (InvalidOperationException ex)
             {
-                StatusMessage = $"Step '{step.Name}': {ex.Message}";
+                StatusMessage = string.Format(LangKeys.Format_StepValidationError, step.Name, ex.Message);
                 return false;
             }
         }

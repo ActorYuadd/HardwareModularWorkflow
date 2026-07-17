@@ -1,7 +1,11 @@
+using System.Globalization;
 using System.IO;
 using System.Text.Json;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HardwareModularWorkflow.Lang;
+using HardwareModularWorkflow.Lang.Strings;
 using Microsoft.Win32;
 
 namespace HardwareModularWorkflow.Wpf.ViewModels;
@@ -21,7 +25,7 @@ public partial class SettingsViewModel : ObservableObject
     private bool _darkTheme = false;
 
     [ObservableProperty]
-    private string _databasePath = "hardware_workflow.db";
+    private string _databasePath = LangKeys.Default_DatabasePath;
 
     // --- 调度器设置 ---
     [ObservableProperty]
@@ -43,17 +47,28 @@ public partial class SettingsViewModel : ObservableObject
     private bool _isDirty = false;
 
     [ObservableProperty]
-    private string _statusMessage = "Ready";
+    private string _statusMessage = LangKeys.Status_Ready;
 
     // 语言选项
-    public string[] LanguageOptions { get; } = { "zh-CN", "en-US" };
+    public LanguageOption[] LanguageOptions { get; } =
+    [
+        new LanguageOption("zh-CN", Resources.Language_ZhCn),
+        new LanguageOption("en-US", Resources.Language_EnUs)
+    ];
 
     public SettingsViewModel()
     {
-        // 设置由 SettingsView 的 Loaded 事件触发加载
+        ApplyLanguageCulture(Language);
     }
 
-    partial void OnLanguageChanged(string value) => IsDirty = true;
+    public record LanguageOption(string Code, string DisplayName);
+
+    partial void OnLanguageChanged(string value)
+    {
+        IsDirty = true;
+        ApplyLanguageCulture(value);
+        OnPropertyChanged(string.Empty);
+    }
     partial void OnDarkThemeChanged(bool value) => IsDirty = true;
     partial void OnDatabasePathChanged(string value) => IsDirty = true;
     partial void OnSchedulerMaxSlotsChanged(int value) => IsDirty = true;
@@ -79,14 +94,15 @@ public partial class SettingsViewModel : ObservableObject
                     LogRetentionDays = settings.LogRetentionDays;
                     PlcDllPath = settings.PlcDllPath;
                     CanDllPath = settings.CanDllPath;
+                    ApplyLanguageCulture(Language);
                 }
             }
             IsDirty = false;
-            StatusMessage = "Settings loaded";
+            StatusMessage = LangKeys.Message_SettingsLoaded;
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to load settings: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToLoadSettings, ex.Message);
         }
     }
 
@@ -109,11 +125,11 @@ public partial class SettingsViewModel : ObservableObject
             var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
             await File.WriteAllTextAsync(SettingsFileName, json);
             IsDirty = false;
-            StatusMessage = "Settings saved successfully";
+            StatusMessage = LangKeys.Message_SettingsSavedSuccessfully;
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to save settings: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToSaveSettings, ex.Message);
         }
     }
 
@@ -122,13 +138,28 @@ public partial class SettingsViewModel : ObservableObject
     {
         Language = "zh-CN";
         DarkTheme = false;
-        DatabasePath = "hardware_workflow.db";
+        DatabasePath = LangKeys.Default_DatabasePath;
         SchedulerMaxSlots = 50;
         LogRetentionDays = 30;
         PlcDllPath = string.Empty;
         CanDllPath = string.Empty;
         IsDirty = true;
-        StatusMessage = "Settings reset to defaults";
+        StatusMessage = LangKeys.Message_SettingsResetToDefaults;
+    }
+
+    private static void ApplyLanguageCulture(string language)
+    {
+        try
+        {
+            var culture = CultureInfo.GetCultureInfo(language);
+            I18NExtension.Culture = culture;
+            Resources.Culture = culture;
+        }
+        catch (CultureNotFoundException)
+        {
+            I18NExtension.Culture = CultureInfo.InvariantCulture;
+            Resources.Culture = CultureInfo.InvariantCulture;
+        }
     }
 
     [RelayCommand]
@@ -136,7 +167,7 @@ public partial class SettingsViewModel : ObservableObject
     {
         var dialog = new SaveFileDialog
         {
-            Filter = "SQLite Database (*.db)|*.db|All Files (*.*)|*.*",
+            Filter = LangKeys.DialogFilter_SqliteDatabase,
             FileName = Path.GetFileName(DatabasePath),
             InitialDirectory = string.IsNullOrEmpty(DatabasePath)
                 ? Environment.CurrentDirectory
@@ -154,8 +185,8 @@ public partial class SettingsViewModel : ObservableObject
     {
         var dialog = new OpenFileDialog
         {
-            Filter = "DLL Files (*.dll)|*.dll|All Files (*.*)|*.*",
-            Title = "Select PLC DLL"
+            Filter = LangKeys.DialogFilter_DllFiles,
+            Title = LangKeys.DialogTitle_SelectPlcDll
         };
 
         if (dialog.ShowDialog() == true)
@@ -169,8 +200,8 @@ public partial class SettingsViewModel : ObservableObject
     {
         var dialog = new OpenFileDialog
         {
-            Filter = "DLL Files (*.dll)|*.dll|All Files (*.*)|*.*",
-            Title = "Select CAN DLL"
+            Filter = LangKeys.DialogFilter_DllFiles,
+            Title = LangKeys.DialogTitle_SelectCanDll
         };
 
         if (dialog.ShowDialog() == true)
@@ -186,7 +217,7 @@ public partial class SettingsViewModel : ObservableObject
     {
         public string Language { get; set; } = "zh-CN";
         public bool DarkTheme { get; set; } = false;
-        public string DatabasePath { get; set; } = "hardware_workflow.db";
+        public string DatabasePath { get; set; } = LangKeys.Default_DatabasePath;
         public int SchedulerMaxSlots { get; set; } = 50;
         public int LogRetentionDays { get; set; } = 30;
         public string PlcDllPath { get; set; } = string.Empty;

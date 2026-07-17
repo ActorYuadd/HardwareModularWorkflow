@@ -1,4 +1,4 @@
-<UserControl x:Class="HardwareModularWorkflow.Wpf.Views.ModuleView"
+﻿<UserControl x:Class="HardwareModularWorkflow.Wpf.Views.ModuleView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,8 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:vm="clr-namespace:HardwareModularWorkflow.Wpf.ViewModels"
              mc:Ignorable="d"
-             d:DesignHeight="600" d:DesignWidth="900">
+             d:DesignHeight="600" d:DesignWidth="900"
+    xmlns:r="clr-namespace:HardwareModularWorkflow.Lang;assembly=HardwareModularWorkflow.Lang">
 
     <Grid Margin="16">
         <Grid.RowDefinitions>
@@ -17,7 +18,7 @@
 
         <!-- 标题 -->
         <TextBlock Grid.Row="0"
-                   Text="Module Editor"
+                   Text="{I18N {x:Static r:LangKeys.PageTitle_ModuleEditor}}"
                    Style="{StaticResource PageTitleStyle}" />
 
         <!-- 工具栏 -->
@@ -29,7 +30,7 @@
 
             <TextBox Grid.Column="0"
                      Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                     materialDesign:HintAssist.Hint="Search modules..."
+                     materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_SearchModules}}"
                      materialDesign:TextFieldAssist.HasLeadingIcon="True"
                      materialDesign:TextFieldAssist.LeadingIcon="Magnify"
                      Width="300"
@@ -40,14 +41,14 @@
                         Style="{StaticResource ActionButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Refresh" Margin="0,0,4,0" />
-                        <TextBlock Text="Refresh" />
+                        <TextBlock Text="{I18N {x:Static r:LangKeys.Button_Refresh}}" />
                     </StackPanel>
                 </Button>
                 <Button Command="{Binding AddModuleCommand}"
                         Style="{StaticResource ActionButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Plus" Margin="0,0,4,0" />
-                        <TextBlock Text="Add Module" />
+                        <TextBlock Text="{I18N {x:Static r:LangKeys.Button_AddModule}}" />
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -70,13 +71,13 @@
                           HeadersVisibility="Column"
                           CanUserAddRows="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="150" />
-                        <DataGridTextColumn Header="Alias" Binding="{Binding Alias}" Width="100" />
-                        <DataGridTextColumn Header="Mode" Binding="{Binding DefaultExecutionMode}" Width="90" />
-                        <DataGridTextColumn Header="Steps" Binding="{Binding Steps.Count}" Width="60" />
-                        <DataGridTextColumn Header="Tags" Binding="{Binding Tags}" Width="120" />
-                        <DataGridCheckBoxColumn Header="ContinueOnFail" Binding="{Binding ContinueOnFailure}" Width="110" />
-                        <DataGridTemplateColumn Header="Actions" Width="*">
+                        <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Name}}" Binding="{Binding Name}" Width="150" />
+                        <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Alias}}" Binding="{Binding Alias}" Width="100" />
+                        <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Mode}}" Binding="{Binding DefaultExecutionMode}" Width="90" />
+                        <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Steps}}" Binding="{Binding Steps.Count}" Width="60" />
+                        <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Tags}}" Binding="{Binding Tags}" Width="120" />
+                        <DataGridCheckBoxColumn Header="{I18N {x:Static r:LangKeys.Header_ContinueOnFail}}" Binding="{Binding ContinueOnFailure}" Width="110" />
+                        <DataGridTemplateColumn Header="{I18N {x:Static r:LangKeys.Header_Actions}}" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -133,19 +134,19 @@
                         <StackPanel>
                             <!-- 模块基本信息 -->
                             <TextBox Text="{Binding EditModel.Name}"
-                                     materialDesign:HintAssist.Hint="Module Name *"
+                                     materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_ModuleNameRequired}}"
                                      Margin="0,0,0,6" />
 
                             <TextBox Text="{Binding EditModel.Alias}"
-                                     materialDesign:HintAssist.Hint="Alias"
+                                     materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_Alias}}"
                                      Margin="0,0,0,6" />
 
                             <TextBox Text="{Binding EditModel.Note}"
-                                     materialDesign:HintAssist.Hint="Note"
+                                     materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_Note}}"
                                      Margin="0,0,0,6" />
 
                             <TextBox Text="{Binding EditModel.Tags}"
-                                     materialDesign:HintAssist.Hint="Tags (comma separated)"
+                                     materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_TagsCommaSeparated}}"
                                      Margin="0,0,0,6" />
 
                             <Grid Margin="0,0,0,6">
@@ -156,27 +157,27 @@
                                 </Grid.ColumnDefinitions>
                                 <ComboBox Grid.Column="0"
                                           Text="{Binding EditModel.DefaultExecutionMode}"
-                                          materialDesign:HintAssist.Hint="Default Execution Mode"
+                                          materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_DefaultExecutionMode}}"
                                           IsEditable="False">
-                                    <ComboBoxItem Content="Sequential" />
-                                    <ComboBoxItem Content="Parallel" />
+                                    <ComboBoxItem Content="{I18N {x:Static r:LangKeys.ComboBoxItem_Sequential}}" />
+                                    <ComboBoxItem Content="{I18N {x:Static r:LangKeys.ComboBoxItem_Parallel}}" />
                                 </ComboBox>
                                 <TextBox Grid.Column="2"
                                          Text="{Binding EditModel.TimeoutMs}"
-                                         materialDesign:HintAssist.Hint="Timeout (ms)"
+                                         materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_TimeoutMs}}"
                                          materialDesign:TextFieldAssist.HasTrailingIcon="True"
                                          materialDesign:TextFieldAssist.TrailingIcon="Timer" />
                             </Grid>
 
                             <CheckBox IsChecked="{Binding EditModel.ContinueOnFailure}"
-                                      Content="Continue on Failure"
+                                      Content="{I18N {x:Static r:LangKeys.CheckBox_ContinueOnFailure}}"
                                       Margin="0,0,0,12" />
 
                             <!-- 分隔线 -->
                             <Separator Margin="0,0,0,12" />
 
                             <!-- 步骤列表标题 -->
-                            <TextBlock Text="Steps"
+                            <TextBlock Text="{I18N {x:Static r:LangKeys.Section_Steps}}"
                                        Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
                                        Margin="0,0,0,8" />
 
@@ -187,7 +188,7 @@
                                         Padding="4">
                                     <StackPanel Orientation="Horizontal">
                                         <materialDesign:PackIcon Kind="Plus" />
-                                        <TextBlock Text="Add Step" Margin="4,0,0,0" />
+                                        <TextBlock Text="{I18N {x:Static r:LangKeys.Button_AddStep}}" Margin="4,0,0,0" />
                                     </StackPanel>
                                 </Button>
                                 <Button Command="{Binding RemoveStepCommand}"
@@ -196,7 +197,7 @@
                                         Padding="4">
                                     <StackPanel Orientation="Horizontal">
                                         <materialDesign:PackIcon Kind="Minus" />
-                                        <TextBlock Text="Remove" Margin="4,0,0,0" />
+                                        <TextBlock Text="{I18N {x:Static r:LangKeys.Button_Remove}}" Margin="4,0,0,0" />
                                     </StackPanel>
                                 </Button>
                                 <Button Command="{Binding MoveStepUpCommand}"
@@ -224,11 +225,11 @@
                                       MaxHeight="180"
                                       Margin="0,0,0,12">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="#" Binding="{Binding OrderIndex}" Width="30" />
-                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="100" />
-                                    <DataGridTextColumn Header="Hardware" Binding="{Binding HardwareInstanceId}" Width="80" />
-                                    <DataGridTextColumn Header="Command" Binding="{Binding CommandName}" Width="90" />
-                                    <DataGridTextColumn Header="Mode" Binding="{Binding ExecutionMode}" Width="70" />
+                                    <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Number}}" Binding="{Binding OrderIndex}" Width="30" />
+                                    <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Name}}" Binding="{Binding Name}" Width="100" />
+                                    <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Hardware}}" Binding="{Binding HardwareInstanceId}" Width="80" />
+                                    <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Command}}" Binding="{Binding CommandName}" Width="90" />
+                                    <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Mode}}" Binding="{Binding ExecutionMode}" Width="70" />
                                 </DataGrid.Columns>
                             </DataGrid>
 
@@ -247,27 +248,31 @@
 
                                 <materialDesign:Card Padding="12" UniformCornerRadius="4">
                                     <StackPanel>
-                                        <TextBlock Text="Edit Selected Step"
+                                        <TextBlock Text="{I18N {x:Static r:LangKeys.Section_EditSelectedStep}}"
                                                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                                    FontWeight="Bold"
                                                    Margin="0,0,0,8" />
 
                                         <TextBox Text="{Binding SelectedStep.Name}"
-                                                 materialDesign:HintAssist.Hint="Step Name *"
+                                                 materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_StepNameRequired}}"
                                                  Margin="0,0,0,6" />
 
                                         <ComboBox ItemsSource="{Binding HardwareInstances}"
                                                   SelectedValue="{Binding SelectedStep.HardwareInstanceId}"
                                                   SelectedValuePath="Id"
-                                                  materialDesign:HintAssist.Hint="Hardware Instance *"
+                                                  materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_HardwareInstanceRequired}}"
                                                   Margin="0,0,0,6">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate>
                                                     <StackPanel Orientation="Horizontal">
-                                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" />
-                                                        <TextBlock Text=" (" />
-                                                        <TextBlock Text="{Binding Definition.Category.Name}" />
-                                                        <TextBlock Text=")" />
+                                                        <TextBlock FontWeight="Bold">
+                                                            <TextBlock.Text>
+                                                                <I18N Key="{x:Static r:LangKeys.Format_NameWithDetail}">
+                                                                    <Binding Path="Name" />
+                                                                    <Binding Path="Definition.Category.Name" />
+                                                                </I18N>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </ComboBox.ItemTemplate>
@@ -277,11 +282,11 @@
                                                   SelectedValue="{Binding SelectedStep.CommandName}"
                                                   SelectedValuePath="Name"
                                                   DisplayMemberPath="DisplayName"
-                                                  materialDesign:HintAssist.Hint="Command *"
+                                                  materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_CommandRequired}}"
                                                   Margin="0,0,0,6" />
 
                                         <TextBox Text="{Binding SelectedStep.CommandParametersJson}"
-                                                 materialDesign:HintAssist.Hint="Command Parameters JSON"
+                                                 materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_CommandParametersJson}}"
                                                  TextWrapping="Wrap"
                                                  AcceptsReturn="True"
                                                  Height="60"
@@ -297,22 +302,22 @@
                                             </Grid.ColumnDefinitions>
                                             <ComboBox Grid.Column="0"
                                                       Text="{Binding SelectedStep.ExecutionMode}"
-                                                      materialDesign:HintAssist.Hint="Execution Mode"
+                                                      materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_ExecutionMode}}"
                                                       IsEditable="False">
-                                                <ComboBoxItem Content="Sequential" />
-                                                <ComboBoxItem Content="Parallel" />
+                                                <ComboBoxItem Content="{I18N {x:Static r:LangKeys.ComboBoxItem_Sequential}}" />
+                                                <ComboBoxItem Content="{I18N {x:Static r:LangKeys.ComboBoxItem_Parallel}}" />
                                             </ComboBox>
                                             <TextBox Grid.Column="2"
                                                      Text="{Binding SelectedStep.TimeoutMs}"
-                                                     materialDesign:HintAssist.Hint="Step Timeout (ms)" />
+                                                     materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_StepTimeoutMs}}" />
                                         </Grid>
 
                                         <StackPanel Orientation="Horizontal">
                                             <CheckBox IsChecked="{Binding SelectedStep.IsAsync}"
-                                                      Content="Async"
+                                                      Content="{I18N {x:Static r:LangKeys.CheckBox_Async}}"
                                                       Margin="0,0,12,0" />
                                             <CheckBox IsChecked="{Binding SelectedStep.ContinueOnFailure}"
-                                                      Content="Continue on Failure" />
+                                                      Content="{I18N {x:Static r:LangKeys.CheckBox_ContinueOnFailure}}" />
                                         </StackPanel>
                                     </StackPanel>
                                 </materialDesign:Card>
@@ -326,14 +331,14 @@
                                 Style="{StaticResource ActionButtonStyle}">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="ContentSave" Margin="0,0,4,0" />
-                                <TextBlock Text="Save" />
+                                <TextBlock Text="{I18N {x:Static r:LangKeys.Button_Save}}" />
                             </StackPanel>
                         </Button>
                         <Button Command="{Binding CancelEditCommand}"
                                 Style="{StaticResource ActionButtonStyle}">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="Cancel" Margin="0,0,4,0" />
-                                <TextBlock Text="Cancel" />
+                                <TextBlock Text="{I18N {x:Static r:LangKeys.Button_Cancel}}" />
                             </StackPanel>
                         </Button>
                     </StackPanel>

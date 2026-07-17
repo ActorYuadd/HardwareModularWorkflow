@@ -5,6 +5,7 @@ using HardwareModularWorkflow.Core.Events;
 using HardwareModularWorkflow.Core.Services;
 using HardwareModularWorkflow.Db.Entities;
 using HardwareModularWorkflow.Db.Services;
+using HardwareModularWorkflow.Lang;
 using HardwareModularWorkflow.Workflow.Events;
 
 namespace HardwareModularWorkflow.Wpf.ViewModels;
@@ -77,7 +78,7 @@ public partial class DashboardViewModel : ObservableObject
     private bool _isRuntimeRunning;
 
     [ObservableProperty]
-    private string _statusMessage = "Ready";
+    private string _statusMessage = LangKeys.Status_Ready;
 
     [ObservableProperty]
     private bool _isLoading;
@@ -144,7 +145,7 @@ public partial class DashboardViewModel : ObservableObject
     private async Task RefreshAsync()
     {
         IsLoading = true;
-        StatusMessage = "Refreshing dashboard...";
+        StatusMessage = LangKeys.Message_RefreshingDashboard;
         try
         {
             // 硬件统计
@@ -177,11 +178,11 @@ public partial class DashboardViewModel : ObservableObject
             // 运行时状态（简单判断，实际应根据调度器状态）
             IsRuntimeRunning = true; // 占位：运行时服务通常在启动时已启动
 
-            StatusMessage = $"Dashboard refreshed at {DateTime.Now:HH:mm:ss}";
+            StatusMessage = string.Format(LangKeys.Message_DashboardRefreshedAt, DateTime.Now.ToString("HH:mm:ss"));
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to refresh: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToRefreshDashboard, ex.Message);
         }
         finally
         {

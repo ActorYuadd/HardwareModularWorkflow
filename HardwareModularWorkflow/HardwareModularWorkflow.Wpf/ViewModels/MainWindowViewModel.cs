@@ -1,7 +1,11 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HardwareModularWorkflow.Core.Services;
+using HardwareModularWorkflow.Lang;
+using HardwareModularWorkflow.Lang.Strings;
 using HardwareModularWorkflow.Wpf.ViewModels;
 
 namespace HardwareModularWorkflow.Wpf.ViewModels;
@@ -23,10 +27,10 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly SettingsViewModel _settingsViewModel;
 
     [ObservableProperty]
-    private string _statusMessage = "Ready";
+    private string _statusMessage = LangKeys.Status_Ready;
 
     [ObservableProperty]
-    private string _hardwareStatus = "No hardware connected";
+    private string _hardwareStatus = LangKeys.Status_NoHardwareConnected;
 
     [ObservableProperty]
     private bool _isRuntimeRunning = false;
@@ -62,21 +66,32 @@ public partial class MainWindowViewModel : ObservableObject
         _monitorViewModel = monitorViewModel ?? throw new ArgumentNullException(nameof(monitorViewModel));
         _executionLogViewModel = executionLogViewModel ?? throw new ArgumentNullException(nameof(executionLogViewModel));
         _settingsViewModel = settingsViewModel ?? throw new ArgumentNullException(nameof(settingsViewModel));
+        _settingsViewModel.PropertyChanged += OnSettingsViewModelPropertyChanged;
         InitializeNavigation();
+    }
+
+    private void OnSettingsViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(SettingsViewModel.Language))
+        {
+            foreach (var item in NavigationItems)
+            {
+                item.RefreshDisplayTitle();
+            }
+        }
     }
 
     private void InitializeNavigation()
     {
-        NavigationItems.Add(new NavigationItem("Dashboard", "ViewDashboard", _dashboardViewModel));
-        NavigationItems.Add(new NavigationItem("Hardware", "Chip", _hardwareViewModel));
-        NavigationItems.Add(new NavigationItem(
-            "Hardware Definitions", "Shape", _hardwareDefinitionViewModel));
-        NavigationItems.Add(new NavigationItem("Controller", "LanConnect", _controllerViewModel));
-        NavigationItems.Add(new NavigationItem("Module", "ViewModule", _moduleViewModel));
-        NavigationItems.Add(new NavigationItem("Workflow", "SourceFork", _flowViewModel));
-        NavigationItems.Add(new NavigationItem("Monitor", "Monitor", _monitorViewModel));
-        NavigationItems.Add(new NavigationItem("Execution Log", "ClipboardTextClock", _executionLogViewModel));
-        NavigationItems.Add(new NavigationItem("Settings", "Cog", _settingsViewModel));
+        NavigationItems.Add(new NavigationItem(LangKeys.Navigation_Dashboard, "ViewDashboard", _dashboardViewModel));
+        NavigationItems.Add(new NavigationItem(LangKeys.Navigation_Hardware, "Chip", _hardwareViewModel));
+        NavigationItems.Add(new NavigationItem(LangKeys.Navigation_HardwareDefinitions, "Shape", _hardwareDefinitionViewModel));
+        NavigationItems.Add(new NavigationItem(LangKeys.Navigation_Controller, "LanConnect", _controllerViewModel));
+        NavigationItems.Add(new NavigationItem(LangKeys.Navigation_Module, "ViewModule", _moduleViewModel));
+        NavigationItems.Add(new NavigationItem(LangKeys.Navigation_Workflow, "SourceFork", _flowViewModel));
+        NavigationItems.Add(new NavigationItem(LangKeys.Navigation_Monitor, "Monitor", _monitorViewModel));
+        NavigationItems.Add(new NavigationItem(LangKeys.Navigation_ExecutionLog, "ClipboardTextClock", _executionLogViewModel));
+        NavigationItems.Add(new NavigationItem(LangKeys.Navigation_Settings, "Cog", _settingsViewModel));
 
         SelectedNavigationItem = NavigationItems.FirstOrDefault();
     }
@@ -96,11 +111,11 @@ public partial class MainWindowViewModel : ObservableObject
         {
             _runtimeService.Start();
             IsRuntimeRunning = true;
-            StatusMessage = "Runtime started";
+            StatusMessage = LangKeys.Message_RuntimeStarted;
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to start runtime: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToStartRuntime, ex.Message);
         }
     }
 
@@ -111,35 +126,47 @@ public partial class MainWindowViewModel : ObservableObject
         {
             await _runtimeService.StopAsync(TimeSpan.FromSeconds(5));
             IsRuntimeRunning = false;
-            StatusMessage = "Runtime stopped";
+            StatusMessage = LangKeys.Message_RuntimeStopped;
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to stop runtime: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToStopRuntime, ex.Message);
         }
     }
 
     [RelayCommand]
     private void RefreshHardware()
     {
-        StatusMessage = "Hardware refreshed";
+        StatusMessage = LangKeys.Message_HardwareRefreshed;
     }
 
     [RelayCommand]
     private void OpenSettings()
     {
-        SelectedNavigationItem = NavigationItems.FirstOrDefault(n => n.Title == "Settings");
+        SelectedNavigationItem = NavigationItems.FirstOrDefault(n => n.Title == LangKeys.Navigation_Settings);
+    }
+
+    [RelayCommand]
+    private void NavigateTo(string pageName)
+    {
+        var item = NavigationItems.FirstOrDefault(n => n.Title == pageName);
+        if (item is not null)
+        {
+            SelectedNavigationItem = item;
+        }
     }
 }
 
 /// <summary>
 /// 导航项模型
 /// </summary>
-public class NavigationItem
+public class NavigationItem : INotifyPropertyChanged
 {
     public string Title { get; }
     public string Icon { get; }
     public object ViewModel { get; }
+
+    public string DisplayTitle => Resources.ResourceManager.GetString(Title, Resources.Culture ?? CultureInfo.CurrentUICulture) ?? Title;
 
     public NavigationItem(string title, string icon, object viewModel)
     {
@@ -147,4 +174,11 @@ public class NavigationItem
         Icon = icon;
         ViewModel = viewModel;
     }
+
+    public void RefreshDisplayTitle()
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DisplayTitle)));
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 }

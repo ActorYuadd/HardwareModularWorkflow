@@ -31,6 +31,10 @@ public partial class App : Application
         var runtimeService = _serviceProvider.GetRequiredService<WorkflowRuntimeService>();
         runtimeService.Start();
 
+        // 3.5. 加载用户设置（语言、主题等）
+        var settingsViewModel = _serviceProvider.GetRequiredService<SettingsViewModel>();
+        await settingsViewModel.LoadSettingsCommand.ExecuteAsync(null);
+
         // 4. 启动主窗口
         var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
         mainWindow.Show();

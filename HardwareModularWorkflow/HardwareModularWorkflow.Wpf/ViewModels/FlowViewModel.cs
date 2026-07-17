@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HardwareModularWorkflow.Db.Entities;
 using HardwareModularWorkflow.Db.Services;
+using HardwareModularWorkflow.Lang;
 using Microsoft.EntityFrameworkCore;
 using AppDbContext = HardwareModularWorkflow.Db.DbContext.HardwareModularWorkflowDbContext;
 
@@ -54,10 +55,10 @@ public partial class FlowViewModel : ObservableObject
     private FlowEntity? _selectedSubFlowToAdd;
 
     [ObservableProperty]
-    private string _editPanelTitle = "Add Workflow";
+    private string _editPanelTitle = LangKeys.Title_AddWorkflow;
 
     [ObservableProperty]
-    private string _statusMessage = string.Empty;
+    private string _statusMessage = LangKeys.Status_Ready;
 
     [ObservableProperty]
     private string _cycleWarning = string.Empty;
@@ -104,7 +105,7 @@ public partial class FlowViewModel : ObservableObject
     private async Task LoadFlowsAsync()
     {
         IsLoading = true;
-        StatusMessage = "Loading workflows...";
+        StatusMessage = LangKeys.Message_LoadingWorkflows;
         try
         {
             var list = await _flowService.GetAllAsync();
@@ -116,11 +117,11 @@ public partial class FlowViewModel : ObservableObject
             var subFlows = await _flowService.GetReusableFlowsAsync();
             AvailableSubFlows = new ObservableCollection<FlowEntity>(subFlows);
 
-            StatusMessage = $"Loaded {list.Count} workflows";
+            StatusMessage = string.Format(LangKeys.Message_LoadedWorkflows, list.Count);
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to load: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToLoad, ex.Message);
         }
         finally
         {
@@ -136,10 +137,10 @@ public partial class FlowViewModel : ObservableObject
         SelectedFlowNode = null;
         SelectedModuleToAdd = null;
         SelectedSubFlowToAdd = null;
-        EditPanelTitle = "Add Workflow";
+        EditPanelTitle = LangKeys.Title_AddWorkflow;
         CycleWarning = string.Empty;
         IsEditing = true;
-        StatusMessage = "Adding new workflow...";
+        StatusMessage = LangKeys.Message_AddingNewWorkflow;
     }
 
     [RelayCommand]
@@ -171,8 +172,8 @@ public partial class FlowViewModel : ObservableObject
                 {
                     Id = relation.Id,
                     OrderIndex = relation.OrderIndex,
-                    Name = relation.Module?.Name ?? $"Module #{relation.ModuleId}",
-                    NodeType = "Module",
+                    Name = relation.Module?.Name ?? string.Format(LangKeys.Format_ModuleReference, relation.ModuleId),
+                    NodeType = LangKeys.Label_Module,
                     ReferenceId = relation.ModuleId,
                     ExecutionMode = relation.ExecutionMode,
                     Condition = relation.Condition
@@ -187,8 +188,8 @@ public partial class FlowViewModel : ObservableObject
                 {
                     Id = reference.Id,
                     OrderIndex = reference.OrderIndex,
-                    Name = reference.SubFlow?.Name ?? $"Flow #{reference.SubFlowId}",
-                    NodeType = "SubFlow",
+                    Name = reference.SubFlow?.Name ?? string.Format(LangKeys.Format_FlowReference, reference.SubFlowId),
+                    NodeType = LangKeys.Label_SubFlow,
                     ReferenceId = reference.SubFlowId,
                     ExecutionMode = reference.ExecutionMode,
                     Condition = reference.Condition
@@ -200,10 +201,10 @@ public partial class FlowViewModel : ObservableObject
         SelectedFlowNode = null;
         SelectedModuleToAdd = null;
         SelectedSubFlowToAdd = null;
-        EditPanelTitle = $"Edit Workflow (ID: {flow.Id})";
+        EditPanelTitle = string.Format(LangKeys.Title_EditWorkflow, flow.Id);
         CycleWarning = string.Empty;
         IsEditing = true;
-        StatusMessage = $"Editing {flow.Name}...";
+        StatusMessage = string.Format(LangKeys.Message_EditingName, flow.Name);
     }
 
     [RelayCommand]
@@ -213,7 +214,7 @@ public partial class FlowViewModel : ObservableObject
 
         if (string.IsNullOrWhiteSpace(EditModel.Name))
         {
-            StatusMessage = "Workflow name is required";
+            StatusMessage = LangKeys.Validation_WorkflowNameRequired;
             return;
         }
 
@@ -225,13 +226,13 @@ public partial class FlowViewModel : ObservableObject
             {
                 if (node.ReferenceId == EditModel.Id)
                 {
-                    StatusMessage = "Cannot reference itself as a sub-flow";
+                    StatusMessage = LangKeys.Validation_CannotReferenceSelfAsSubFlow;
                     return;
                 }
                 var visited = new HashSet<long>();
                 if (await HasCircularReferenceAsync(EditModel.Id, node.ReferenceId, visited))
                 {
-                    StatusMessage = $"Circular reference detected through sub-flow '{node.Name}'";
+                    StatusMessage = string.Format(LangKeys.Validation_CircularReferenceDetected, node.Name);
                     return;
                 }
             }
@@ -283,7 +284,7 @@ public partial class FlowViewModel : ObservableObject
 
                 _dbContext.Flows.Add(entity);
                 await _dbContext.SaveChangesAsync();
-                StatusMessage = $"Workflow '{entity.Name}' created with {FlowNodes.Count} nodes";
+                StatusMessage = string.Format(LangKeys.Message_WorkflowCreatedWithNodes, entity.Name, FlowNodes.Count);
             }
             else
             {
@@ -335,7 +336,7 @@ public partial class FlowViewModel : ObservableObject
                 }
 
                 await _dbContext.SaveChangesAsync();
-                StatusMessage = $"Workflow '{entity.Name}' updated with {FlowNodes.Count} nodes";
+                StatusMessage = string.Format(LangKeys.Message_WorkflowUpdatedWithNodes, entity.Name, FlowNodes.Count);
             }
 
             IsEditing = false;
@@ -349,7 +350,7 @@ public partial class FlowViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to save: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToSave, ex.Message);
         }
         finally
         {
@@ -367,7 +368,7 @@ public partial class FlowViewModel : ObservableObject
         SelectedModuleToAdd = null;
         SelectedSubFlowToAdd = null;
         CycleWarning = string.Empty;
-        StatusMessage = "Edit cancelled";
+        StatusMessage = LangKeys.Message_EditCancelled;
     }
 
     [RelayCommand]
@@ -379,12 +380,12 @@ public partial class FlowViewModel : ObservableObject
         try
         {
             await _flowService.DeleteAsync(flow.Id);
-            StatusMessage = $"Workflow '{flow.Name}' deleted";
+            StatusMessage = string.Format(LangKeys.Message_WorkflowDeleted, flow.Name);
             await LoadFlowsAsync();
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Failed to delete: {ex.Message}";
+            StatusMessage = string.Format(LangKeys.Message_FailedToDelete, ex.Message);
         }
         finally
         {
@@ -402,13 +403,13 @@ public partial class FlowViewModel : ObservableObject
         {
             OrderIndex = FlowNodes.Count,
             Name = SelectedModuleToAdd.Name,
-            NodeType = "Module",
+            NodeType = LangKeys.Label_Module,
             ReferenceId = SelectedModuleToAdd.Id,
             ExecutionMode = EditModel?.ExecutionMode
         };
         FlowNodes.Add(node);
         SelectedModuleToAdd = null;
-        StatusMessage = $"Module '{node.Name}' added to workflow";
+        StatusMessage = string.Format(LangKeys.Message_ModuleAddedToWorkflow, node.Name);
     }
 
     [RelayCommand]
@@ -417,20 +418,20 @@ public partial class FlowViewModel : ObservableObject
         if (SelectedSubFlowToAdd is null) return;
         if (EditModel?.Id != 0 && SelectedSubFlowToAdd.Id == EditModel?.Id)
         {
-            StatusMessage = "Cannot reference the workflow itself";
+            StatusMessage = LangKeys.Message_CannotReferenceWorkflowItself;
             return;
         }
         var node = new FlowNodeEditModel
         {
             OrderIndex = FlowNodes.Count,
             Name = SelectedSubFlowToAdd.Name,
-            NodeType = "SubFlow",
+            NodeType = LangKeys.Label_SubFlow,
             ReferenceId = SelectedSubFlowToAdd.Id,
             ExecutionMode = EditModel?.ExecutionMode
         };
         FlowNodes.Add(node);
         SelectedSubFlowToAdd = null;
-        StatusMessage = $"Sub-flow '{node.Name}' added to workflow";
+        StatusMessage = string.Format(LangKeys.Message_SubFlowAddedToWorkflow, node.Name);
     }
 
     [RelayCommand]
@@ -440,7 +441,7 @@ public partial class FlowViewModel : ObservableObject
         FlowNodes.Remove(node);
         RecalculateOrderIndices();
         SelectedFlowNode = null;
-        StatusMessage = "Node removed";
+        StatusMessage = LangKeys.Message_NodeRemoved;
     }
 
     [RelayCommand]
