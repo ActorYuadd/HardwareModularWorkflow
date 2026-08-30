@@ -171,7 +171,45 @@
 
                             <CheckBox IsChecked="{Binding EditModel.ContinueOnFailure}"
                                       Content="{I18N {x:Static r:LangKeys.CheckBox_ContinueOnFailure}}"
-                                      Margin="0,0,0,12" />
+                                      Margin="0,0,0,6" />
+
+                            <TextBox Text="{Binding EditModel.ResourceWaitTimeoutMs}"
+                                     materialDesign:HintAssist.Hint="资源等待超时 (ms)"
+                                     Margin="0,0,0,6" />
+                            <TextBox Text="{Binding EditModel.CompensationTimeoutMs}"
+                                     materialDesign:HintAssist.Hint="补偿链超时 (ms)"
+                                     Margin="0,0,0,6" />
+                            <ComboBox Text="{Binding EditModel.RecoveryPolicy}"
+                                      IsEditable="False"
+                                      materialDesign:HintAssist.Hint="模块恢复策略"
+                                      Margin="0,0,0,12">
+                                <ComboBoxItem Content="NotRecoverable" />
+                                <ComboBoxItem Content="Reexecute" />
+                                <ComboBoxItem Content="VerifyHardwareState" />
+                                <ComboBoxItem Content="ReturnToSafePositionThenReexecute" />
+                            </ComboBox>
+
+                            <TextBlock Text="模块范围资源预留"
+                                       Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                       Margin="0,0,0,6" />
+                            <TextBlock Text="关联轴或夹具在模块开始前一次性取得，模块结束后释放；未加入此处的步骤硬件仅在命令期间占用。"
+                                       Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                       TextWrapping="Wrap" Margin="0,0,0,6" />
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                <ComboBox ItemsSource="{Binding HardwareInstances}"
+                                          SelectedItem="{Binding SelectedModuleResourceHardware}"
+                                          DisplayMemberPath="Name" Width="190" />
+                                <Button Command="{Binding AddModuleResourceReservationCommand}"
+                                        Content="+ 范围资源" Style="{StaticResource MaterialDesignFlatButton}" />
+                            </StackPanel>
+                            <DataGrid ItemsSource="{Binding ModuleResourceReservations}"
+                                      AutoGenerateColumns="False" CanUserAddRows="False" MaxHeight="110" Margin="0,0,0,12">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="硬件" Binding="{Binding Name}" Width="*" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="模式" Binding="{Binding AccessMode}" Width="90" />
+                                    <DataGridTemplateColumn Header="" Width="55"><DataGridTemplateColumn.CellTemplate><DataTemplate><Button Command="{Binding DataContext.RemoveModuleResourceReservationCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Content="删除" /></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
 
                             <!-- 分隔线 -->
                             <Separator Margin="0,0,0,12" />
@@ -230,6 +268,7 @@
                                     <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Hardware}}" Binding="{Binding HardwareInstanceId}" Width="80" />
                                     <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Command}}" Binding="{Binding CommandName}" Width="90" />
                                     <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Mode}}" Binding="{Binding ExecutionMode}" Width="70" />
+                                    <DataGridCheckBoxColumn Header="补偿" Binding="{Binding IsCompensation}" Width="45" />
                                 </DataGrid.Columns>
                             </DataGrid>
 
@@ -312,12 +351,25 @@
                                                      materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_StepTimeoutMs}}" />
                                         </Grid>
 
+                                        <ComboBox Text="{Binding SelectedStep.ResourceAccessMode}"
+                                                  materialDesign:HintAssist.Hint="命令资源模式"
+                                                  IsEditable="False" Margin="0,0,0,6">
+                                            <ComboBoxItem Content="Exclusive" />
+                                            <ComboBoxItem Content="SharedRead" />
+                                        </ComboBox>
+
+                                        <TextBox Text="{Binding SelectedStep.ResultVariable}"
+                                                 materialDesign:HintAssist.Hint="命令返回值写入变量（供 Switch 使用）"
+                                                 Margin="0,0,0,6" />
+
                                         <StackPanel Orientation="Horizontal">
                                             <CheckBox IsChecked="{Binding SelectedStep.IsAsync}"
                                                       Content="{I18N {x:Static r:LangKeys.CheckBox_Async}}"
                                                       Margin="0,0,12,0" />
                                             <CheckBox IsChecked="{Binding SelectedStep.ContinueOnFailure}"
                                                       Content="{I18N {x:Static r:LangKeys.CheckBox_ContinueOnFailure}}" />
+                                            <CheckBox IsChecked="{Binding SelectedStep.IsCompensation}"
+                                                      Content="失败/取消后补偿" Margin="12,0,0,0" />
                                         </StackPanel>
                                     </StackPanel>
                                 </materialDesign:Card>

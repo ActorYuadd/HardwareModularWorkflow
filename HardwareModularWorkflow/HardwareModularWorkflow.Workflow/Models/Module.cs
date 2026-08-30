@@ -1,4 +1,5 @@
 using HardwareModularWorkflow.Hardware.Enums;
+using HardwareModularWorkflow.Workflow.Resources;
 
 namespace HardwareModularWorkflow.Workflow.Models;
 
@@ -26,6 +27,24 @@ public sealed class Module
     /// <summary>硬件步骤列表</summary>
     public List<HardwareStep> Steps { get; set; } = new();
 
+    /// <summary>模块失败或取消后，在释放模块范围资源前按逆序执行的显式安全补偿步骤。</summary>
+    public List<HardwareStep> CompensationSteps { get; set; } = new();
+
+    /// <summary>补偿链的独立超时；原执行令牌取消后仍允许在此安全窗口内执行。</summary>
+    public TimeSpan CompensationTimeout { get; set; } = TimeSpan.FromSeconds(10);
+
+    /// <summary>模块级恢复声明，供运行快照、人工恢复判断和后续状态核验使用。</summary>
+    public ModuleRecoveryPolicy RecoveryPolicy { get; set; } = ModuleRecoveryPolicy.NotRecoverable;
+
+    /// <summary>
+    /// 模块开始前额外预留的资源。模块步骤引用的硬件会由执行器自动加入独占资源，
+    /// 此列表用于轨迹关联轴、夹具等未在当前步骤直接执行但必须保持一致的硬件。
+    /// </summary>
+    public List<ResourceRequirement> ResourceRequirements { get; set; } = new();
+
+    /// <summary>模块范围租约和模块内命令租约允许等待的最长时间。</summary>
+    public TimeSpan? ResourceWaitTimeout { get; set; } = TimeSpan.FromSeconds(30);
+
     /// <summary>模块内默认执行模式（步骤可覆盖）</summary>
     public ExecutionMode DefaultExecutionMode { get; set; } = ExecutionMode.Sequential;
 
@@ -47,4 +66,12 @@ public sealed class Module
     /// <summary>按 ExecutionMode 分组步骤</summary>
     public IEnumerable<IGrouping<ExecutionMode, HardwareStep>> GetGroupedSteps() =>
         Steps.GroupBy(s => s.ExecutionMode);
+}
+
+public enum ModuleRecoveryPolicy
+{
+    NotRecoverable,
+    Reexecute,
+    VerifyHardwareState,
+    ReturnToSafePositionThenReexecute
 }

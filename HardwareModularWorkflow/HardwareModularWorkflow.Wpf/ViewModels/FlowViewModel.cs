@@ -1,22 +1,35 @@
-using System.Collections.ObjectModel;
+﻿﻿﻿using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HardwareModularWorkflow.Db.Entities;
 using HardwareModularWorkflow.Db.Services;
 using HardwareModularWorkflow.Lang;
+using HardwareModularWorkflow.Workflow.Engine;
+using HardwareModularWorkflow.Workflow.Models;
+using HardwareModularWorkflow.Workflow.Resources;
+using HardwareModularWorkflow.Workflow.Scheduling;
+using HardwareModularWorkflow.Wpf.Controls;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
 using AppDbContext = HardwareModularWorkflow.Db.DbContext.HardwareModularWorkflowDbContext;
 
 namespace HardwareModularWorkflow.Wpf.ViewModels;
 
 /// <summary>
-/// 工作流编辑器 ViewModel：工作流列表、模块/子流编排、排序、串/并行、循环检测
-/// </summary>
+/// 宸ヤ綔娴佺紪杈戝櫒 ViewModel锛氬伐浣滄祦鍒楄〃銆佹ā鍧?瀛愭祦缂栨帓銆佹帓搴忋€佷覆/骞惰銆佸惊鐜娴?/// </summary>
 public partial class FlowViewModel : ObservableObject
 {
     private readonly FlowService _flowService;
     private readonly ModuleService _moduleService;
     private readonly AppDbContext _dbContext;
+    private readonly IResourceReservationManager? _resourceReservationManager;
+    private readonly WorkflowScheduler? _workflowScheduler;
+    private readonly ISchedulingEventLog? _schedulingEventLog;
+    private readonly HardwareInstanceService? _hardwareInstanceService;
 
     [ObservableProperty]
     private ObservableCollection<FlowEntity> _flows = new();
@@ -49,28 +62,102 @@ public partial class FlowViewModel : ObservableObject
     private FlowNodeEditModel? _selectedFlowNode;
 
     [ObservableProperty]
+    private ObservableCollection<FlowParameterEditModel> _inputParameters = new();
+
+    [ObservableProperty]
+    private ObservableCollection<FlowParameterEditModel> _outputParameters = new();
+
+    [ObservableProperty]
     private ModuleEntity? _selectedModuleToAdd;
 
     [ObservableProperty]
     private FlowEntity? _selectedSubFlowToAdd;
 
     [ObservableProperty]
-    private string _editPanelTitle = LangKeys.Title_AddWorkflow;
+    private ObservableCollection<HardwareInstance> _hardwareInstances = new();
 
     [ObservableProperty]
-    private string _statusMessage = LangKeys.Status_Ready;
+    private HardwareInstance? _selectedFlowResourceHardware;
+
+    [ObservableProperty]
+    private ObservableCollection<FlowResourceReservationEditModel> _flowResourceReservations = new();
+
+    [ObservableProperty]
+    private ObservableCollection<GraphNodeEditModel> _graphNodes = new();
+
+    [ObservableProperty]
+    private ObservableCollection<GraphEdgeEditModel> _graphEdges = new();
+
+    [ObservableProperty]
+    private GraphNodeEditModel? _selectedGraphNode;
+
+    [ObservableProperty]
+    private GraphNodeEditModel? _selectedGraphEdgeFrom;
+
+    [ObservableProperty]
+    private GraphNodeEditModel? _selectedGraphEdgeTo;
+
+    [ObservableProperty]
+    private string _graphRouteKey = "Success";
+
+    [ObservableProperty]
+    private string _editPanelTitle = "Add Workflow";
+
+    [ObservableProperty]
+    private string _statusMessage = "Ready";
 
     [ObservableProperty]
     private string _cycleWarning = string.Empty;
 
+    [ObservableProperty]
+    private ObservableCollection<ResourceReservationDisplayModel> _resourceReservations = new();
+
+    [ObservableProperty]
+    private ResourceReservationDisplayModel? _selectedResourceReservation;
+
+    [ObservableProperty]
+    private int _waitingReservationPriority;
+
+    [ObservableProperty]
+    private string _schedulerMetrics = string.Empty;
+
+    [ObservableProperty]
+    private string _resourceQueueMetrics = string.Empty;
+
+    [ObservableProperty]
+    private ObservableCollection<SchedulingEventDisplayModel> _schedulingEvents = new();
+
+    [ObservableProperty]
+    private ObservableCollection<WorkflowTabItem> _openTabs = new();
+
+    [ObservableProperty]
+    private WorkflowTabItem? _selectedTab;
+
+    [ObservableProperty]
+    private bool _isConnectionMode;
+
+    [ObservableProperty]
+    private ObservableCollection<Guid> _executedNodeIds = new();
+
+    [ObservableProperty]
+    private ObservableCollection<string> _executedEdgeKeys = new();
+
     public FlowViewModel(
         FlowService flowService,
         ModuleService moduleService,
-        AppDbContext dbContext)
+        AppDbContext dbContext,
+        IResourceReservationManager? resourceReservationManager = null,
+        WorkflowScheduler? workflowScheduler = null,
+        ISchedulingEventLog? schedulingEventLog = null,
+        HardwareInstanceService? hardwareInstanceService = null)
     {
         _flowService = flowService ?? throw new ArgumentNullException(nameof(flowService));
         _moduleService = moduleService ?? throw new ArgumentNullException(nameof(moduleService));
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _resourceReservationManager = resourceReservationManager;
+        _workflowScheduler = workflowScheduler;
+        _schedulingEventLog = schedulingEventLog;
+        _hardwareInstanceService = hardwareInstanceService;
     }
 
     partial void OnSearchTextChanged(string value)
@@ -116,6 +203,10 @@ public partial class FlowViewModel : ObservableObject
 
             var subFlows = await _flowService.GetReusableFlowsAsync();
             AvailableSubFlows = new ObservableCollection<FlowEntity>(subFlows);
+
+            if (_hardwareInstanceService is not null)
+                HardwareInstances = new ObservableCollection<HardwareInstance>(await _hardwareInstanceService.GetAllAsync());
+            RefreshResourceReservations();
 
             StatusMessage = string.Format(LangKeys.Message_LoadedWorkflows, list.Count);
         }
@@ -218,8 +309,7 @@ public partial class FlowViewModel : ObservableObject
             return;
         }
 
-        // 循环检测
-        if (EditModel.Id != 0)
+        // 寰幆妫€娴?        if (EditModel.Id != 0)
         {
             var cycleNodes = FlowNodes.Where(n => n.NodeType == "SubFlow").ToList();
             foreach (var node in cycleNodes)
@@ -243,7 +333,7 @@ public partial class FlowViewModel : ObservableObject
         {
             if (EditModel.Id == 0)
             {
-                // 创建新工作流
+                // 鍒涘缓鏂板伐浣滄祦
                 var entity = new FlowEntity
                 {
                     Name = EditModel.Name.Trim(),
@@ -288,7 +378,6 @@ public partial class FlowViewModel : ObservableObject
             }
             else
             {
-                // 编辑现有工作流
                 var entity = await _dbContext.Flows
                     .Include(f => f.ModuleRelations)
                     .Include(f => f.SubFlowReferences)
@@ -305,8 +394,7 @@ public partial class FlowViewModel : ObservableObject
                 entity.ContinueOnFailure = EditModel.ContinueOnFailure;
                 entity.IsReusable = EditModel.IsReusable;
 
-                // 清除旧关联
-                _dbContext.FlowModuleRelations.RemoveRange(entity.ModuleRelations);
+                // 娓呴櫎鏃у叧鑱?                _dbContext.FlowModuleRelations.RemoveRange(entity.ModuleRelations);
                 entity.ModuleRelations.Clear();
                 _dbContext.FlowSubFlowReferences.RemoveRange(entity.SubFlowReferences);
                 entity.SubFlowReferences.Clear();
@@ -393,7 +481,7 @@ public partial class FlowViewModel : ObservableObject
         }
     }
 
-    // --- 节点编排 ---
+    // --- 鑺傜偣缂栨帓 ---
 
     [RelayCommand]
     private void AddModuleNode()
@@ -473,7 +561,7 @@ public partial class FlowViewModel : ObservableObject
         }
     }
 
-    // --- 循环检测 ---
+    // --- 寰幆妫€娴?---
 
     private async Task<bool> HasCircularReferenceAsync(long flowId, long subFlowId, HashSet<long> visited)
     {
@@ -495,10 +583,218 @@ public partial class FlowViewModel : ObservableObject
 
         return false;
     }
+
+    [RelayCommand]
+    private void RefreshResourceReservations()
+    {
+        if (_workflowScheduler is null) return;
+        var s = _workflowScheduler.GetSnapshot();
+        SchedulerMetrics = $"并发 {s.RunningWorkItems}/{s.MaxConcurrency}，队列 {s.QueuedWorkItems}，平均等待 {s.AverageQueueWait.TotalMilliseconds:F0} ms";
+        if (_resourceReservationManager is not null)
+        {
+            var m = _resourceReservationManager.GetMetrics();
+            ResourceQueueMetrics = $"资源等待 {m.WaitingReservations}/{m.QueueCapacity}，持有 {m.GrantedReservations}，继承 {m.InheritedPriorityReservations}，最长等待 {m.OldestWaitingDuration.TotalSeconds:F1}s";
+            ResourceReservations = new ObservableCollection<ResourceReservationDisplayModel>(
+                _resourceReservationManager.GetSnapshot().OrderBy(x => x.IsGranted).ThenByDescending(x => x.EffectivePriority)
+                .Select(x => new ResourceReservationDisplayModel
+                {
+                    WorkflowRunId = x.WorkflowRunId, NodeRunId = x.NodeRunId, ReservationId = x.ReservationId,
+                    Status = x.IsGranted ? "持有中" : "等待中", IsGranted = x.IsGranted,
+                    Resources = string.Join(", ", x.Requirements.Select(r => r.ResourceId)),
+                    Waiting = x.IsGranted ? "-" : x.WaitingDuration.ToString(@"mm\:ss"),
+                    Deadline = x.DeadlineUtc?.ToLocalTime().ToString("HH:mm:ss") ?? "-",
+                    Priority = $"{x.BasePriority} +{x.AgingPriorityBoost} +{x.InheritedPriorityBoost} -> {x.EffectivePriority}",
+                    BlockedBy = x.BlockingReservationIds.Count == 0 ? "-" : string.Join(", ", x.BlockingReservationIds.Select(id => id.ToString("N")[..8]))
+                }));
+        }
+        if (_schedulingEventLog is not null)
+        {
+            SchedulingEvents = new ObservableCollection<SchedulingEventDisplayModel>(
+                _schedulingEventLog.GetRecentEvents(100).Select(e => new SchedulingEventDisplayModel
+                {
+                    Time = e.TimestampUtc.ToLocalTime().ToString("HH:mm:ss.fff"), Kind = e.Kind.ToString(),
+                    Source = e.Source, WorkflowRun = e.WorkflowRunId is Guid g ? g.ToString("N")[..8] : "-", Message = e.Message
+                }));
+        }
+    }
+
+    [RelayCommand] private void UpdateWaitingReservationPriority()
+    {
+        if (SelectedResourceReservation is null || SelectedResourceReservation.IsGranted || _resourceReservationManager is null) return;
+        _resourceReservationManager.TryUpdateWaitingPriority(SelectedResourceReservation.WorkflowRunId, SelectedResourceReservation.NodeRunId, WaitingReservationPriority);
+        RefreshResourceReservations();
+    }
+    [RelayCommand] private void CancelWaitingReservation()
+    {
+        if (SelectedResourceReservation is null || SelectedResourceReservation.IsGranted || _resourceReservationManager is null) return;
+        _resourceReservationManager.TryCancelWaitingReservation(SelectedResourceReservation.ReservationId);
+        SelectedResourceReservation = null; RefreshResourceReservations();
+    }
+
+    // --- Tab management ---
+    [RelayCommand] private void OpenTab(FlowEntity? f) { if (f is null) return; if (OpenTabs.Any(t => t.FlowId == f.Id)) { SelectedTab = OpenTabs.First(t => t.FlowId == f.Id); return; } var tab = new WorkflowTabItem { TabId = Guid.NewGuid(), FlowId = f.Id, Title = f.Name, EditModel = new FlowEditModel() }; OpenTabs.Add(tab); SelectedTab = tab; LoadTabContent(tab, f); }
+    [RelayCommand] private void CloseTab(WorkflowTabItem? t) { if (t is null) return; OpenTabs.Remove(t); if (SelectedTab == t) SelectedTab = OpenTabs.LastOrDefault(); }
+    [RelayCommand] private void AddNewTab() { var tab = new WorkflowTabItem { TabId = Guid.NewGuid(), Title = "New Workflow", EditModel = new FlowEditModel() }; OpenTabs.Add(tab); SelectedTab = tab; IsEditing = true; }
+
+    partial void OnSelectedTabChanged(WorkflowTabItem? value)
+    {
+        if (value is null) return;
+        EditModel = value.EditModel;
+        GraphNodes = value.Nodes;
+        GraphEdges = new ObservableCollection<GraphEdgeEditModel>((value.Edges ?? new()).Select(e => new GraphEdgeEditModel { FromNodeId = e.FromNodeId, ToNodeId = e.ToNodeId, RouteKey = e.RouteKey, IsDefault = e.IsDefault }));
+        IsEditing = true;
+    }
+
+    private void LoadTabContent(WorkflowTabItem tab, FlowEntity flow)
+    {
+        tab.Title = flow.Name;
+        tab.EditModel = new FlowEditModel { Id = flow.Id, Name = flow.Name, Alias = flow.Alias, Note = flow.Note, Tags = flow.Tags, ExecutionMode = flow.ExecutionMode, TimeoutMs = flow.TimeoutMs, ResourceWaitTimeoutMs = flow.ResourceWaitTimeoutMs > 0 ? flow.ResourceWaitTimeoutMs : 30000, MaxGraphNodeVisits = flow.MaxGraphNodeVisits > 0 ? flow.MaxGraphNodeVisits : 1000, DefinitionVersion = flow.DefinitionVersion, RecoveryPolicy = flow.RecoveryPolicy ?? "NotRecoverable", ContinueOnFailure = flow.ContinueOnFailure, IsReusable = flow.IsReusable };
+        tab.Nodes.Clear(); tab.Edges?.Clear();
+        foreach (var n in flow.GraphNodes.OrderBy(n => n.Id))
+            tab.Nodes.Add(new GraphNodeEditModel { NodeId = n.NodeId, Name = n.Name, NodeType = n.NodeType, ModuleId = n.ModuleId, SubFlowId = n.SubFlowId, RouteKeyVariable = n.RouteKeyVariable, JoinMode = n.JoinMode ?? "WaitAll", MaxVisits = n.MaxVisits, InvocationPolicy = n.SubFlowInvocationPolicy ?? "Reentrant", X = n.X, Y = n.Y });
+        var byDbId = new Dictionary<long, GraphNodeEditModel>();
+        var dbNodes = flow.GraphNodes.ToList();
+        for (int i = 0; i < dbNodes.Count && i < tab.Nodes.Count; i++) byDbId[dbNodes[i].Id] = tab.Nodes[i];
+        foreach (var e in flow.GraphEdges)
+        {
+            if (byDbId.TryGetValue(e.FromNodeId, out var fn) && byDbId.TryGetValue(e.ToNodeId, out var tn) && tab.Edges is not null)
+            {
+                var re = new GraphEdgeRenderModel { FromNodeId = fn.NodeId, ToNodeId = tn.NodeId, RouteKey = e.RouteKey ?? "Success", IsDefault = e.IsDefault };
+                re.UpdateLine(fn.X + fn.Width / 2, fn.Y + fn.Height, tn.X + tn.Width / 2, tn.Y);
+                tab.Edges.Add(re);
+            }
+        }
+    }
+
+    [RelayCommand] private async Task SaveTabAsync()
+    {
+        if (SelectedTab?.EditModel is null || string.IsNullOrWhiteSpace(SelectedTab.EditModel.Name)) { StatusMessage = "Name required"; return; }
+        var m = SelectedTab.EditModel; IsLoading = true;
+        try
+        {
+            FlowEntity entity;
+            if (m.Id == 0) { entity = new FlowEntity { Name = m.Name.Trim(), Alias = m.Alias, Note = m.Note, Tags = m.Tags, ExecutionMode = m.ExecutionMode, TimeoutMs = m.TimeoutMs, ResourceWaitTimeoutMs = m.ResourceWaitTimeoutMs, MaxGraphNodeVisits = m.MaxGraphNodeVisits, DefinitionVersion = 1, RecoveryPolicy = m.RecoveryPolicy, ContinueOnFailure = m.ContinueOnFailure, IsReusable = m.IsReusable }; _dbContext.Flows.Add(entity); await _dbContext.SaveChangesAsync(); SelectedTab.FlowId = entity.Id; }
+            else { entity = await _dbContext.Flows.Include(f => f.GraphNodes).Include(f => f.GraphEdges).FirstAsync(f => f.Id == m.Id); entity.Name = m.Name.Trim(); entity.Alias = m.Alias; entity.Note = m.Note; entity.Tags = m.Tags; entity.ExecutionMode = m.ExecutionMode; entity.TimeoutMs = m.TimeoutMs; entity.ResourceWaitTimeoutMs = m.ResourceWaitTimeoutMs; entity.MaxGraphNodeVisits = m.MaxGraphNodeVisits; entity.DefinitionVersion = Math.Max(1, entity.DefinitionVersion + 1); entity.RecoveryPolicy = m.RecoveryPolicy; entity.ContinueOnFailure = m.ContinueOnFailure; entity.IsReusable = m.IsReusable; _dbContext.FlowGraphEdges.RemoveRange(entity.GraphEdges); _dbContext.FlowGraphNodes.RemoveRange(entity.GraphNodes); entity.GraphEdges.Clear(); entity.GraphNodes.Clear(); }
+            foreach (var n in SelectedTab.Nodes)
+                entity.GraphNodes.Add(new FlowGraphNode { NodeId = n.NodeId, NodeType = n.NodeType, Name = n.Name, ModuleId = n.ModuleId, SubFlowId = n.SubFlowId, RouteKeyVariable = n.RouteKeyVariable, JoinMode = n.JoinMode, MaxVisits = n.MaxVisits, SubFlowInvocationPolicy = n.InvocationPolicy, X = n.X, Y = n.Y });
+            await _dbContext.SaveChangesAsync();
+            var persisted = entity.GraphNodes.ToDictionary(n => n.NodeId, n => n.Id);
+            foreach (var e in SelectedTab.Edges ?? new())
+                if (persisted.TryGetValue(e.FromNodeId, out var fid) && persisted.TryGetValue(e.ToNodeId, out var tid))
+                    entity.GraphEdges.Add(new FlowGraphEdge { FromNodeId = fid, ToNodeId = tid, RouteKey = e.RouteKey, IsDefault = e.IsDefault });
+            await _dbContext.SaveChangesAsync();
+            SelectedTab.Title = entity.Name; SelectedTab.IsDirty = false; SelectedTab.NotifyHeaderChanged();
+            StatusMessage = $"Saved: {entity.Name}"; await LoadFlowsAsync();
+        }
+        catch (Exception ex) { StatusMessage = $"Save failed: {ex.Message}"; }
+        finally { IsLoading = false; }
+    }
+
+    // --- Graph node commands ---
+    private void AddNodeToTab(string type, string name, long? modId = null, long? subId = null, string joinMode = "WaitAll")
+    {
+        if (SelectedTab is null) { AddNewTab(); if (SelectedTab is null) return; }
+        var n = new GraphNodeEditModel { NodeType = type, Name = name, ModuleId = modId, SubFlowId = subId, JoinMode = joinMode, InvocationPolicy = "Reentrant", X = 50 + SelectedTab.Nodes.Count * 200, Y = 50 + (SelectedTab.Nodes.Count % 3) * 100 };
+        SelectedTab.Nodes.Add(n); SelectedTab.NotifyDirty();
+    }
+    [RelayCommand] private void AddGraphStart() => AddNodeToTab("Start", "Start");
+    [RelayCommand] private void AddGraphEnd() => AddNodeToTab("End", "End");
+    [RelayCommand] private void AddGraphSwitch() => AddNodeToTab("Switch", "Switch");
+    [RelayCommand] private void AddGraphFork() => AddNodeToTab("Fork", "Fork");
+    [RelayCommand] private void AddGraphJoin() => AddNodeToTab("Join", "Join (WaitAll)");
+    [RelayCommand] private void AddGraphWaitAnyJoin() => AddNodeToTab("Join", "Join (WaitAny)", joinMode: "WaitAny");
+    [RelayCommand] private void AddGraphModule() { if (SelectedModuleToAdd is not null) AddNodeToTab("Module", SelectedModuleToAdd.Name, modId: SelectedModuleToAdd.Id); }
+    [RelayCommand] private void AddGraphSubFlow() { if (SelectedSubFlowToAdd is not null) AddNodeToTab("SubFlow", SelectedSubFlowToAdd.Name, subId: SelectedSubFlowToAdd.Id); }
+    [RelayCommand] private void RemoveGraphNode(GraphNodeEditModel? n)
+    {
+        if (n is null || SelectedTab is null) return;
+        var es = (SelectedTab.Edges ?? new()).Where(e => e.FromNodeId == n.NodeId || e.ToNodeId == n.NodeId).ToList();
+        foreach (var e in es) SelectedTab.Edges?.Remove(e);
+        SelectedTab.Nodes.Remove(n); SelectedTab.NotifyDirty();
+    }
+    [RelayCommand] private void AddEdgeToTab(object? c)
+    {
+        if (c is ValueTuple<Guid, Guid, string> conn && SelectedTab is not null)
+        {
+            var fn = SelectedTab.Nodes.FirstOrDefault(n => n.NodeId == conn.Item1);
+            var tn = SelectedTab.Nodes.FirstOrDefault(n => n.NodeId == conn.Item2);
+            if (fn is null || tn is null || conn.Item1 == conn.Item2) return;
+            if ((SelectedTab.Edges ?? new()).Any(e => e.FromNodeId == conn.Item1 && e.ToNodeId == conn.Item2 && e.RouteKey == conn.Item3)) return;
+            var re = new GraphEdgeRenderModel { FromNodeId = conn.Item1, ToNodeId = conn.Item2, RouteKey = conn.Item3 };
+            re.UpdateLine(fn.X + fn.Width / 2, fn.Y + fn.Height, tn.X + tn.Width / 2, tn.Y);
+            SelectedTab.Edges?.Add(re); SelectedTab.NotifyDirty();
+        }
+    }
+    [RelayCommand] private void RemoveEdgeFromTab(object? e) { if (e is GraphEdgeRenderModel re && SelectedTab is not null) { SelectedTab.Edges?.Remove(re); SelectedTab.NotifyDirty(); } }
+    [RelayCommand] private void ToggleConnectionMode() => IsConnectionMode = !IsConnectionMode;
+    [RelayCommand] private void AutoLayoutNodes()
+    {
+        if (SelectedTab is null) return;
+        var inDeg = new Dictionary<Guid, int>(); foreach (var n in SelectedTab.Nodes) inDeg[n.NodeId] = 0;
+        foreach (var e in SelectedTab.Edges ?? new()) if (inDeg.ContainsKey(e.ToNodeId)) inDeg[e.ToNodeId]++;
+        var layers = new Dictionary<Guid, int>(); var q = new Queue<Guid>();
+        foreach (var kv in inDeg) if (kv.Value == 0) { q.Enqueue(kv.Key); layers[kv.Key] = 0; }
+        while (q.Count > 0) { var cur = q.Dequeue(); var layer = layers.GetValueOrDefault(cur, 0); foreach (var e in (SelectedTab.Edges ?? new()).Where(e => e.FromNodeId == cur)) { layers[e.ToNodeId] = Math.Max(layers.GetValueOrDefault(e.ToNodeId, 0), layer + 1); q.Enqueue(e.ToNodeId); } }
+        var pos = new Dictionary<int, int>();
+        foreach (var n in SelectedTab.Nodes) { var l = layers.GetValueOrDefault(n.NodeId, 0); n.X = 60 + l * 200; var idx = pos.GetValueOrDefault(l, 0); n.Y = 40 + idx * 100; pos[l] = idx + 1; }
+        foreach (var e in SelectedTab.Edges ?? new()) { var fn = SelectedTab.Nodes.FirstOrDefault(n => n.NodeId == e.FromNodeId); var tn = SelectedTab.Nodes.FirstOrDefault(n => n.NodeId == e.ToNodeId); if (fn is not null && tn is not null) e.UpdateLine(fn.X + fn.Width / 2, fn.Y + fn.Height, tn.X + tn.Width / 2, tn.Y); }
+    }
+    [RelayCommand] private void ClearExecutionHighlights() { ExecutedNodeIds.Clear(); ExecutedEdgeKeys.Clear(); foreach (var t in OpenTabs) { foreach (var n in t.Nodes) n.IsExecuted = false; foreach (var e in t.Edges ?? new()) e.IsExecuted = false; } }
+
+    // --- Parameters ---
+    [RelayCommand] private void AddInputParameter() => InputParameters.Add(new FlowParameterEditModel());
+    [RelayCommand] private void AddOutputParameter() => OutputParameters.Add(new FlowParameterEditModel { IsRequired = false });
+    [RelayCommand] private void RemoveInputParameter(FlowParameterEditModel? p) { if (p is not null) InputParameters.Remove(p); }
+    [RelayCommand] private void RemoveOutputParameter(FlowParameterEditModel? p) { if (p is not null) OutputParameters.Remove(p); }
+
+    // --- Flow resource ---
+    [RelayCommand] private void AddFlowResourceReservation() { if (SelectedFlowResourceHardware is not null && !FlowResourceReservations.Any(r => r.HardwareInstanceId == SelectedFlowResourceHardware.Id)) FlowResourceReservations.Add(new FlowResourceReservationEditModel { HardwareInstanceId = SelectedFlowResourceHardware.Id, Name = SelectedFlowResourceHardware.Name }); SelectedFlowResourceHardware = null; }
+    [RelayCommand] private void RemoveFlowResourceReservation(FlowResourceReservationEditModel? r) { if (r is not null) FlowResourceReservations.Remove(r); }
+
+    // --- Export / Import ---
+    [RelayCommand] private async Task ExportFlowAsync(FlowEntity? f)
+    {
+        if (f is null) return;
+        var full = await _dbContext.Flows.Include(x => x.GraphNodes).Include(x => x.GraphEdges).Include(x => x.Parameters).Include(x => x.ResourceReservations).AsNoTracking().FirstOrDefaultAsync(x => x.Id == f.Id);
+        if (full is null) return;
+        var json = JsonSerializer.Serialize(full, new JsonSerializerOptions { WriteIndented = true, ReferenceHandler = ReferenceHandler.IgnoreCycles });
+        var path = Path.Combine(Environment.CurrentDirectory, SanitizeFileName(full.Name) + "_workflow.json");
+        await File.WriteAllTextAsync(path, json); StatusMessage = $"Exported to {path}";
+    }
+    [RelayCommand] private async Task ExportAllFlowsAsync()
+    {
+        var all = await _dbContext.Flows.AsNoTracking().ToListAsync(); if (all.Count == 0) return;
+        var path = Path.Combine(Environment.CurrentDirectory, $"all_workflows_{DateTime.Now:yyyyMMdd_HHmmss}.json");
+        var json = JsonSerializer.Serialize(all, new JsonSerializerOptions { WriteIndented = true, ReferenceHandler = ReferenceHandler.IgnoreCycles });
+        await File.WriteAllTextAsync(path, json); StatusMessage = $"Exported {all.Count} workflows to {path}";
+    }
+    [RelayCommand] private async Task ImportFlowAsync()
+    {
+        var dlg = new OpenFileDialog { Filter = "JSON|*.json", Title = "Import Workflow" };
+        if (dlg.ShowDialog() != true) return;
+        var json = await File.ReadAllTextAsync(dlg.FileName);
+        var opts = new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.IgnoreCycles };
+        try
+        {
+            var flows = JsonSerializer.Deserialize<List<FlowEntity>>(json, opts);
+            if (flows is { Count: > 0 }) { foreach (var f in flows) { f.Id = 0; f.GraphNodes.ToList().ForEach(n => n.Id = 0); f.GraphEdges.ToList().ForEach(e => e.Id = 0); _dbContext.Flows.Add(f); } await _dbContext.SaveChangesAsync(); StatusMessage = $"Imported {flows.Count} workflows."; await LoadFlowsAsync(); return; }
+        }
+        catch { }
+        try
+        {
+            var single = JsonSerializer.Deserialize<FlowEntity>(json, opts);
+            if (single is not null) { single.Id = 0; single.GraphNodes.ToList().ForEach(n => n.Id = 0); single.GraphEdges.ToList().ForEach(e => e.Id = 0); _dbContext.Flows.Add(single); await _dbContext.SaveChangesAsync(); StatusMessage = $"Imported: {single.Name}"; await LoadFlowsAsync(); }
+        }
+        catch (Exception ex) { StatusMessage = $"Import failed: {ex.Message}"; }
+    }
+
+    // --- Helpers ---
+    private static string SanitizeFileName(string name) => string.Join("_", name.Split(Path.GetInvalidFileNameChars()));
+    private static List<FlowSubFlowParameterBinding> ToParameterBindings(FlowNodeEditModel node) => new();
 }
 
 /// <summary>
-/// 工作流编辑模型
+/// Workflow Edit Model
 /// </summary>
 public partial class FlowEditModel : ObservableObject
 {
@@ -529,34 +825,118 @@ public partial class FlowEditModel : ObservableObject
     private int? _timeoutMs;
 
     [ObservableProperty]
+    private int _resourceWaitTimeoutMs = 30000;
+
+    [ObservableProperty]
+    private int _maxGraphNodeVisits = 1000;
+
+    [ObservableProperty]
+    private int _definitionVersion = 1;
+
+    [ObservableProperty]
+    private string _recoveryPolicy = "NotRecoverable";
+
+    [ObservableProperty]
     private bool _continueOnFailure = false;
 
     [ObservableProperty]
     private bool _isReusable = true;
 }
-
-/// <summary>
-/// 工作流节点编辑模型（统一表示模块或子流节点）
-/// </summary>
 public partial class FlowNodeEditModel : ObservableObject
 {
     public long Id { get; set; }
+    [ObservableProperty] private int _orderIndex;
+    [ObservableProperty] private string _name = string.Empty;
+    [ObservableProperty] private string _nodeType = "Module";
+    [ObservableProperty] private long _referenceId;
+    [ObservableProperty] private string? _executionMode;
+    [ObservableProperty] private string? _condition;
+    [ObservableProperty] private string? _inputBindings;
+    [ObservableProperty] private string? _outputBindings;
+    [ObservableProperty] private string _invocationPolicy = "Reentrant";
+}
 
-    [ObservableProperty]
-    private int _orderIndex;
+public partial class FlowParameterEditModel : ObservableObject
+{
+    [ObservableProperty] private string _name = string.Empty;
+    [ObservableProperty] private string _parameterType = "String";
+    [ObservableProperty] private bool _isRequired;
+    [ObservableProperty] private string? _defaultValueJson;
+    [ObservableProperty] private string? _description;
+}
 
-    [ObservableProperty]
-    private string _name = string.Empty;
+public sealed class ResourceReservationDisplayModel
+{
+    public Guid ReservationId { get; init; }
+    public Guid WorkflowRunId { get; init; }
+    public Guid NodeRunId { get; init; }
+    public string Status { get; init; } = string.Empty;
+    public bool IsGranted { get; init; }
+    public string Resources { get; init; } = string.Empty;
+    public string Waiting { get; init; } = string.Empty;
+    public string Deadline { get; init; } = string.Empty;
+    public string Priority { get; init; } = string.Empty;
+    public string BlockedBy { get; init; } = string.Empty;
+    public string Description { get; init; } = string.Empty;
+}
 
-    [ObservableProperty]
-    private string _nodeType = "Module"; // "Module" or "SubFlow"
+public sealed class SchedulingEventDisplayModel
+{
+    public string Time { get; init; } = string.Empty;
+    public string Kind { get; init; } = string.Empty;
+    public string Source { get; init; } = string.Empty;
+    public string WorkflowRun { get; init; } = string.Empty;
+    public string Message { get; init; } = string.Empty;
+}
 
-    [ObservableProperty]
-    private long _referenceId;
+public partial class FlowResourceReservationEditModel : ObservableObject
+{
+    public long HardwareInstanceId { get; set; }
+    [ObservableProperty] private string _name = string.Empty;
+    [ObservableProperty] private string _accessMode = "Exclusive";
+    [ObservableProperty] private int _priority;
+}
 
-    [ObservableProperty]
-    private string? _executionMode;
+public partial class GraphNodeEditModel : ObservableObject
+{
+    public Guid NodeId { get; set; } = Guid.NewGuid();
+    [ObservableProperty] private string _name = string.Empty;
+    [ObservableProperty] private string _nodeType = "Module";
+    [ObservableProperty] private long? _moduleId;
+    [ObservableProperty] private long? _subFlowId;
+    [ObservableProperty] private string? _routeKeyVariable;
+    [ObservableProperty] private string _joinMode = "WaitAll";
+    [ObservableProperty] private int? _maxVisits;
+    [ObservableProperty] private string _invocationPolicy = "Reentrant";
+    [ObservableProperty] private string? _inputBindings;
+    [ObservableProperty] private string? _outputBindings;
+    [ObservableProperty] private double _x;
+    [ObservableProperty] private double _y;
+    [ObservableProperty] private double _width = 120;
+    [ObservableProperty] private double _height = 44;
+    [ObservableProperty] private bool _isExecuted;
+}
 
-    [ObservableProperty]
-    private string? _condition;
+public partial class GraphEdgeEditModel : ObservableObject
+{
+    public Guid FromNodeId { get; set; }
+    public Guid ToNodeId { get; set; }
+    [ObservableProperty] private string? _routeKey;
+    [ObservableProperty] private bool _isDefault;
+    [ObservableProperty] private int _priority;
+}
+
+public class WorkflowTabItem : ObservableObject
+{
+    public Guid TabId { get; set; } = Guid.NewGuid();
+    public long FlowId { get; set; }
+    private string _title = string.Empty;
+    public string Title { get => _title; set => SetProperty(ref _title, value); }
+    public ObservableCollection<GraphNodeEditModel> Nodes { get; set; } = new();
+    public ObservableCollection<GraphEdgeRenderModel>? Edges { get; set; } = new();
+    public FlowEditModel? EditModel { get; set; }
+    public bool IsDirty { get; set; }
+    public string DisplayHeader => $"{(IsDirty ? "*" : "")}{Title}{(FlowId > 0 ? "" : " [unsaved]")}";
+    public void NotifyDirty() { IsDirty = true; NotifyHeaderChanged(); }
+    public void NotifyHeaderChanged() => OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(DisplayHeader)));
 }

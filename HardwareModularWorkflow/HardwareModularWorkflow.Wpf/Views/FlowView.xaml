@@ -5,382 +5,556 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:vm="clr-namespace:HardwareModularWorkflow.Wpf.ViewModels"
+             xmlns:controls="clr-namespace:HardwareModularWorkflow.Wpf.Controls"
              mc:Ignorable="d"
-             d:DesignHeight="600" d:DesignWidth="900"
-    xmlns:r="clr-namespace:HardwareModularWorkflow.Lang;assembly=HardwareModularWorkflow.Lang">
+             d:DesignHeight="700" d:DesignWidth="1200"
+             xmlns:r="clr-namespace:HardwareModularWorkflow.Lang;assembly=HardwareModularWorkflow.Lang">
 
-    <Grid Margin="16">
+    <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- 标题 -->
-        <TextBlock Grid.Row="0"
-                   Text="{I18N {x:Static r:LangKeys.PageTitle_WorkflowEditor}}"
-                   Style="{StaticResource PageTitleStyle}" />
-
         <!-- 工具栏 -->
-        <Grid Grid.Row="1" Margin="0,0,0,16">
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-
             <TextBox Grid.Column="0"
                      Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                      materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_SearchWorkflows}}"
                      materialDesign:TextFieldAssist.HasLeadingIcon="True"
                      materialDesign:TextFieldAssist.LeadingIcon="Magnify"
-                     Width="300"
-                     HorizontalAlignment="Left" />
-
+                     Width="280" HorizontalAlignment="Left" />
             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                <Button Command="{Binding LoadFlowsCommand}"
-                        Style="{StaticResource ActionButtonStyle}">
+                <Button Command="{Binding LoadFlowsCommand}" Style="{StaticResource ActionButtonStyle}">
                     <StackPanel Orientation="Horizontal">
-                        <materialDesign:PackIcon Kind="Refresh" Margin="0,0,4,0" />
-                        <TextBlock Text="{I18N {x:Static r:LangKeys.Button_Refresh}}" />
+                        <materialDesign:PackIcon Kind="Refresh" Margin="0,0,4,0"/>
+                        <TextBlock Text="{I18N {x:Static r:LangKeys.Button_Refresh}}"/>
                     </StackPanel>
                 </Button>
-                <Button Command="{Binding AddFlowCommand}"
-                        Style="{StaticResource ActionButtonStyle}">
+                <Button Command="{Binding RefreshResourceReservationsCommand}"
+                        ToolTip="刷新资源等待状态" Style="{StaticResource ActionButtonStyle}">
                     <StackPanel Orientation="Horizontal">
-                        <materialDesign:PackIcon Kind="Plus" Margin="0,0,4,0" />
-                        <TextBlock Text="{I18N {x:Static r:LangKeys.Button_AddWorkflow}}" />
+                        <materialDesign:PackIcon Kind="Memory" Margin="0,0,4,0"/>
+                        <TextBlock Text="资源状态"/>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding AddFlowCommand}" Style="{StaticResource ActionButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Plus" Margin="0,0,4,0"/>
+                        <TextBlock Text="{I18N {x:Static r:LangKeys.Button_AddWorkflow}}"/>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding ImportFlowCommand}" Style="{StaticResource ActionButtonStyle}"
+                        ToolTip="从 JSON 文件导入工作流">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="FileImport" Margin="0,0,4,0"/>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding ExportAllFlowsCommand}" Style="{StaticResource ActionButtonStyle}"
+                        ToolTip="导出全部工作流到 JSON">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="FileExport" Margin="0,0,4,0"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
+
+            <!-- 模块面板（可折叠） -->
+            <Expander Grid.Row="1" Grid.ColumnSpan="2" Header="模块面板 (点击添加节点到画布)" IsExpanded="False" Margin="0,4,0,0">
+                <Border Padding="8" Background="{DynamicResource MaterialDesignCardBackground}">
+                    <WrapPanel>
+                        <Button Content="Start" Command="{Binding AddGraphStartCommand}"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                Background="#E8F5E9" Margin="2" Padding="10,4"
+                                ToolTip="开始节点 - 工作流入口"/>
+                        <Button Content="End" Command="{Binding AddGraphEndCommand}"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                Background="#FFEBEE" Margin="2" Padding="10,4"
+                                ToolTip="结束节点 - 工作流出口"/>
+                        <Button Content="Switch" Command="{Binding AddGraphSwitchCommand}"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                Background="#FFF3E0" Margin="2" Padding="10,4"
+                                ToolTip="选择节点 - 根据RouteKey分支"/>
+                        <Button Content="Fork" Command="{Binding AddGraphForkCommand}"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                Background="#E0F2F1" Margin="2" Padding="10,4"
+                                ToolTip="分支节点 - 并行执行多个分支"/>
+                        <Button Content="Join" Command="{Binding AddGraphJoinCommand}"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                Background="#ECEFF1" Margin="2" Padding="10,4"
+                                ToolTip="汇聚节点 - 等待全部分支完成"/>
+                        <Button Content="Join (Any)" Command="{Binding AddGraphWaitAnyJoinCommand}"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                Background="#ECEFF1" Margin="2" Padding="10,4"
+                                ToolTip="汇聚节点 - 等待任意分支完成"/>
+                        <Separator Style="{StaticResource MaterialDesignSeparator}"/>
+                        <!-- 模块列表 -->
+                        <ItemsControl ItemsSource="{Binding AvailableModules}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.AddGraphModuleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                            Background="#E3F2FD" Margin="2" Padding="10,4"
+                                            ToolTip="{Binding Name}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <materialDesign:PackIcon Kind="ViewModule" Height="14" Width="14" Margin="0,0,4,0"/>
+                                            <TextBlock Text="{Binding Name}" MaxWidth="120" TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </WrapPanel>
+                </Border>
+            </Expander>
         </Grid>
 
-        <!-- 内容区域 -->
-        <Grid Grid.Row="2">
+        <!-- 主内容区域 -->
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="260" MinWidth="200"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <!-- 左侧：工作流列表 -->
-            <materialDesign:Card Grid.Column="0"
-                                 Style="{StaticResource CardContainerStyle}">
-                <DataGrid ItemsSource="{Binding FilteredFlows}"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          GridLinesVisibility="Horizontal"
-                          HeadersVisibility="Column"
-                          CanUserAddRows="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Name}}" Binding="{Binding Name}" Width="150" />
-                        <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Alias}}" Binding="{Binding Alias}" Width="100" />
-                        <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Mode}}" Binding="{Binding ExecutionMode}" Width="90" />
-                        <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Nodes}}" 
-                                            Binding="{Binding ModuleRelations.Count, StringFormat='{}{0} + '}">
-                            <!-- 复合列不好绑定，用只读 -->
-                        </DataGridTextColumn>
-                        <DataGridCheckBoxColumn Header="{I18N {x:Static r:LangKeys.Header_Reusable}}" Binding="{Binding IsReusable}" Width="80" />
-                        <DataGridCheckBoxColumn Header="{I18N {x:Static r:LangKeys.Header_ContinueOnFail}}" Binding="{Binding ContinueOnFailure}" Width="110" />
-                        <DataGridTemplateColumn Header="{I18N {x:Static r:LangKeys.Header_Actions}}" Width="*">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Button Command="{Binding DataContext.EditFlowCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                CommandParameter="{Binding}"
-                                                Style="{StaticResource MaterialDesignFlatButton}"
-                                                Padding="4">
-                                            <materialDesign:PackIcon Kind="Pencil" />
-                                        </Button>
-                                        <Button Command="{Binding DataContext.DeleteFlowCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                CommandParameter="{Binding}"
-                                                Style="{StaticResource MaterialDesignFlatButton}"
-                                                Padding="4"
-                                                Foreground="Red">
-                                            <materialDesign:PackIcon Kind="Delete" />
-                                        </Button>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
+            <materialDesign:Card Grid.Column="0" Padding="8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <DataGrid Grid.Row="0" ItemsSource="{Binding FilteredFlows}"
+                              AutoGenerateColumns="False" IsReadOnly="True"
+                              GridLinesVisibility="Horizontal" HeadersVisibility="Column"
+                              CanUserAddRows="False" MinHeight="200">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Name}}" Binding="{Binding Name}" Width="*"/>
+                            <DataGridTextColumn Header="模式" Binding="{Binding ExecutionMode}" Width="60"/>
+                            <DataGridTemplateColumn Header="" Width="70">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button Command="{Binding DataContext.EditFlowCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}"
+                                                    Style="{StaticResource MaterialDesignFlatButton}" Padding="2">
+                                                <materialDesign:PackIcon Kind="Pencil" Height="16" Width="16"/>
+                                            </Button>
+                                            <Button Command="{Binding DataContext.OpenTabCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}"
+                                                    Style="{StaticResource MaterialDesignFlatButton}" Padding="2"
+                                                    ToolTip="在新标签页打开">
+                                                <materialDesign:PackIcon Kind="OpenInNew" Height="16" Width="16"/>
+                                            </Button>
+                                            <Button Command="{Binding DataContext.DeleteFlowCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}"
+                                                    Style="{StaticResource MaterialDesignFlatButton}" Padding="2"
+                                                    Foreground="Red">
+                                                <materialDesign:PackIcon Kind="Delete" Height="16" Width="16"/>
+                                            </Button>
+                                            <Button Command="{Binding DataContext.ExportFlowCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}"
+                                                    Style="{StaticResource MaterialDesignFlatButton}" Padding="2"
+                                                    ToolTip="导出 JSON">
+                                                <materialDesign:PackIcon Kind="FileExport" Height="16" Width="16"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <!-- 资源状态（折叠面板） -->
+                    <Expander Grid.Row="1" Header="资源与调度" IsExpanded="False" Margin="0,6,0,0">
+                        <StackPanel>
+                            <TextBlock Text="{Binding SchedulerMetrics}" TextWrapping="Wrap" FontSize="11" Margin="0,0,0,4"/>
+                            <TextBlock Text="{Binding ResourceQueueMetrics}" TextWrapping="Wrap" FontSize="11"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,6,0,4">
+                                <TextBox Text="{Binding WaitingReservationPriority}" Width="70" FontSize="11"
+                                         materialDesign:HintAssist.Hint="优先级"/>
+                                <Button Command="{Binding UpdateWaitingReservationPriorityCommand}"
+                                        Content="提升" Style="{StaticResource MaterialDesignFlatButton}"
+                                        FontSize="11"/>
+                                <Button Command="{Binding CancelWaitingReservationCommand}"
+                                        Content="取消等待" Style="{StaticResource MaterialDesignFlatButton}"
+                                        FontSize="11"/>
+                            </StackPanel>
+                            <DataGrid ItemsSource="{Binding ResourceReservations}"
+                                      SelectedItem="{Binding SelectedResourceReservation}"
+                                      AutoGenerateColumns="False" IsReadOnly="True"
+                                      CanUserAddRows="False" MaxHeight="120" FontSize="10">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="状态" Binding="{Binding Status}" Width="50"/>
+                                    <DataGridTextColumn Header="资源" Binding="{Binding Resources}" Width="*"/>
+                                    <DataGridTextColumn Header="等待" Binding="{Binding Waiting}" Width="45"/>
+                                    <DataGridTextColumn Header="优先" Binding="{Binding Priority}" Width="100"/>
+                                    <DataGridTextColumn Header="阻塞者" Binding="{Binding BlockedBy}" Width="55"/>
+                                    <DataGridTextColumn Header="运行" Binding="{Binding WorkflowRunDisplayId}" Width="55"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Expander Header="调度日志" Margin="0,4,0,0" FontSize="11">
+                                <DataGrid ItemsSource="{Binding SchedulingEvents}"
+                                          AutoGenerateColumns="False" IsReadOnly="True"
+                                          CanUserAddRows="False" MaxHeight="100" FontSize="10">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="时间" Binding="{Binding Time}" Width="75"/>
+                                        <DataGridTextColumn Header="事件" Binding="{Binding Kind}" Width="100"/>
+                                        <DataGridTextColumn Header="说明" Binding="{Binding Message}" Width="*"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Expander>
+                        </StackPanel>
+                    </Expander>
+                </Grid>
             </materialDesign:Card>
 
-            <!-- 右侧：编辑面板 -->
-            <materialDesign:Card Grid.Column="1"
-                                 Width="460"
-                                 Margin="16,0,0,0"
-                                 Padding="16">
+            <!-- 中间：TabControl + Canvas -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- 无标签时显示提示 -->
+                <TextBlock Text="点击「编辑」或「+」创建工作流，在画布中编排节点与连线。"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Opacity="0.5" FontSize="14">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding OpenTabs.Count}" Value="0">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <TabControl ItemsSource="{Binding OpenTabs}"
+                            SelectedItem="{Binding SelectedTab}">
+                    <TabControl.Style>
+                        <Style TargetType="TabControl" BasedOn="{StaticResource MaterialDesignTabControl}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding OpenTabs.Count}" Value="0">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TabControl.Style>
+
+                    <TabControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:WorkflowTabItem}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding DisplayHeader}" VerticalAlignment="Center"/>
+                                <Button Command="{Binding DataContext.CloseTabCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"
+                                        Style="{StaticResource MaterialDesignFlatButton}"
+                                        Padding="2,0" Margin="6,0,0,0">
+                                    <materialDesign:PackIcon Kind="Close" Height="12" Width="12"/>
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </TabControl.ItemTemplate>
+
+                    <TabControl.ContentTemplate>
+                        <DataTemplate DataType="{x:Type vm:WorkflowTabItem}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Tab 内工具栏 -->
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="4">
+                                    <TextBlock VerticalAlignment="Center" Margin="0,0,8,0">
+                                        <Run Text="名称：" FontWeight="Bold"/>
+                                        <Run Text="{Binding EditModel.Name}" />
+                                    </TextBlock>
+                                    <TextBlock VerticalAlignment="Center" Margin="0,0,8,0">
+                                        <Run Text="模式：" FontWeight="Bold"/>
+                                        <Run Text="{Binding EditModel.ExecutionMode}" />
+                                    </TextBlock>
+                                    <Button Command="{Binding DataContext.AutoLayoutNodesCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            Content="自动布局" Style="{StaticResource MaterialDesignFlatButton}"
+                                            FontSize="11" VerticalAlignment="Center"/>
+                                    <Button Command="{Binding DataContext.ToggleConnectionModeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            Content="连线模式" Style="{StaticResource MaterialDesignFlatButton}"
+                                            FontSize="11" VerticalAlignment="Center"/>
+                                    <Button Command="{Binding DataContext.AddGraphStartCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            Content="+ Start" Style="{StaticResource MaterialDesignFlatButton}"
+                                            FontSize="11" VerticalAlignment="Center"/>
+                                    <Button Command="{Binding DataContext.AddGraphEndCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            Content="+ End" Style="{StaticResource MaterialDesignFlatButton}"
+                                            FontSize="11" VerticalAlignment="Center"/>
+                                    <Button Command="{Binding DataContext.AddGraphSwitchCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            Content="+ Switch" Style="{StaticResource MaterialDesignFlatButton}"
+                                            FontSize="11" VerticalAlignment="Center"/>
+                                    <Button Command="{Binding DataContext.AddGraphForkCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            Content="+ Fork" Style="{StaticResource MaterialDesignFlatButton}"
+                                            FontSize="11" VerticalAlignment="Center"/>
+                                    <Button Command="{Binding DataContext.AddGraphJoinCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            Content="+ Join" Style="{StaticResource MaterialDesignFlatButton}"
+                                            FontSize="11" VerticalAlignment="Center"/>
+                                    <Button Command="{Binding DataContext.AddGraphModuleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            Content="+ 模块" Style="{StaticResource MaterialDesignFlatButton}"
+                                            FontSize="11" VerticalAlignment="Center"/>
+                                    <Button Command="{Binding DataContext.AddGraphSubFlowCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            Content="+ 子流" Style="{StaticResource MaterialDesignFlatButton}"
+                                            FontSize="11" VerticalAlignment="Center"/>
+                                    <Button Command="{Binding DataContext.ClearExecutionHighlightsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            Content="清高亮" Style="{StaticResource MaterialDesignFlatButton}"
+                                            FontSize="11" VerticalAlignment="Center" ToolTip="清除运行路径高亮"/>
+                                    <Button Command="{Binding DataContext.SaveTabCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            Style="{StaticResource ActionButtonStyle}" FontSize="11"
+                                            Margin="8,0,0,0" VerticalAlignment="Center">
+                                        <StackPanel Orientation="Horizontal">
+                                            <materialDesign:PackIcon Kind="ContentSave" Height="14" Width="14" Margin="0,0,4,0"/>
+                                            <TextBlock Text="保存"/>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+
+                                <!-- 画布区域 -->
+                                <controls:WorkflowGraphEditorView Grid.Row="1"
+                                    Nodes="{Binding Nodes}"
+                                    Edges="{Binding Edges}"
+                                    SelectedNode="{Binding DataContext.SelectedGraphNode, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
+                                    ConnectionMode="{Binding DataContext.IsConnectionMode, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    Margin="0,4,0,0">
+                                    <controls:WorkflowGraphEditorView.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="连线模式"
+                                                      IsCheckable="True"
+                                                      IsChecked="{Binding DataContext.IsConnectionMode, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                                            <MenuItem Header="自动布局"
+                                                      Command="{Binding DataContext.AutoLayoutNodesCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                                            <Separator/>
+                                            <MenuItem Header="添加 Start"
+                                                      Command="{Binding DataContext.AddGraphStartCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                                            <MenuItem Header="添加 End"
+                                                      Command="{Binding DataContext.AddGraphEndCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                                            <MenuItem Header="添加 Switch"
+                                                      Command="{Binding DataContext.AddGraphSwitchCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                                            <MenuItem Header="添加 Fork"
+                                                      Command="{Binding DataContext.AddGraphForkCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                                            <MenuItem Header="添加 Join"
+                                                      Command="{Binding DataContext.AddGraphJoinCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                                            <MenuItem Header="添加模块"
+                                                      Command="{Binding DataContext.AddGraphModuleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                                            <MenuItem Header="添加子工作流"
+                                                      Command="{Binding DataContext.AddGraphSubFlowCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                                            <Separator/>
+                                            <MenuItem Header="清除高亮"
+                                                      Command="{Binding DataContext.ClearExecutionHighlightsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                                        </ContextMenu>
+                                    </controls:WorkflowGraphEditorView.ContextMenu>
+                                </controls:WorkflowGraphEditorView>
+                            </Grid>
+                        </DataTemplate>
+                    </TabControl.ContentTemplate>
+                </TabControl>
+            </Grid>
+
+            <!-- 右侧：编辑属性面板 -->
+            <materialDesign:Card Grid.Column="4" Width="420" Padding="12">
                 <materialDesign:Card.Style>
                     <Style TargetType="materialDesign:Card" BasedOn="{StaticResource CardContainerStyle}">
-                        <Setter Property="Visibility" Value="Visible" />
+                        <Setter Property="Visibility" Value="Visible"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsEditing}" Value="False">
-                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Setter Property="Visibility" Value="Collapsed"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </materialDesign:Card.Style>
 
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="工作流属性" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Margin="0,0,0,10"/>
 
-                    <TextBlock Grid.Row="0"
-                               Text="{Binding EditPanelTitle}"
-                               Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-                               Margin="0,0,0,12" />
+                        <!-- 基本信息 -->
+                        <TextBox Text="{Binding SelectedTab.EditModel.Name}"
+                                 materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_WorkflowNameRequired}}"
+                                 Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding SelectedTab.EditModel.Alias}"
+                                 materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_Alias}}"
+                                 Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding SelectedTab.EditModel.Note}"
+                                 materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_Note}}"
+                                 Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding SelectedTab.EditModel.Tags}"
+                                 materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_TagsCommaSeparated}}"
+                                 Margin="0,0,0,5"/>
 
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                        <StackPanel>
-                            <!-- 工作流基本信息 -->
-                            <TextBox Text="{Binding EditModel.Name}"
-                                     materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_WorkflowNameRequired}}"
-                                     Margin="0,0,0,6" />
+                        <Grid Margin="0,0,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="6"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0" Text="{Binding SelectedTab.EditModel.ExecutionMode}"
+                                      materialDesign:HintAssist.Hint="执行模式" IsEditable="False">
+                                <ComboBoxItem Content="Sequential"/>
+                                <ComboBoxItem Content="Parallel"/>
+                            </ComboBox>
+                            <TextBox Grid.Column="2" Text="{Binding SelectedTab.EditModel.TimeoutMs}"
+                                     materialDesign:HintAssist.Hint="超时(ms)"/>
+                        </Grid>
 
-                            <TextBox Text="{Binding EditModel.Alias}"
-                                     materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_Alias}}"
-                                     Margin="0,0,0,6" />
+                        <TextBox Text="{Binding SelectedTab.EditModel.ResourceWaitTimeoutMs}"
+                                 materialDesign:HintAssist.Hint="资源等待超时(ms)" Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding SelectedTab.EditModel.MaxGraphNodeVisits}"
+                                 materialDesign:HintAssist.Hint="图节点访问上限" Margin="0,0,0,5"/>
 
-                            <TextBox Text="{Binding EditModel.Note}"
-                                     materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_Note}}"
-                                     Margin="0,0,0,6" />
+                        <ComboBox Text="{Binding SelectedTab.EditModel.RecoveryPolicy}" IsEditable="False"
+                                  materialDesign:HintAssist.Hint="恢复策略" Margin="0,0,0,8">
+                            <ComboBoxItem Content="NotRecoverable"/>
+                            <ComboBoxItem Content="RestartFromBeginning"/>
+                        </ComboBox>
 
-                            <TextBox Text="{Binding EditModel.Tags}"
-                                     materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_TagsCommaSeparated}}"
-                                     Margin="0,0,0,6" />
-
-                            <Grid Margin="0,0,0,6">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="8"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <ComboBox Grid.Column="0"
-                                          Text="{Binding EditModel.ExecutionMode}"
-                                          materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_ExecutionMode}}"
-                                          IsEditable="False">
-                                    <ComboBoxItem Content="{I18N {x:Static r:LangKeys.ComboBoxItem_Sequential}}" />
-                                    <ComboBoxItem Content="{I18N {x:Static r:LangKeys.ComboBoxItem_Parallel}}" />
-                                </ComboBox>
-                                <TextBox Grid.Column="2"
-                                         Text="{Binding EditModel.TimeoutMs}"
-                                         materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_TimeoutMs}}" />
-                            </Grid>
-
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                                <CheckBox IsChecked="{Binding EditModel.IsReusable}"
-                                          Content="{I18N {x:Static r:LangKeys.CheckBox_Reusable}}"
-                                          Margin="0,0,12,0" />
-                                <CheckBox IsChecked="{Binding EditModel.ContinueOnFailure}"
-                                          Content="{I18N {x:Static r:LangKeys.CheckBox_ContinueOnFailure}}" />
-                            </StackPanel>
-
-                            <!-- 循环检测警告 -->
-                            <TextBlock Text="{Binding CycleWarning}"
-                                       Foreground="Red"
-                                       FontWeight="Bold"
-                                       Margin="0,0,0,8"
-                                       TextWrapping="Wrap">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Visible" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding CycleWarning}" Value="">
-                                                <Setter Property="Visibility" Value="Collapsed" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-
-                            <!-- 分隔线 -->
-                            <Separator Margin="0,0,0,12" />
-
-                            <!-- 节点列表标题 -->
-                            <TextBlock Text="{I18N {x:Static r:LangKeys.Section_FlowNodes}}"
-                                       Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
-                                       Margin="0,0,0,8" />
-
-                            <!-- 添加模块/子流 -->
-                            <Grid Margin="0,0,0,8">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <ComboBox Grid.Row="0" Grid.Column="0"
-                                          ItemsSource="{Binding AvailableModules}"
-                                          SelectedItem="{Binding SelectedModuleToAdd}"
-                                          materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_SelectModuleToAdd}}"
-                                          Margin="0,0,8,0">
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock FontWeight="Bold">
-                                                    <TextBlock.Text>
-                                                        <I18N Key="{x:Static r:LangKeys.Format_ModuleItem}">
-                                                            <Binding Path="Name" />
-                                                            <Binding Path="Definition.Type" />
-                                                            <Binding Path="Steps.Count" />
-                                                        </I18N>
-                                                    </TextBlock.Text>
-                                                </TextBlock>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
-                                <Button Grid.Row="0" Grid.Column="1"
-                                        Command="{Binding AddModuleNodeCommand}"
-                                        Style="{StaticResource MaterialDesignFlatButton}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <materialDesign:PackIcon Kind="Plus" />
-                                        <TextBlock Text="{I18N {x:Static r:LangKeys.Button_AddModule}}" Margin="4,0,0,0" />
-                                    </StackPanel>
-                                </Button>
-
-                                <ComboBox Grid.Row="1" Grid.Column="0"
-                                          ItemsSource="{Binding AvailableSubFlows}"
-                                          SelectedItem="{Binding SelectedSubFlowToAdd}"
-                                          materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_SelectSubFlowToAdd}}"
-                                          Margin="0,4,8,0">
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock FontWeight="Bold">
-                                                    <TextBlock.Text>
-                                                        <I18N Key="{x:Static r:LangKeys.Format_NameWithDetail}">
-                                                            <Binding Path="Name" />
-                                                            <Binding Path="ExecutionMode" />
-                                                        </I18N>
-                                                    </TextBlock.Text>
-                                                </TextBlock>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
-                                <Button Grid.Row="1" Grid.Column="1"
-                                        Command="{Binding AddSubFlowNodeCommand}"
-                                        Style="{StaticResource MaterialDesignFlatButton}"
-                                        Margin="0,4,0,0">
-                                    <StackPanel Orientation="Horizontal">
-                                        <materialDesign:PackIcon Kind="Plus" />
-                                        <TextBlock Text="{I18N {x:Static r:LangKeys.Button_AddSubFlow}}" Margin="4,0,0,0" />
-                                    </StackPanel>
-                                </Button>
-                            </Grid>
-
-                            <!-- 节点操作按钮 -->
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                                <Button Command="{Binding RemoveNodeCommand}"
-                                        CommandParameter="{Binding SelectedFlowNode}"
-                                        Style="{StaticResource MaterialDesignFlatButton}"
-                                        Padding="4">
-                                    <StackPanel Orientation="Horizontal">
-                                        <materialDesign:PackIcon Kind="Minus" />
-                                        <TextBlock Text="{I18N {x:Static r:LangKeys.Button_Remove}}" Margin="4,0,0,0" />
-                                    </StackPanel>
-                                </Button>
-                                <Button Command="{Binding MoveNodeUpCommand}"
-                                        CommandParameter="{Binding SelectedFlowNode}"
-                                        Style="{StaticResource MaterialDesignFlatButton}"
-                                        Padding="4">
-                                    <materialDesign:PackIcon Kind="ArrowUp" />
-                                </Button>
-                                <Button Command="{Binding MoveNodeDownCommand}"
-                                        CommandParameter="{Binding SelectedFlowNode}"
-                                        Style="{StaticResource MaterialDesignFlatButton}"
-                                        Padding="4">
-                                    <materialDesign:PackIcon Kind="ArrowDown" />
-                                </Button>
-                            </StackPanel>
-
-                            <!-- 节点列表 -->
-                            <DataGrid ItemsSource="{Binding FlowNodes}"
-                                      SelectedItem="{Binding SelectedFlowNode}"
-                                      AutoGenerateColumns="False"
-                                      IsReadOnly="True"
-                                      GridLinesVisibility="Horizontal"
-                                      HeadersVisibility="Column"
-                                      CanUserAddRows="False"
-                                      MaxHeight="160"
-                                      Margin="0,0,0,12">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Number}}" Binding="{Binding OrderIndex}" Width="30" />
-                                    <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Name}}" Binding="{Binding Name}" Width="120" />
-                                    <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Type}}" Binding="{Binding NodeType}" Width="70" />
-                                    <DataGridTextColumn Header="{I18N {x:Static r:LangKeys.Header_Mode}}" Binding="{Binding ExecutionMode}" Width="70" />
-                                </DataGrid.Columns>
-                            </DataGrid>
-
-                            <!-- 选中节点编辑表单 -->
-                            <Grid Margin="0,0,0,12">
-                                <Grid.Style>
-                                    <Style TargetType="Grid">
-                                        <Setter Property="Visibility" Value="Visible" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding SelectedFlowNode}" Value="{x:Null}">
-                                                <Setter Property="Visibility" Value="Collapsed" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Grid.Style>
-
-                                <materialDesign:Card Padding="12" UniformCornerRadius="4">
-                                    <StackPanel>
-                                        <TextBlock Text="{I18N {x:Static r:LangKeys.Section_EditSelectedNode}}"
-                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                                                   FontWeight="Bold"
-                                                   Margin="0,0,0,8" />
-
-                                        <TextBlock Text="{Binding SelectedFlowNode.Name, StringFormat='Name: {0}'}"
-                                                   Margin="0,0,0,6" />
-
-                                        <TextBlock Text="{Binding SelectedFlowNode.NodeType, StringFormat='Type: {0}'}"
-                                                   Margin="0,0,0,6" />
-
-                                        <ComboBox Text="{Binding SelectedFlowNode.ExecutionMode}"
-                                                  materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_ExecutionMode}}"
-                                                  IsEditable="False"
-                                                  Margin="0,0,0,6">
-                                            <ComboBoxItem Content="{I18N {x:Static r:LangKeys.ComboBoxItem_Sequential}}" />
-                                            <ComboBoxItem Content="{I18N {x:Static r:LangKeys.ComboBoxItem_Parallel}}" />
-                                        </ComboBox>
-
-                                        <TextBox Text="{Binding SelectedFlowNode.Condition}"
-                                                 materialDesign:HintAssist.Hint="{I18N {x:Static r:LangKeys.Hint_Condition}}"
-                                                 Margin="0,0,0,6" />
-                                    </StackPanel>
-                                </materialDesign:Card>
-                            </Grid>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <CheckBox IsChecked="{Binding SelectedTab.EditModel.IsReusable}"
+                                      Content="可复用" Margin="0,0,8,0"/>
+                            <CheckBox IsChecked="{Binding SelectedTab.EditModel.ContinueOnFailure}"
+                                      Content="失败继续"/>
                         </StackPanel>
-                    </ScrollViewer>
 
-                    <!-- 保存/取消 -->
-                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Command="{Binding SaveFlowCommand}"
-                                Style="{StaticResource ActionButtonStyle}">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="ContentSave" Margin="0,0,4,0" />
-                                <TextBlock Text="{I18N {x:Static r:LangKeys.Button_Save}}" />
+                        <Separator Margin="0,0,0,10"/>
+
+                        <!-- 模块/子流选择 -->
+                        <TextBlock Text="添加模块 / 子工作流" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" Margin="0,0,0,6"/>
+                        <ComboBox ItemsSource="{Binding AvailableModules}"
+                                  SelectedItem="{Binding SelectedModuleToAdd}"
+                                  materialDesign:HintAssist.Hint="选择模块" Margin="0,0,0,4"
+                                  IsSynchronizedWithCurrentItem="True"/>
+                        <ComboBox ItemsSource="{Binding AvailableSubFlows}"
+                                  SelectedItem="{Binding SelectedSubFlowToAdd}"
+                                  materialDesign:HintAssist.Hint="选择子工作流" Margin="0,0,0,8"
+                                  IsSynchronizedWithCurrentItem="True"/>
+
+                        <Separator Margin="0,0,0,10"/>
+
+                        <!-- 节点列表 -->
+                        <TextBlock Text="{Binding SelectedTab.Nodes.Count, StringFormat='图节点 ({0} 个)'}"
+                                   Style="{StaticResource MaterialDesignSubtitle2TextBlock}" Margin="0,0,0,6"/>
+                        <DataGrid ItemsSource="{Binding SelectedTab.Nodes}"
+                                  SelectedItem="{Binding SelectedGraphNode}"
+                                  AutoGenerateColumns="False" IsReadOnly="True"
+                                  CanUserAddRows="False" MaxHeight="140" Margin="0,0,0,8">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="名称" Binding="{Binding Name}" Width="*"/>
+                                <DataGridTextColumn Header="类型" Binding="{Binding NodeType}" Width="60"/>
+                                <DataGridTextColumn Header="Switch" Binding="{Binding RouteKeyVariable}" Width="70"/>
+                                <DataGridTextColumn Header="Join" Binding="{Binding JoinMode}" Width="55"/>
+                                <DataGridTemplateColumn Header="" Width="40">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Command="{Binding DataContext.RemoveGraphNodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}" Content="删" FontSize="10"
+                                                    Style="{StaticResource MaterialDesignFlatButton}" Padding="2"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <!-- 选中节点属性 -->
+                        <materialDesign:Card Padding="10" UniformCornerRadius="4" Margin="0,0,0,8"
+                                             Visibility="{Binding SelectedGraphNode, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding SelectedGraphNode.NodeType, StringFormat='编辑: {0} 节点'}"
+                                           FontWeight="Bold" Margin="0,0,0,6"/>
+                                <TextBox Text="{Binding SelectedGraphNode.RouteKeyVariable}"
+                                         materialDesign:HintAssist.Hint="Switch 路由键变量" Margin="0,0,0,4"
+                                         Visibility="{Binding SelectedGraphNode.NodeType, FallbackValue=Collapsed}"/>
+                                <ComboBox Text="{Binding SelectedGraphNode.JoinMode}" IsEditable="False"
+                                          materialDesign:HintAssist.Hint="Join 模式" Margin="0,0,0,4"
+                                          xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                    <ComboBoxItem Content="WaitAll"/>
+                                    <ComboBoxItem Content="WaitAny"/>
+                                </ComboBox>
+                                <TextBox Text="{Binding SelectedGraphNode.MaxVisits}"
+                                         materialDesign:HintAssist.Hint="最大访问次数" Margin="0,0,0,4"/>
+                                <ComboBox Text="{Binding SelectedGraphNode.InvocationPolicy}" IsEditable="False"
+                                          materialDesign:HintAssist.Hint="子流调用策略" Margin="0,0,0,4">
+                                    <ComboBoxItem Content="Reentrant"/>
+                                    <ComboBoxItem Content="Exclusive"/>
+                                    <ComboBoxItem Content="JoinRunning"/>
+                                    <ComboBoxItem Content="RejectIfRunning"/>
+                                </ComboBox>
+                                <TextBox Text="{Binding SelectedGraphNode.InputBindings}"
+                                         materialDesign:HintAssist.Hint="输入: child=parent; ..." Margin="0,0,0,4"
+                                         TextWrapping="Wrap" AcceptsReturn="True" MinLines="1"/>
+                                <TextBox Text="{Binding SelectedGraphNode.OutputBindings}"
+                                         materialDesign:HintAssist.Hint="输出: child=父变量; ..." Margin="0,0,0,4"
+                                         TextWrapping="Wrap" AcceptsReturn="True" MinLines="1"/>
                             </StackPanel>
-                        </Button>
-                        <Button Command="{Binding CancelEditCommand}"
-                                Style="{StaticResource ActionButtonStyle}">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Cancel" Margin="0,0,4,0" />
-                                <TextBlock Text="{I18N {x:Static r:LangKeys.Button_Cancel}}" />
-                            </StackPanel>
-                        </Button>
+                        </materialDesign:Card>
+
+                        <!-- 边列表 -->
+                        <TextBlock Text="{Binding SelectedTab.Edges.Count, StringFormat='连线 ({0} 条)'}"
+                                   Style="{StaticResource MaterialDesignSubtitle2TextBlock}" Margin="0,0,0,6"/>
+                        <DataGrid ItemsSource="{Binding SelectedTab.Edges}" AutoGenerateColumns="False"
+                                  IsReadOnly="True" CanUserAddRows="False" MaxHeight="100" Margin="0,0,0,8">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="来源" Binding="{Binding FromNodeId}" Width="*"/>
+                                <DataGridTextColumn Header="目标" Binding="{Binding ToNodeId}" Width="*"/>
+                                <DataGridTextColumn Header="RouteKey" Binding="{Binding RouteKey}" Width="70"/>
+                                <DataGridTemplateColumn Header="" Width="40">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Command="{Binding DataContext.RemoveEdgeFromTabCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}" Content="删" FontSize="10"
+                                                    Style="{StaticResource MaterialDesignFlatButton}" Padding="2"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <Separator Margin="0,6,0,6"/>
+
+                        <!-- 保存 -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,6,0,0">
+                            <Button Command="{Binding SaveTabCommand}" Style="{StaticResource ActionButtonStyle}">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="ContentSave" Margin="0,0,4,0"/>
+                                    <TextBlock Text="保存工作流"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Command="{Binding CancelEditCommand}" Style="{StaticResource ActionButtonStyle}">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="Cancel" Margin="0,0,4,0"/>
+                                    <TextBlock Text="取消"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
                     </StackPanel>
-                </Grid>
+                </ScrollViewer>
             </materialDesign:Card>
         </Grid>
+
+        <!-- 底部状态栏 -->
+        <StatusBar Grid.Row="2" Margin="0,6,0,0">
+            <TextBlock Text="{Binding StatusMessage}"/>
+            <Separator/>
+            <TextBlock Text="{Binding SelectedTab.EditModel.Name, StringFormat='当前: {0}', FallbackValue='就绪'}"/>
+        </StatusBar>
     </Grid>
 </UserControl>

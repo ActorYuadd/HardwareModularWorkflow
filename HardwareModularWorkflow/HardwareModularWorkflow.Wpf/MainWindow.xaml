@@ -55,6 +55,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- 顶部工具栏 -->
@@ -78,6 +79,11 @@
                 <Button Command="{Binding OpenSettingsCommand}" ToolTip="{I18N {x:Static r:LangKeys.Tooltip_Settings}}">
                     <materialDesign:PackIcon Kind="Cog" Width="20" Height="20" />
                 </Button>
+                <Separator />
+                <ToggleButton Name="BottomPanelToggle" IsChecked="True"
+                              ToolTip="显示/隐藏底部面板">
+                    <materialDesign:PackIcon Kind="Console" Width="20" Height="20" />
+                </ToggleButton>
             </ToolBar>
         </ToolBarTray>
 
@@ -137,5 +143,43 @@
                 </StatusBar>
             </Grid>
         </Grid>
+
+        <!-- 底部面板 -->
+        <Border Grid.Row="2" Background="{DynamicResource MaterialDesignCardBackground}"
+                Visibility="{Binding ElementName=BottomPanelToggle, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Expander Header="系统控制台" IsExpanded="True" Margin="8,4" Padding="4">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <DataGrid Grid.Column="0" ItemsSource="{Binding LiveEvents}"
+                              AutoGenerateColumns="False" IsReadOnly="True"
+                              CanUserAddRows="False" MaxHeight="140"
+                              HeadersVisibility="Column" GridLinesVisibility="Horizontal">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="时间" Binding="{Binding Time}" Width="75"/>
+                            <DataGridTextColumn Header="类型" Binding="{Binding Type}" Width="80"/>
+                            <DataGridTextColumn Header="工作流" Binding="{Binding FlowName}" Width="100"/>
+                            <DataGridTextColumn Header="消息" Binding="{Binding Message}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="{Binding RuntimeMetrics}" FontSize="11" Margin="0,0,0,4"/>
+                        <ProgressBar Grid.Row="1" Value="{Binding RuntimeSlotsUsed}"
+                                     Maximum="{Binding RuntimeSlotsMax}" Height="14" Margin="0,0,0,4"/>
+                        <TextBlock Grid.Row="2" Text="{Binding ResourceMetrics}" FontSize="11" Margin="0,0,0,4"/>
+                        <TextBlock Grid.Row="3" Text="{Binding SystemStatus}" FontSize="11" FontWeight="Bold"/>
+                    </Grid>
+                </Grid>
+            </Expander>
+        </Border>
     </Grid>
 </Window>

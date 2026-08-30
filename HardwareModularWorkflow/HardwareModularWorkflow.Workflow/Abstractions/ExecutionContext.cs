@@ -10,10 +10,23 @@ namespace HardwareModularWorkflow.Workflow.Abstractions;
 public sealed class ExecutionContext
 {
     /// <summary>本次执行的全局唯一 ID</summary>
-    public Guid ExecutionId { get; } = Guid.NewGuid();
+    public Guid ExecutionId { get; init; } = Guid.NewGuid();
 
     /// <summary>父上下文（根执行为 null）</summary>
     public ExecutionContext? ParentContext { get; init; }
+
+    /// <summary>本次调用的输入快照；调用开始后不可修改。</summary>
+    public IReadOnlyDictionary<string, object?> Inputs { get; init; } =
+        new Dictionary<string, object?>(StringComparer.Ordinal);
+
+    /// <summary>本次调用内部变量。不同工作流运行实例之间绝不共享。</summary>
+    public Dictionary<string, object?> Variables { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>本次调用向调用方公开的输出。只能通过参数绑定跨工作流边界传递。</summary>
+    public Dictionary<string, object?> Outputs { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>当前流程已在工作流级别预留的资源；模块执行时不重复申请。</summary>
+    public HashSet<string> FlowReservedResourceIds { get; } = new(StringComparer.Ordinal);
 
     /// <summary>当前执行的流 ID（与数据库 FlowEntity.Id 对应）</summary>
     public long CurrentFlowId { get; set; }
@@ -54,14 +67,50 @@ public sealed class ExecutionContext
     /// <summary>检查是否已访问过该流（循环检测）</summary>
     public bool HasVisitedFlow(long flowId) => ExecutionPath.Contains(flowId);
 
+    /// <summary>读取当前调用的输入参数。</summary>
+    public bool TryGetInput(string name, out object? value) => Inputs.TryGetValue(name, out value);
+
+    /// <summary>写入当前调用的内部变量。</summary>
+    public void SetVariable(string name, object? value) => Variables[name] = value;
+
+    /// <summary>写入当前调用对外公开的输出参数。</summary>
+    public void SetOutput(string name, object? value) => Outputs[name] = value;
+
     /// <summary>创建子上下文（用于嵌套流执行）</summary>
-    public ExecutionContext CreateChildContext(long flowId)
+    public ExecutionContext CreateChildContext(long flowId, IReadOnlyDictionary<string, object?>? inputs = null)
     {
-        return new ExecutionContext
+        var child = new ExecutionContext
         {
             ParentContext = this,
             CurrentFlowId = flowId,
-            ExecutionPath = new List<long>(ExecutionPath) { flowId }
+            ExecutionPath = new List<long>(ExecutionPath) { flowId },
+            Inputs = inputs ?? new Dictionary<string, object?>(StringComparer.Ordinal)
         };
+        child.FlowReservedResourceIds.UnionWith(FlowReservedResourceIds);
+        return child;
+    }
+
+    /// <summary>
+    /// 创建图工作流 Fork 分支专用上下文。分支继承进入 Fork 时的可见状态，
+    /// 但 Variables、Outputs 和执行结果均为私有副本，Join 不会隐式合并并发写入。
+    /// </summary>
+    public ExecutionContext CreateForkBranchContext()
+    {
+        var branch = new ExecutionContext
+        {
+            ParentContext = this,
+            CurrentFlowId = CurrentFlowId,
+            CurrentModuleId = CurrentModuleId,
+            ExecutionPath = new List<long>(ExecutionPath),
+            Inputs = Inputs
+        };
+
+        foreach (var (name, value) in Variables)
+            branch.Variables[name] = value;
+        foreach (var (name, value) in Outputs)
+            branch.Outputs[name] = value;
+        branch.FlowReservedResourceIds.UnionWith(FlowReservedResourceIds);
+
+        return branch;
     }
 }

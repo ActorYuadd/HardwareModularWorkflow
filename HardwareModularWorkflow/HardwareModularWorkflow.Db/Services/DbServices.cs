@@ -302,6 +302,8 @@ public class ModuleService
             .Include(m => m.Steps)
                 .ThenInclude(s => s.HardwareInstance)
                     .ThenInclude(h => h!.Definition)
+            .Include(m => m.ResourceReservations)
+                .ThenInclude(reservation => reservation.HardwareInstance)
             .OrderBy(m => m.Name)
             .ToListAsync(ct);
     }
@@ -313,6 +315,8 @@ public class ModuleService
             .Include(m => m.Steps)
                 .ThenInclude(s => s.HardwareInstance)
                     .ThenInclude(h => h!.Definition)
+            .Include(m => m.ResourceReservations)
+                .ThenInclude(reservation => reservation.HardwareInstance)
             .FirstOrDefaultAsync(m => m.Id == id, ct);
     }
 
@@ -364,6 +368,14 @@ public class FlowService
                 .ThenInclude(r => r.Module)
             .Include(f => f.SubFlowReferences)
                 .ThenInclude(r => r.SubFlow)
+            .Include(f => f.SubFlowReferences)
+                .ThenInclude(r => r.ParameterBindings)
+            .Include(f => f.ResourceReservations)
+                .ThenInclude(r => r.HardwareInstance)
+            .Include(f => f.Parameters)
+            .Include(f => f.GraphNodes)
+                .ThenInclude(node => node.ParameterBindings)
+            .Include(f => f.GraphEdges)
             .OrderBy(f => f.Name)
             .ToListAsync(ct);
     }
@@ -377,8 +389,31 @@ public class FlowService
                     .ThenInclude(m => m!.Steps)
                         .ThenInclude(s => s.HardwareInstance)
                             .ThenInclude(h => h!.Definition)
+            .Include(f => f.ModuleRelations)
+                .ThenInclude(r => r.Module)
+                    .ThenInclude(m => m!.ResourceReservations)
+                        .ThenInclude(reservation => reservation.HardwareInstance)
+            .Include(f => f.GraphNodes)
+                .ThenInclude(node => node.Module)
+                    .ThenInclude(module => module!.Steps)
+                        .ThenInclude(step => step.HardwareInstance)
+                            .ThenInclude(hardware => hardware!.Definition)
+            .Include(f => f.GraphNodes)
+                .ThenInclude(node => node.Module)
+                    .ThenInclude(module => module!.ResourceReservations)
+                        .ThenInclude(reservation => reservation.HardwareInstance)
+            .Include(f => f.GraphNodes)
+                .ThenInclude(node => node.SubFlow)
+            .Include(f => f.GraphNodes)
+                .ThenInclude(node => node.ParameterBindings)
+            .Include(f => f.GraphEdges)
+            .Include(f => f.ResourceReservations)
+                .ThenInclude(r => r.HardwareInstance)
+            .Include(f => f.Parameters)
             .Include(f => f.SubFlowReferences)
                 .ThenInclude(r => r.SubFlow)
+            .Include(f => f.SubFlowReferences)
+                .ThenInclude(r => r.ParameterBindings)
             .FirstOrDefaultAsync(f => f.Id == id, ct);
     }
 

@@ -5,6 +5,8 @@ using HardwareModularWorkflow.Workflow.Abstractions;
 using HardwareModularWorkflow.Workflow.Events;
 using HardwareModularWorkflow.Workflow.Engine;
 using HardwareModularWorkflow.Workflow.Models;
+using HardwareModularWorkflow.Workflow.Resources;
+using HardwareModularWorkflow.Workflow.Scheduling;
 using HardwareModularWorkflow.Core.Orchestration;
 using HardwareModularWorkflow.Core.Events;
 using HardwareModularWorkflow.Core.Services;
@@ -50,6 +52,7 @@ public static class ServiceRegistration
         services.AddScoped<ModuleService>();
         services.AddScoped<FlowService>();
         services.AddScoped<ExecutionLogService>();
+        services.AddScoped<WorkflowRunSnapshotService>();
 
         // --- 3. 控制器层 ---
         services.AddSingleton<VendorLibraryLoader>(provider =>
@@ -72,6 +75,10 @@ public static class ServiceRegistration
         services.AddSingleton<CoreStepExecutor>();
         services.AddSingleton<IStepExecutor>(provider => provider.GetRequiredService<CoreStepExecutor>());
         services.AddSingleton<IFlowResolver, FlowResolver>();
+        services.AddSingleton<ISchedulingEventLog, InMemorySchedulingEventLog>();
+        services.AddSingleton<IResourceReservationManager>(provider =>
+            new ResourceReservationManager(
+                eventLog: provider.GetRequiredService<ISchedulingEventLog>()));
         services.AddSingleton<WorkflowRuntimeService>();
 
         // --- 5. 事件总线 ---
@@ -82,7 +89,15 @@ public static class ServiceRegistration
         {
             var stepExecutor = provider.GetRequiredService<IStepExecutor>();
             var flowResolver = provider.GetService<IFlowResolver>();
-            var scheduler = new WorkflowScheduler(stepExecutor, flowResolver, maxConcurrency: 50, channelCapacity: 1000);
+            var resourceReservationManager = provider.GetRequiredService<IResourceReservationManager>();
+            var eventLog = provider.GetRequiredService<ISchedulingEventLog>();
+            var scheduler = new WorkflowScheduler(
+                stepExecutor,
+                flowResolver,
+                maxConcurrency: 50,
+                channelCapacity: 1000,
+                resourceReservationManager,
+                eventLog);
             return scheduler;
         });
 

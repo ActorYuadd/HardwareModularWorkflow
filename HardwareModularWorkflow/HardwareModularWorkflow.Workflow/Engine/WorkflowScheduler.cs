@@ -1,8 +1,10 @@
-using System.Threading.Channels;
+using System.Text.Json;
 using HardwareModularWorkflow.Workflow.Abstractions;
 using HardwareModularWorkflow.Workflow.Models;
 using HardwareModularWorkflow.Workflow.Engine;
 using HardwareModularWorkflow.Workflow.Results;
+using HardwareModularWorkflow.Workflow.Resources;
+using HardwareModularWorkflow.Workflow.Scheduling;
 using ExecutionContext = HardwareModularWorkflow.Workflow.Abstractions.ExecutionContext;
 
 namespace HardwareModularWorkflow.Workflow.Engine;
@@ -11,10 +13,10 @@ namespace HardwareModularWorkflow.Workflow.Engine;
 /// 工作流调度引擎：全局任务调度器
 /// 
 /// 核心设计：
-/// - Channel&lt;WorkItem&gt; 作为待执行队列
+/// - 有界优先级队列保存待执行工作项，基础优先级相同时按 FIFO，等待老化防止饥饿
 /// - SemaphoreSlim(50) 限制全局并发数
 /// - CancellationToken 控制整个调度器生命周期
-/// - 嵌套流通过队列调度（非递归），避免栈溢出
+/// - 嵌套流复用父运行实例的调度槽，避免父项占槽等待子项造成饥饿
 /// - 不做嵌套层级限制，运行时通过 ExecutionPath 检测循环
 /// </summary>
 public sealed class WorkflowScheduler : IAsyncDisposable
@@ -24,11 +26,29 @@ public sealed class WorkflowScheduler : IAsyncDisposable
     private readonly IFlowResolver? _flowResolver;
     private readonly ModuleExecutor _moduleExecutor;
     private readonly FlowExecutor _flowExecutor;
-    private readonly Channel<WorkItem> _workQueue;
+    private readonly object _queueSync = new();
+    private readonly List<QueuedWorkItem> _workQueue = new();
+    private readonly SemaphoreSlim _workAvailable = new(0);
+    private readonly SemaphoreSlim? _queueSlots;
     private readonly SemaphoreSlim _concurrencyLimit;
     private readonly CancellationTokenSource _globalCts = new();
     private readonly List<Task> _runningTasks = new();
     private readonly SemaphoreSlim _taskListLock = new(1, 1);
+    private readonly object _subFlowInvocationSync = new();
+    private readonly Dictionary<long, List<ActiveSubFlowInvocation>> _activeSubFlows = new();
+    private readonly Dictionary<long, SemaphoreSlim> _exclusiveSubFlowGates = new();
+    private readonly ISchedulingEventLog _eventLog;
+    private readonly int _schedulerAgingStepSeconds;
+    private readonly int _schedulerMaxAgingBoost;
+    private long _enqueueSequence;
+    private long _acceptedWorkItems;
+    private long _startedWorkItems;
+    private long _completedWorkItems;
+    private long _failedWorkItems;
+    private long _cancelledWorkItems;
+    private long _totalQueueWaitTicks;
+    private Task? _dispatcherTask;
+    private bool _acceptingWork = true;
     private bool _isDisposed;
     private bool _isStarted;
 
@@ -57,15 +77,34 @@ public sealed class WorkflowScheduler : IAsyncDisposable
     /// <summary>队列中待执行的工作项数（有界队列时可用）</summary>
     public int QueuedWorkItems
     {
-        get
+        get { lock (_queueSync) return _workQueue.Count; }
+    }
+
+    /// <summary>返回当前并发槽、队列长度、吞吐及等待时长指标。</summary>
+    public WorkflowSchedulerSnapshot GetSnapshot()
+    {
+        TimeSpan oldestQueueWait;
+        lock (_queueSync)
         {
-            if (_workQueue.Reader.TryPeek(out _))
-            {
-                // Channel 没有公开的 Count 属性，只能通过 BoundedChannel 获取
-                // 对于无界队列返回 0（未知）
-            }
-            return 0;
+            oldestQueueWait = _workQueue.Count == 0
+                ? TimeSpan.Zero
+                : DateTime.UtcNow - _workQueue.Min(item => item.EnqueuedAtUtc);
         }
+
+        var started = Interlocked.Read(ref _startedWorkItems);
+        var totalWaitTicks = Interlocked.Read(ref _totalQueueWaitTicks);
+        return new WorkflowSchedulerSnapshot(
+            _maxConcurrency,
+            CurrentRunningTasks,
+            QueuedWorkItems,
+            CurrentAvailableSlots,
+            Interlocked.Read(ref _acceptedWorkItems),
+            started,
+            Interlocked.Read(ref _completedWorkItems),
+            Interlocked.Read(ref _failedWorkItems),
+            Interlocked.Read(ref _cancelledWorkItems),
+            started == 0 ? TimeSpan.Zero : TimeSpan.FromTicks(totalWaitTicks / started),
+            oldestQueueWait);
     }
 
     #endregion
@@ -77,21 +116,30 @@ public sealed class WorkflowScheduler : IAsyncDisposable
     /// <param name="flowResolver">流解析器（可选，用于子流解析）</param>
     /// <param name="maxConcurrency">最大并发工作项数（默认 50）</param>
     /// <param name="channelCapacity">队列容量（默认 1000，0 表示无界）</param>
-    public WorkflowScheduler(IStepExecutor stepExecutor, IFlowResolver? flowResolver = null, int maxConcurrency = 50, int channelCapacity = 1000)
+    public WorkflowScheduler(
+        IStepExecutor stepExecutor,
+        IFlowResolver? flowResolver = null,
+        int maxConcurrency = 50,
+        int channelCapacity = 1000,
+        IResourceReservationManager? resourceReservationManager = null,
+        ISchedulingEventLog? eventLog = null,
+        int schedulerAgingStepSeconds = 5,
+        int schedulerMaxAgingBoost = 20)
     {
+        if (maxConcurrency <= 0) throw new ArgumentOutOfRangeException(nameof(maxConcurrency));
+        if (schedulerAgingStepSeconds <= 0) throw new ArgumentOutOfRangeException(nameof(schedulerAgingStepSeconds));
+        if (schedulerMaxAgingBoost < 0) throw new ArgumentOutOfRangeException(nameof(schedulerMaxAgingBoost));
+
         _maxConcurrency = maxConcurrency;
         _stepExecutor = stepExecutor ?? throw new ArgumentNullException(nameof(stepExecutor));
         _flowResolver = flowResolver;
-        _moduleExecutor = new ModuleExecutor(stepExecutor);
-        _flowExecutor = new FlowExecutor(_moduleExecutor);
+        _moduleExecutor = new ModuleExecutor(stepExecutor, resourceReservationManager);
+        _flowExecutor = new FlowExecutor(_moduleExecutor, resourceReservationManager);
         _concurrencyLimit = new SemaphoreSlim(maxConcurrency, maxConcurrency);
-
-        _workQueue = channelCapacity > 0
-            ? Channel.CreateBounded<WorkItem>(new BoundedChannelOptions(channelCapacity)
-            {
-                FullMode = BoundedChannelFullMode.Wait
-            })
-            : Channel.CreateUnbounded<WorkItem>();
+        _queueSlots = channelCapacity > 0 ? new SemaphoreSlim(channelCapacity, channelCapacity) : null;
+        _eventLog = eventLog ?? NullSchedulingEventLog.Instance;
+        _schedulerAgingStepSeconds = schedulerAgingStepSeconds;
+        _schedulerMaxAgingBoost = schedulerMaxAgingBoost;
     }
 
     #region 启动与停止
@@ -104,37 +152,7 @@ public sealed class WorkflowScheduler : IAsyncDisposable
     {
         if (_isStarted) return;
         _isStarted = true;
-
-        // 启动后台调度循环（每个 WorkItem 作为一个独立 Task，通过 Semaphore 控制并发）
-        _ = Task.Run(async () =>
-        {
-            await foreach (var item in _workQueue.Reader.ReadAllAsync(_globalCts.Token))
-            {
-                // 等待获取并发槽位
-                await _concurrencyLimit.WaitAsync(_globalCts.Token);
-
-                // 启动执行 Task，完成后释放槽位
-                var task = ExecuteWorkItemAsync(item, _globalCts.Token)
-                    .ContinueWith(async _ =>
-                    {
-                        _concurrencyLimit.Release();
-                    }, TaskScheduler.Default)
-                    .Unwrap();
-
-                await _taskListLock.WaitAsync(_globalCts.Token);
-                try
-                {
-                    _runningTasks.Add(task);
-                }
-                finally
-                {
-                    _taskListLock.Release();
-                }
-
-                // 清理已完成的任务（避免内存泄漏）
-                _ = CleanupCompletedTasksAsync();
-            }
-        }, _globalCts.Token);
+        _dispatcherTask = Task.Run(DispatchLoopAsync);
     }
 
     /// <summary>
@@ -142,7 +160,10 @@ public sealed class WorkflowScheduler : IAsyncDisposable
     /// </summary>
     public void Stop()
     {
-        _workQueue.Writer.Complete();
+        lock (_queueSync)
+            _acceptingWork = false;
+        // 哨兵令牌使调度循环在队列清空后能够退出。
+        _workAvailable.Release();
     }
 
     /// <summary>
@@ -151,6 +172,7 @@ public sealed class WorkflowScheduler : IAsyncDisposable
     public void Cancel()
     {
         _globalCts.Cancel();
+        CancelQueuedWorkItems();
     }
 
     /// <summary>
@@ -159,6 +181,19 @@ public sealed class WorkflowScheduler : IAsyncDisposable
     public async Task ShutdownAsync(TimeSpan? timeout = null)
     {
         Stop();
+        if (_dispatcherTask is not null)
+        {
+            if (timeout.HasValue)
+            {
+                using var dispatcherTimeout = new CancellationTokenSource(timeout.Value);
+                try { await _dispatcherTask.WaitAsync(dispatcherTimeout.Token).ConfigureAwait(false); }
+                catch (OperationCanceledException) { }
+            }
+            else
+            {
+                await _dispatcherTask.ConfigureAwait(false);
+            }
+        }
         await WaitForAllAsync(timeout);
     }
 
@@ -206,22 +241,45 @@ public sealed class WorkflowScheduler : IAsyncDisposable
     /// 提交一个流执行请求
     /// </summary>
     /// <returns>执行结果 Task</returns>
-    public async Task<WorkItemResult> SubmitFlowAsync(Flow flow, CancellationToken ct = default)
+    public Task<WorkItemResult> SubmitFlowAsync(Flow flow, CancellationToken ct = default) =>
+        SubmitFlowAsync(flow, inputs: null, ct);
+
+    /// <summary>
+    /// 提交带输入参数的流执行请求。输入在写入队列前按工作流契约验证，
+    /// 并复制为本次运行独立的不可变快照。
+    /// </summary>
+    public async Task<WorkItemResult> SubmitFlowAsync(
+        Flow flow,
+        IReadOnlyDictionary<string, object?>? inputs,
+        CancellationToken ct = default) =>
+        await SubmitFlowAsync(flow, inputs, Guid.NewGuid(), ct);
+
+    /// <summary>使用调用方分配的运行标识提交工作流，便于持久化快照、日志和恢复记录使用同一 ID。</summary>
+    public async Task<WorkItemResult> SubmitFlowAsync(
+        Flow flow,
+        IReadOnlyDictionary<string, object?>? inputs,
+        Guid executionId,
+        CancellationToken ct = default)
     {
         if (_isDisposed) throw new ObjectDisposedException(nameof(WorkflowScheduler));
         if (!_isStarted) Start();
 
+        if (!FlowInputValidator.TryCreateInputSnapshot(flow, inputs, out var inputSnapshot, out var validationError))
+            return WorkItemResult.Failed(TimeSpan.Zero, validationError!);
+
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(_globalCts.Token, ct);
-        var tcs = new TaskCompletionSource<WorkItemResult>();
+        var tcs = new TaskCompletionSource<WorkItemResult>(TaskCreationOptions.RunContinuationsAsynchronously);
 
         var context = new ExecutionContext
         {
-            CurrentFlowId = flow.FlowId
+            ExecutionId = executionId,
+            CurrentFlowId = flow.FlowId,
+            Inputs = inputSnapshot
         };
         context.RecordFlowEntry(flow.FlowId);
 
         var workItem = WorkItem.CreateFlow(flow, context, tcs);
-        await _workQueue.Writer.WriteAsync(workItem, linkedCts.Token);
+        await EnqueueAsync(workItem, linkedCts.Token);
 
         return await tcs.Task;
     }
@@ -248,10 +306,10 @@ public sealed class WorkflowScheduler : IAsyncDisposable
         if (!_isStarted) Start();
 
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(_globalCts.Token, ct);
-        var tcs = new TaskCompletionSource<WorkItemResult>();
+        var tcs = new TaskCompletionSource<WorkItemResult>(TaskCreationOptions.RunContinuationsAsynchronously);
 
         var workItem = WorkItem.CreateModule(module, parentContext, tcs);
-        await _workQueue.Writer.WriteAsync(workItem, linkedCts.Token);
+        await EnqueueAsync(workItem, linkedCts.Token);
 
         return await tcs.Task;
     }
@@ -259,6 +317,160 @@ public sealed class WorkflowScheduler : IAsyncDisposable
     #endregion
 
     #region 执行 WorkItem
+
+    private async Task EnqueueAsync(WorkItem item, CancellationToken ct)
+    {
+        if (_queueSlots is not null)
+            await _queueSlots.WaitAsync(ct).ConfigureAwait(false);
+
+        var enqueued = false;
+        try
+        {
+            lock (_queueSync)
+            {
+                if (!_acceptingWork)
+                    throw new InvalidOperationException("Workflow scheduler is no longer accepting work items.");
+
+                _workQueue.Add(new QueuedWorkItem(
+                    item,
+                    DateTime.UtcNow,
+                    Interlocked.Increment(ref _enqueueSequence)));
+                enqueued = true;
+            }
+
+            Interlocked.Increment(ref _acceptedWorkItems);
+            RecordWorkItemEvent(item, SchedulingEventKind.WorkItemQueued,
+                $"Queued {item.Type} work item with base priority {item.BasePriority}.", item.BasePriority);
+            _workAvailable.Release();
+        }
+        finally
+        {
+            if (!enqueued)
+                _queueSlots?.Release();
+        }
+    }
+
+    private async Task DispatchLoopAsync()
+    {
+        try
+        {
+            while (true)
+            {
+                await _workAvailable.WaitAsync(_globalCts.Token).ConfigureAwait(false);
+
+                QueuedWorkItem? queuedItem;
+                int effectivePriority;
+                lock (_queueSync)
+                {
+                    if (_workQueue.Count == 0)
+                    {
+                        if (!_acceptingWork)
+                            return;
+                        continue;
+                    }
+                }
+
+                // 保留工作项在队列中直到真正获得并发槽；这样槽位释放时，后来到达的高优先级项仍可先执行。
+                await _concurrencyLimit.WaitAsync(_globalCts.Token).ConfigureAwait(false);
+                lock (_queueSync)
+                {
+                    if (_workQueue.Count == 0)
+                    {
+                        _concurrencyLimit.Release();
+                        if (!_acceptingWork)
+                            return;
+                        continue;
+                    }
+
+                    var now = DateTime.UtcNow;
+                    var selectedIndex = 0;
+                    effectivePriority = GetEffectiveQueuePriority(_workQueue[0], now);
+                    for (var index = 1; index < _workQueue.Count; index++)
+                    {
+                        var candidatePriority = GetEffectiveQueuePriority(_workQueue[index], now);
+                        if (candidatePriority > effectivePriority
+                            || (candidatePriority == effectivePriority
+                                && _workQueue[index].Sequence < _workQueue[selectedIndex].Sequence))
+                        {
+                            selectedIndex = index;
+                            effectivePriority = candidatePriority;
+                        }
+                    }
+
+                    queuedItem = _workQueue[selectedIndex];
+                    _workQueue.RemoveAt(selectedIndex);
+                }
+
+                _queueSlots?.Release();
+
+                var queueWait = DateTime.UtcNow - queuedItem.EnqueuedAtUtc;
+                Interlocked.Increment(ref _startedWorkItems);
+                Interlocked.Add(ref _totalQueueWaitTicks, queueWait.Ticks);
+                RecordWorkItemEvent(queuedItem.Item, SchedulingEventKind.WorkItemStarted,
+                    $"Started {queuedItem.Item.Type} work item after waiting {queueWait.TotalMilliseconds:F0} ms.",
+                    effectivePriority);
+
+                var task = ExecuteScheduledWorkItemAsync(queuedItem.Item, _globalCts.Token);
+                await _taskListLock.WaitAsync(_globalCts.Token).ConfigureAwait(false);
+                try
+                {
+                    _runningTasks.Add(task);
+                }
+                finally
+                {
+                    _taskListLock.Release();
+                }
+
+                _ = CleanupCompletedTasksAsync();
+            }
+        }
+        catch (OperationCanceledException) when (_globalCts.IsCancellationRequested)
+        {
+            // Cancel() 已负责完成仍在队列中的 CompletionSource。
+        }
+    }
+
+    private async Task ExecuteScheduledWorkItemAsync(WorkItem item, CancellationToken ct)
+    {
+        try
+        {
+            await ExecuteWorkItemAsync(item, ct).ConfigureAwait(false);
+        }
+        finally
+        {
+            _concurrencyLimit.Release();
+        }
+    }
+
+    private int GetEffectiveQueuePriority(QueuedWorkItem queuedItem, DateTime now)
+    {
+        var agingBoost = Math.Min(
+            _schedulerMaxAgingBoost,
+            Math.Max(0, (int)((now - queuedItem.EnqueuedAtUtc).TotalSeconds / _schedulerAgingStepSeconds)));
+        return queuedItem.Item.BasePriority + agingBoost;
+    }
+
+    private void CancelQueuedWorkItems()
+    {
+        List<QueuedWorkItem> queued;
+        lock (_queueSync)
+        {
+            _acceptingWork = false;
+            queued = _workQueue.ToList();
+            _workQueue.Clear();
+        }
+
+        foreach (var item in queued)
+        {
+            _queueSlots?.Release();
+            item.Item.CompletionSource?.TrySetResult(WorkItemResult.Cancelled(TimeSpan.Zero, item.Item.Context));
+            Interlocked.Increment(ref _cancelledWorkItems);
+            RecordWorkItemEvent(item.Item, SchedulingEventKind.WorkItemCancelled,
+                "Cancelled before a concurrency slot was assigned.", item.Item.BasePriority);
+        }
+
+        _workAvailable.Release();
+    }
 
     private async Task ExecuteWorkItemAsync(WorkItem item, CancellationToken ct)
     {
@@ -275,6 +487,14 @@ public sealed class WorkflowScheduler : IAsyncDisposable
                 _ => WorkItemResult.Failed(TimeSpan.Zero, $"Unknown work item type: {item.Type}")
             };
         }
+        catch (ResourceReservationTimeoutException ex)
+        {
+            result = WorkItemResult.Failed(DateTime.UtcNow - startTime, ex.Message, item.Context, "Timeout");
+        }
+        catch (ResourceReservationBusyException ex)
+        {
+            result = WorkItemResult.Failed(DateTime.UtcNow - startTime, ex.Message, item.Context, "Busy");
+        }
         catch (OperationCanceledException)
         {
             result = WorkItemResult.Cancelled(DateTime.UtcNow - startTime, item.Context);
@@ -284,9 +504,44 @@ public sealed class WorkflowScheduler : IAsyncDisposable
             result = WorkItemResult.Failed(DateTime.UtcNow - startTime, ex.Message, item.Context);
         }
 
+        if (result.IsCancelled)
+        {
+            Interlocked.Increment(ref _cancelledWorkItems);
+            RecordWorkItemEvent(item, SchedulingEventKind.WorkItemCancelled,
+                result.ErrorMessage ?? "Work item was cancelled.", item.BasePriority);
+        }
+        else if (result.IsSuccess)
+        {
+            Interlocked.Increment(ref _completedWorkItems);
+            RecordWorkItemEvent(item, SchedulingEventKind.WorkItemCompleted,
+                $"Work item completed in {result.Duration.TotalMilliseconds:F0} ms.", item.BasePriority);
+        }
+        else
+        {
+            Interlocked.Increment(ref _failedWorkItems);
+            RecordWorkItemEvent(item, SchedulingEventKind.WorkItemFailed,
+                result.ErrorMessage ?? "Work item failed.", item.BasePriority);
+        }
+
         // 通知完成
         item.CompletionSource?.TrySetResult(result);
     }
+
+    private void RecordWorkItemEvent(
+        WorkItem item,
+        SchedulingEventKind kind,
+        string message,
+        int effectivePriority) =>
+        _eventLog.Record(new SchedulingEvent(
+            DateTime.UtcNow,
+            kind,
+            nameof(WorkflowScheduler),
+            message,
+            item.Context.RootContext.ExecutionId,
+            item.Context.ExecutionId,
+            item.WorkItemId,
+            BasePriority: item.BasePriority,
+            EffectivePriority: effectivePriority));
 
     private async Task<WorkItemResult> ExecuteFlowItemAsync(WorkItem item, CancellationToken ct)
     {
@@ -304,7 +559,7 @@ public sealed class WorkflowScheduler : IAsyncDisposable
 
         return flowResult.IsSuccess
             ? WorkItemResult.Success(flowResult.Duration, item.Context)
-            : WorkItemResult.Failed(flowResult.Duration, flowResult.ErrorMessage ?? "Flow execution failed", item.Context);
+            : WorkItemResult.Failed(flowResult.Duration, flowResult.ErrorMessage ?? "Flow execution failed", item.Context, flowResult.RouteKey);
     }
 
     private async Task<WorkItemResult> ExecuteModuleItemAsync(WorkItem item, CancellationToken ct)
@@ -316,7 +571,7 @@ public sealed class WorkflowScheduler : IAsyncDisposable
 
         return moduleResult.IsSuccess
             ? WorkItemResult.Success(moduleResult.Duration, item.Context)
-            : WorkItemResult.Failed(moduleResult.Duration, moduleResult.ErrorMessage ?? "Module execution failed", item.Context);
+            : WorkItemResult.Failed(moduleResult.Duration, moduleResult.ErrorMessage ?? "Module execution failed", item.Context, moduleResult.RouteKey);
     }
 
     private async Task<WorkItemResult> ExecuteSubFlowItemAsync(WorkItem item, CancellationToken ct)
@@ -356,16 +611,175 @@ public sealed class WorkflowScheduler : IAsyncDisposable
         }
 
         // 创建子流执行上下文
-        var childContext = parentCtx.CreateChildContext(subFlow.FlowId);
+        if (!TryCreateSubFlowInputs(flowRef, parentCtx, out var childInputs, out var bindingError))
+            return WorkItemResult.Failed(TimeSpan.Zero, bindingError!, parentCtx);
 
-        // 创建子流 WorkItem 并提交到队列
-        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(_globalCts.Token, ct);
-        var tcs = new TaskCompletionSource<WorkItemResult>();
+        if (!FlowInputValidator.TryCreateInputSnapshot(subFlow, childInputs, out var inputSnapshot, out var validationError))
+            return WorkItemResult.Failed(TimeSpan.Zero, validationError!, parentCtx);
 
-        var workItem = WorkItem.CreateSubFlow(flowRef, childContext, subFlow, tcs);
-        await _workQueue.Writer.WriteAsync(workItem, linkedCts.Token);
+        var signature = CreateInputSignature(inputSnapshot);
+        var result = await ExecuteSubFlowByPolicyAsync(flowRef, subFlow, parentCtx, inputSnapshot, signature, ct);
+        if (result.IsSuccess && result.Context is not null)
+        {
+            foreach (var (childOutput, parentVariable) in flowRef.OutputBindings)
+            {
+                if (result.Context.Outputs.TryGetValue(childOutput, out var value))
+                    parentCtx.SetVariable(parentVariable, value);
+            }
+        }
 
-        return await tcs.Task;
+        return result;
+    }
+
+    private async Task<WorkItemResult> ExecuteSubFlowByPolicyAsync(
+        FlowReference flowRef,
+        Flow subFlow,
+        ExecutionContext parentContext,
+        IReadOnlyDictionary<string, object?> inputs,
+        string inputSignature,
+        CancellationToken ct)
+    {
+        switch (flowRef.InvocationPolicy)
+        {
+            case FlowInvocationPolicy.Reentrant:
+                return await StartTrackedSubFlowAsync(flowRef, subFlow, parentContext, inputs, inputSignature, ct);
+
+            case FlowInvocationPolicy.Exclusive:
+            {
+                SemaphoreSlim gate;
+                lock (_subFlowInvocationSync)
+                {
+                    if (!_exclusiveSubFlowGates.TryGetValue(subFlow.FlowId, out gate!))
+                        _exclusiveSubFlowGates[subFlow.FlowId] = gate = new SemaphoreSlim(1, 1);
+                }
+                await gate.WaitAsync(ct);
+                try
+                {
+                    return await StartTrackedSubFlowAsync(flowRef, subFlow, parentContext, inputs, inputSignature, ct);
+                }
+                finally
+                {
+                    gate.Release();
+                }
+            }
+
+            case FlowInvocationPolicy.JoinRunning:
+            {
+                Task<WorkItemResult> invocationTask;
+                lock (_subFlowInvocationSync)
+                {
+                    var existing = _activeSubFlows.GetValueOrDefault(subFlow.FlowId)?
+                        .FirstOrDefault(item => string.Equals(item.InputSignature, inputSignature, StringComparison.Ordinal));
+                    invocationTask = existing?.Task
+                        ?? StartTrackedSubFlowAsync(flowRef, subFlow, parentContext, inputs, inputSignature, ct);
+                }
+                return await invocationTask.WaitAsync(ct);
+            }
+
+            case FlowInvocationPolicy.RejectIfRunning:
+            {
+                Task<WorkItemResult> invocationTask;
+                lock (_subFlowInvocationSync)
+                {
+                    if (_activeSubFlows.GetValueOrDefault(subFlow.FlowId)?.Count > 0)
+                    {
+                        return WorkItemResult.Failed(
+                            TimeSpan.Zero,
+                            $"Sub-flow '{subFlow.Name}' is already running.",
+                            parentContext,
+                            "Busy");
+                    }
+                    invocationTask = StartTrackedSubFlowAsync(
+                        flowRef, subFlow, parentContext, inputs, inputSignature, ct);
+                }
+                return await invocationTask;
+            }
+
+            default:
+                throw new InvalidOperationException($"Unknown sub-flow invocation policy '{flowRef.InvocationPolicy}'.");
+        }
+    }
+
+    private Task<WorkItemResult> StartTrackedSubFlowAsync(
+        FlowReference flowRef,
+        Flow subFlow,
+        ExecutionContext parentContext,
+        IReadOnlyDictionary<string, object?> inputs,
+        string inputSignature,
+        CancellationToken ct)
+    {
+        var childContext = parentContext.CreateChildContext(subFlow.FlowId, inputs);
+        var completion = new TaskCompletionSource<WorkItemResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var workItem = WorkItem.CreateSubFlow(flowRef, childContext, subFlow, completion);
+        var invocation = new ActiveSubFlowInvocation(inputSignature, completion.Task);
+        lock (_subFlowInvocationSync)
+        {
+            if (!_activeSubFlows.TryGetValue(subFlow.FlowId, out var active))
+                _activeSubFlows[subFlow.FlowId] = active = new List<ActiveSubFlowInvocation>();
+            active.Add(invocation);
+        }
+
+        return QueueAndAwaitAsync();
+
+        async Task<WorkItemResult> QueueAndAwaitAsync()
+        {
+            try
+            {
+                using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(_globalCts.Token, ct);
+                // 子工作流属于当前根运行实例并复用其调度槽。
+                // 如果父项占着槽位等待、子项再进入同一全局队列，会在槽位耗尽时形成调度饥饿。
+                await ExecuteWorkItemAsync(workItem, linkedCts.Token);
+                return await completion.Task;
+            }
+            finally
+            {
+                lock (_subFlowInvocationSync)
+                {
+                    if (_activeSubFlows.TryGetValue(subFlow.FlowId, out var active))
+                    {
+                        active.Remove(invocation);
+                        if (active.Count == 0) _activeSubFlows.Remove(subFlow.FlowId);
+                    }
+                }
+            }
+        }
+    }
+
+    private static string CreateInputSignature(IReadOnlyDictionary<string, object?> inputs) =>
+        JsonSerializer.Serialize(inputs.OrderBy(item => item.Key, StringComparer.Ordinal));
+
+    private static bool TryCreateSubFlowInputs(
+        FlowReference flowRef,
+        ExecutionContext parentContext,
+        out IReadOnlyDictionary<string, object?> inputs,
+        out string? errorMessage)
+    {
+        var mapped = new Dictionary<string, object?>(StringComparer.Ordinal);
+        foreach (var (childInput, parentValue) in flowRef.InputBindings)
+        {
+            if (string.IsNullOrWhiteSpace(childInput) || string.IsNullOrWhiteSpace(parentValue))
+            {
+                inputs = mapped;
+                errorMessage = $"Sub-flow '{flowRef.Name}' contains an empty parameter binding.";
+                return false;
+            }
+
+            if (parentContext.Variables.TryGetValue(parentValue, out var value)
+                || parentContext.Outputs.TryGetValue(parentValue, out value)
+                || parentContext.Inputs.TryGetValue(parentValue, out value))
+            {
+                mapped[childInput] = value;
+                continue;
+            }
+
+            inputs = mapped;
+            errorMessage = $"Sub-flow '{flowRef.Name}' input '{childInput}' refers to unavailable parent value '{parentValue}'.";
+            return false;
+        }
+
+        inputs = mapped;
+        errorMessage = null;
+        return true;
     }
 
     #endregion
@@ -392,12 +806,29 @@ public sealed class WorkflowScheduler : IAsyncDisposable
 
         Cancel();
         Stop();
+        if (_dispatcherTask is not null)
+        {
+            try { await _dispatcherTask.ConfigureAwait(false); }
+            catch (OperationCanceledException) { }
+        }
         await WaitForAllAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
 
         _globalCts.Dispose();
+        _workAvailable.Dispose();
+        _queueSlots?.Dispose();
         _concurrencyLimit.Dispose();
         _taskListLock.Dispose();
+        lock (_subFlowInvocationSync)
+        {
+            foreach (var gate in _exclusiveSubFlowGates.Values) gate.Dispose();
+            _exclusiveSubFlowGates.Clear();
+            _activeSubFlows.Clear();
+        }
     }
 
     #endregion
 }
+
+internal sealed record ActiveSubFlowInvocation(string InputSignature, Task<WorkItemResult> Task);
+
+internal sealed record QueuedWorkItem(WorkItem Item, DateTime EnqueuedAtUtc, long Sequence);

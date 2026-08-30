@@ -179,6 +179,52 @@ public sealed class HardwareDriverFactory
     }
 
     /// <summary>
+    /// 对所有已创建驱动并行发送安全停止。先复制驱动快照再释放缓存锁，避免某个慢驱动阻塞其他驱动管理操作。
+    /// </summary>
+    public async Task<HardwareSafetyStopReport> TryStopAllAsync(
+        TimeSpan timeout,
+        CancellationToken ct = default)
+    {
+        if (timeout <= TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(timeout));
+
+        KeyValuePair<long, IHardwareDriver>[] drivers;
+        await _cacheLock.WaitAsync(ct).ConfigureAwait(false);
+        try
+        {
+            drivers = _driverCache.ToArray();
+        }
+        finally
+        {
+            _cacheLock.Release();
+        }
+
+        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        timeoutCts.CancelAfter(timeout);
+        var results = await Task.WhenAll(drivers.Select(async pair =>
+        {
+            try
+            {
+                var stopped = await pair.Value.TryStopAsync(timeoutCts.Token).ConfigureAwait(false);
+                return new HardwareSafetyStopResult(pair.Key, pair.Value.Hardware.Name, stopped, null);
+            }
+            catch (OperationCanceledException)
+            {
+                return new HardwareSafetyStopResult(pair.Key, pair.Value.Hardware.Name, false, "Safety stop timed out or was cancelled.");
+            }
+            catch (Exception ex)
+            {
+                return new HardwareSafetyStopResult(pair.Key, pair.Value.Hardware.Name, false, ex.Message);
+            }
+        })).ConfigureAwait(false);
+
+        return new HardwareSafetyStopReport(
+            DateTime.UtcNow,
+            timeout,
+            results,
+            results.All(item => item.Stopped));
+    }
+
+    /// <summary>
     /// 清空所有驱动缓存
     /// </summary>
     public async Task ClearAsync(CancellationToken ct = default)
@@ -264,6 +310,18 @@ public sealed class HardwareDriverFactory
         };
     }
 }
+
+public sealed record HardwareSafetyStopResult(
+    long HardwareId,
+    string HardwareName,
+    bool Stopped,
+    string? ErrorMessage);
+
+public sealed record HardwareSafetyStopReport(
+    DateTime CompletedAtUtc,
+    TimeSpan Timeout,
+    IReadOnlyList<HardwareSafetyStopResult> Results,
+    bool AllStopped);
 
 /// <summary>
 /// Core 层硬件驱动实现：连接 Hardware 模型和 Controller

@@ -38,6 +38,14 @@ public class ModuleEntity
     /// <summary>模块执行超时（毫秒）</summary>
     public int? TimeoutMs { get; set; }
 
+    /// <summary>模块范围租约和命令租约的等待超时（毫秒）。</summary>
+    public int ResourceWaitTimeoutMs { get; set; } = 30000;
+
+    public int CompensationTimeoutMs { get; set; } = 10000;
+
+    [Required, MaxLength(50)]
+    public string RecoveryPolicy { get; set; } = "NotRecoverable";
+
     /// <summary>执行失败后是否继续</summary>
     public bool ContinueOnFailure { get; set; } = false;
 
@@ -46,7 +54,30 @@ public class ModuleEntity
 
     // --- Navigation ---
     public ICollection<ModuleStepEntity> Steps { get; set; } = new List<ModuleStepEntity>();
+    public ICollection<ModuleResourceReservation> ResourceReservations { get; set; } = new List<ModuleResourceReservation>();
     public ICollection<FlowModuleRelation> FlowRelations { get; set; } = new List<FlowModuleRelation>();
+}
+
+/// <summary>
+/// 模块额外资源预留。除模块步骤自动占用的硬件外，
+/// 可在模块开始前预留关联轴、夹具或其他必须保持一致的设备。
+/// </summary>
+public class ModuleResourceReservation
+{
+    [Key]
+    public long Id { get; set; }
+
+    public long ModuleId { get; set; }
+    [ForeignKey(nameof(ModuleId))]
+    public ModuleEntity Module { get; set; } = null!;
+
+    public long HardwareInstanceId { get; set; }
+    [ForeignKey(nameof(HardwareInstanceId))]
+    public HardwareInstance HardwareInstance { get; set; } = null!;
+
+    /// <summary>Exclusive / SharedRead</summary>
+    [Required, MaxLength(50)]
+    public string AccessMode { get; set; } = "Exclusive";
 }
 
 /// <summary>
@@ -76,6 +107,13 @@ public class ModuleStepEntity
     [Required, MaxLength(100)]
     public string CommandName { get; set; } = string.Empty;
 
+    /// <summary>Exclusive / SharedRead；默认写命令独占。</summary>
+    [Required, MaxLength(50)]
+    public string ResourceAccessMode { get; set; } = "Exclusive";
+
+    [MaxLength(100)]
+    public string? ResultVariable { get; set; }
+
     /// <summary>命令参数 JSON</summary>
     [Column(TypeName = "TEXT")]
     public string? CommandParametersJson { get; set; }
@@ -88,6 +126,9 @@ public class ModuleStepEntity
 
     /// <summary>失败后是否继续</summary>
     public bool ContinueOnFailure { get; set; } = false;
+
+    /// <summary>补偿步骤不参与正常执行；失败或取消后按逆序运行。</summary>
+    public bool IsCompensation { get; set; }
 
     /// <summary>所属模块</summary>
     public long ModuleId { get; set; }

@@ -6,4 +6,5 @@
   <Project Path="HardwareModularWorkflow.Core/HardwareModularWorkflow.Core.csproj" />
   <Project Path="HardwareModularWorkflow.Lang/HardwareModularWorkflow.Lang.csproj" />
   <Project Path="HardwareModularWorkflow.Wpf/HardwareModularWorkflow.Wpf.csproj" />
+  <Project Path="HardwareModularWorkflow.Tests/HardwareModularWorkflow.Tests.csproj" />
 </Solution>

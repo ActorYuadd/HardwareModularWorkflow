@@ -16,6 +16,7 @@ public sealed class StepExecutionResult
     public TimeSpan Duration { get; init; }
     public CommandResult? CommandResult { get; init; }
     public string? ErrorMessage { get; init; }
+    public string RouteKey { get; init; } = "Success";
 }
 
 /// <summary>
@@ -28,7 +29,11 @@ public sealed class ModuleExecutionResult
     public bool IsSuccess { get; init; }
     public TimeSpan Duration { get; init; }
     public string? ErrorMessage { get; init; }
+    public string RouteKey { get; init; } = "Success";
     public List<StepExecutionResult> StepResults { get; init; } = new();
+    public bool CompensationAttempted { get; init; }
+    public bool CompensationSucceeded { get; init; }
+    public List<StepExecutionResult> CompensationResults { get; init; } = new();
 }
 
 /// <summary>
@@ -41,5 +46,10 @@ public sealed class FlowExecutionResult
     public bool IsSuccess { get; init; }
     public TimeSpan Duration { get; init; }
     public string? ErrorMessage { get; init; }
+    public string RouteKey { get; init; } = "Success";
     public List<ModuleExecutionResult> ModuleResults { get; init; } = new();
+
+    /// <summary>本次调用对外公开的输出快照。</summary>
+    public IReadOnlyDictionary<string, object?> Outputs { get; init; } =
+        new Dictionary<string, object?>(StringComparer.Ordinal);
 }

@@ -54,4 +54,6 @@ public class HardwareInstance
 
     // --- Navigation ---
     public ICollection<ModuleStepEntity> ModuleSteps { get; set; } = new List<ModuleStepEntity>();
+    public ICollection<ModuleResourceReservation> ModuleResourceReservations { get; set; } = new List<ModuleResourceReservation>();
+    public ICollection<FlowResourceReservation> FlowResourceReservations { get; set; } = new List<FlowResourceReservation>();
 }

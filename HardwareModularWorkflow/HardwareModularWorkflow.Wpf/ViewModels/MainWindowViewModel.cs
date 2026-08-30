@@ -1,11 +1,15 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HardwareModularWorkflow.Core.Events;
 using HardwareModularWorkflow.Core.Services;
 using HardwareModularWorkflow.Lang;
 using HardwareModularWorkflow.Lang.Strings;
+using HardwareModularWorkflow.Workflow.Events;
+using HardwareModularWorkflow.Workflow.Resources;
 using HardwareModularWorkflow.Wpf.ViewModels;
 
 namespace HardwareModularWorkflow.Wpf.ViewModels;
@@ -16,6 +20,8 @@ namespace HardwareModularWorkflow.Wpf.ViewModels;
 public partial class MainWindowViewModel : ObservableObject
 {
     private readonly WorkflowRuntimeService _runtimeService;
+    private readonly IEventBus? _eventBus;
+    private readonly IResourceReservationManager? _resourceReservationManager;
     private readonly DashboardViewModel _dashboardViewModel;
     private readonly HardwareViewModel _hardwareViewModel;
     private readonly HardwareDefinitionViewModel _hardwareDefinitionViewModel;
@@ -25,6 +31,7 @@ public partial class MainWindowViewModel : ObservableObject
     private readonly MonitorViewModel _monitorViewModel;
     private readonly ExecutionLogViewModel _executionLogViewModel;
     private readonly SettingsViewModel _settingsViewModel;
+    private IDisposable? _eventSubscription;
 
     [ObservableProperty]
     private string _statusMessage = LangKeys.Status_Ready;
@@ -43,6 +50,25 @@ public partial class MainWindowViewModel : ObservableObject
 
     public ObservableCollection<NavigationItem> NavigationItems { get; } = new();
 
+    // --- 底部面板 ---
+    [ObservableProperty]
+    private ObservableCollection<LiveEventItem> _liveEvents = new();
+
+    [ObservableProperty]
+    private string _systemStatus = "就绪";
+
+    [ObservableProperty]
+    private string _runtimeMetrics = string.Empty;
+
+    [ObservableProperty]
+    private string _resourceMetrics = string.Empty;
+
+    [ObservableProperty]
+    private double _runtimeSlotsUsed;
+
+    [ObservableProperty]
+    private double _runtimeSlotsMax = 50;
+
     public MainWindowViewModel(
         WorkflowRuntimeService runtimeService,
         DashboardViewModel dashboardViewModel,
@@ -53,9 +79,13 @@ public partial class MainWindowViewModel : ObservableObject
         FlowViewModel flowViewModel,
         MonitorViewModel monitorViewModel,
         ExecutionLogViewModel executionLogViewModel,
-        SettingsViewModel settingsViewModel)
+        SettingsViewModel settingsViewModel,
+        IEventBus? eventBus = null,
+        IResourceReservationManager? resourceReservationManager = null)
     {
         _runtimeService = runtimeService ?? throw new ArgumentNullException(nameof(runtimeService));
+        _eventBus = eventBus;
+        _resourceReservationManager = resourceReservationManager;
         _dashboardViewModel = dashboardViewModel ?? throw new ArgumentNullException(nameof(dashboardViewModel));
         _hardwareViewModel = hardwareViewModel ?? throw new ArgumentNullException(nameof(hardwareViewModel));
         _hardwareDefinitionViewModel = hardwareDefinitionViewModel
@@ -68,6 +98,11 @@ public partial class MainWindowViewModel : ObservableObject
         _settingsViewModel = settingsViewModel ?? throw new ArgumentNullException(nameof(settingsViewModel));
         _settingsViewModel.PropertyChanged += OnSettingsViewModelPropertyChanged;
         InitializeNavigation();
+
+        if (_eventBus is not null)
+            _eventSubscription = _eventBus.Subscribe<WorkflowEvent>(OnWorkflowEvent);
+
+        UpdateMetrics();
     }
 
     private void OnSettingsViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -94,6 +129,48 @@ public partial class MainWindowViewModel : ObservableObject
         NavigationItems.Add(new NavigationItem(LangKeys.Navigation_Settings, "Cog", _settingsViewModel));
 
         SelectedNavigationItem = NavigationItems.FirstOrDefault();
+    }
+
+    private Task OnWorkflowEvent(WorkflowEvent evt)
+    {
+        Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            LiveEvents.Insert(0, new LiveEventItem
+            {
+                Time = evt.Timestamp.ToLocalTime().ToString("HH:mm:ss.fff"),
+                Type = evt.EventType.ToString(),
+                FlowName = evt.FlowId > 0 ? evt.FlowId.ToString() : "-",
+                Message = evt.Message ?? evt.EventType.ToString(),
+                IsError = evt.IsError
+            });
+            while (LiveEvents.Count > 200) LiveEvents.RemoveAt(LiveEvents.Count - 1);
+            UpdateMetrics();
+        });
+        return Task.CompletedTask;
+    }
+
+    private void UpdateMetrics()
+    {
+        try
+        {
+            RuntimeMetrics = $"运行中: {_runtimeService.CurrentRunningTasks} / 槽位: {_runtimeService.MaxConcurrencySlots} | 可用: {_runtimeService.CurrentAvailableSlots}";
+            RuntimeSlotsUsed = _runtimeService.CurrentRunningTasks;
+            RuntimeSlotsMax = _runtimeService.MaxConcurrencySlots;
+            SystemStatus = _runtimeService.IsRuntimeRunning ? "运行中" : "已停止";
+        }
+        catch
+        {
+            SystemStatus = "未知";
+        }
+        if (_resourceReservationManager is not null)
+        {
+            try
+            {
+                var metrics = _resourceReservationManager.GetMetrics();
+                ResourceMetrics = $"资源: 等待 {metrics.WaitingReservations}/{metrics.QueueCapacity} | 持有 {metrics.GrantedReservations} | 继承提升 {metrics.InheritedPriorityReservations} | 最长等待 {metrics.OldestWaitingDuration.TotalSeconds:F1}s";
+            }
+            catch { ResourceMetrics = string.Empty; }
+        }
     }
 
     partial void OnSelectedNavigationItemChanged(NavigationItem? value)
@@ -181,4 +258,13 @@ public class NavigationItem : INotifyPropertyChanged
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
+}
+
+public class LiveEventItem
+{
+    public string Time { get; set; } = string.Empty;
+    public string Type { get; set; } = string.Empty;
+    public string FlowName { get; set; } = string.Empty;
+    public string Message { get; set; } = string.Empty;
+    public bool IsError { get; set; }
 }

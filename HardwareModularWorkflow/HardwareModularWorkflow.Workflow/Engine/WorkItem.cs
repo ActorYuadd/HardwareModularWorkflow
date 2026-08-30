@@ -34,15 +34,19 @@ public sealed class WorkItem
     /// <summary>父工作项 ID（用于关联）</summary>
     public Guid? ParentWorkItemId { get; init; }
 
+    /// <summary>进入全局并发槽队列时使用的基础优先级。</summary>
+    public int BasePriority { get; init; }
+
     /// <summary>创建模块工作项</summary>
-    public static WorkItem CreateModule(Module module, ExecutionContext context, TaskCompletionSource<WorkItemResult>? tcs = null, Guid? parentId = null) =>
+    public static WorkItem CreateModule(Module module, ExecutionContext context, TaskCompletionSource<WorkItemResult>? tcs = null, Guid? parentId = null, int basePriority = 0) =>
         new()
         {
             Type = WorkItemType.Module,
             Module = module,
             Context = context,
             CompletionSource = tcs,
-            ParentWorkItemId = parentId
+            ParentWorkItemId = parentId,
+            BasePriority = basePriority
         };
 
     /// <summary>创建流工作项</summary>
@@ -52,19 +56,21 @@ public sealed class WorkItem
             Type = WorkItemType.Flow,
             Flow = flow,
             Context = context,
-            CompletionSource = tcs
+            CompletionSource = tcs,
+            BasePriority = flow.ResourcePriority
         };
 
     /// <summary>创建子流引用工作项</summary>
-    public static WorkItem CreateSubFlow(FlowReference reference, ExecutionContext parentContext, Flow resolvedFlow, TaskCompletionSource<WorkItemResult>? tcs = null, Guid? parentId = null) =>
+    public static WorkItem CreateSubFlow(FlowReference reference, ExecutionContext context, Flow resolvedFlow, TaskCompletionSource<WorkItemResult>? tcs = null, Guid? parentId = null) =>
         new()
         {
             Type = WorkItemType.SubFlow,
             Flow = resolvedFlow,
             FlowReference = reference,
-            Context = parentContext.CreateChildContext(resolvedFlow.FlowId),
+            Context = context,
             CompletionSource = tcs,
-            ParentWorkItemId = parentId
+            ParentWorkItemId = parentId,
+            BasePriority = resolvedFlow.ResourcePriority
         };
 }
 
@@ -95,12 +101,15 @@ public sealed class WorkItemResult
     /// <summary>是否被取消</summary>
     public bool IsCancelled { get; init; }
 
-    public static WorkItemResult Success(TimeSpan duration, ExecutionContext context) =>
-        new() { IsSuccess = true, Duration = duration, Context = context };
+    /// <summary>图节点用于选择出口的结果键，例如 Success、Busy、Timeout、Failed。</summary>
+    public string RouteKey { get; init; } = "Failed";
 
-    public static WorkItemResult Failed(TimeSpan duration, string error, ExecutionContext? context = null) =>
-        new() { IsSuccess = false, Duration = duration, ErrorMessage = error, Context = context };
+    public static WorkItemResult Success(TimeSpan duration, ExecutionContext context) =>
+        new() { IsSuccess = true, Duration = duration, Context = context, RouteKey = "Success" };
+
+    public static WorkItemResult Failed(TimeSpan duration, string error, ExecutionContext? context = null, string routeKey = "Failed") =>
+        new() { IsSuccess = false, Duration = duration, ErrorMessage = error, Context = context, RouteKey = routeKey };
 
     public static WorkItemResult Cancelled(TimeSpan duration, ExecutionContext? context = null) =>
-        new() { IsSuccess = false, Duration = duration, IsCancelled = true, Context = context };
+        new() { IsSuccess = false, Duration = duration, IsCancelled = true, Context = context, RouteKey = "Cancelled" };
 }

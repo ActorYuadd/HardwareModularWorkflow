@@ -1,5 +1,6 @@
 using HardwareModularWorkflow.Hardware.Abstractions;
 using HardwareModularWorkflow.Hardware.Enums;
+using HardwareModularWorkflow.Workflow.Resources;
 
 namespace HardwareModularWorkflow.Workflow.Models;
 
@@ -22,6 +23,12 @@ public sealed class HardwareStep
 
     /// <summary>要执行的硬件命令</summary>
     public required IHardwareCommand Command { get; init; }
+
+    /// <summary>该命令对硬件资源的访问模式；默认独占，只有驱动明确标记只读时才可共享。</summary>
+    public ResourceAccessMode ResourceAccessMode { get; set; } = ResourceAccessMode.Exclusive;
+
+    /// <summary>将命令返回 Data 写入当前工作流变量，供后续 Switch 读取。</summary>
+    public string? ResultVariable { get; set; }
 
     /// <summary>执行模式：串行或并行</summary>
     public ExecutionMode ExecutionMode { get; set; } = ExecutionMode.Sequential;

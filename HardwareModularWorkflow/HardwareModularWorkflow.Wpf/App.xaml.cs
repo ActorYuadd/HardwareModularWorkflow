@@ -29,6 +29,7 @@ public partial class App : Application
 
         // 3. 启动工作流运行时服务
         var runtimeService = _serviceProvider.GetRequiredService<WorkflowRuntimeService>();
+        await runtimeService.InitializeRecoveryAsync();
         runtimeService.Start();
 
         // 3.5. 加载用户设置（语言、主题等）

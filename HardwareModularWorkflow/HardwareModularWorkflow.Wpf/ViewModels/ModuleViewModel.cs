@@ -5,6 +5,8 @@ using CommunityToolkit.Mvvm.Input;
 using HardwareModularWorkflow.Db.Entities;
 using HardwareModularWorkflow.Db.Services;
 using HardwareModularWorkflow.Lang;
+using HardwareModularWorkflow.Workflow.Models;
+using HardwareModularWorkflow.Workflow.Resources;
 using Microsoft.EntityFrameworkCore;
 using AppDbContext = HardwareModularWorkflow.Db.DbContext.HardwareModularWorkflowDbContext;
 
@@ -27,6 +29,12 @@ public partial class ModuleViewModel : ObservableObject
 
     [ObservableProperty]
     private ObservableCollection<HardwareInstance> _hardwareInstances = new();
+
+    [ObservableProperty]
+    private HardwareInstance? _selectedModuleResourceHardware;
+
+    [ObservableProperty]
+    private ObservableCollection<ModuleResourceReservationEditModel> _moduleResourceReservations = new();
 
     [ObservableProperty]
     private string _searchText = string.Empty;
@@ -128,6 +136,7 @@ public partial class ModuleViewModel : ObservableObject
     {
         EditModel = new ModuleEditModel();
         Steps.Clear();
+        ModuleResourceReservations.Clear();
         SelectedStep = null;
         EditPanelTitle = LangKeys.Title_AddModule;
         IsEditing = true;
@@ -150,6 +159,9 @@ public partial class ModuleViewModel : ObservableObject
             CoreEvent = module.CoreEvent,
             NotifyEvent = module.NotifyEvent,
             TimeoutMs = module.TimeoutMs,
+            ResourceWaitTimeoutMs = module.ResourceWaitTimeoutMs,
+            CompensationTimeoutMs = module.CompensationTimeoutMs,
+            RecoveryPolicy = module.RecoveryPolicy,
             ContinueOnFailure = module.ContinueOnFailure
         };
 
@@ -168,12 +180,22 @@ public partial class ModuleViewModel : ObservableObject
                     CommandName = step.CommandName,
                     CommandParametersJson = step.CommandParametersJson,
                     IsAsync = step.IsAsync,
+                    ResourceAccessMode = step.ResourceAccessMode,
+                    ResultVariable = step.ResultVariable,
                     TimeoutMs = step.TimeoutMs,
-                    ContinueOnFailure = step.ContinueOnFailure
+                    ContinueOnFailure = step.ContinueOnFailure,
+                    IsCompensation = step.IsCompensation
                 });
                 ConfigureStep(Steps[^1]);
             }
         }
+        ModuleResourceReservations = new ObservableCollection<ModuleResourceReservationEditModel>(
+            module.ResourceReservations.Select(reservation => new ModuleResourceReservationEditModel
+            {
+                HardwareInstanceId = reservation.HardwareInstanceId,
+                Name = reservation.HardwareInstance.Name,
+                AccessMode = reservation.AccessMode
+            }));
 
         SelectedStep = null;
         EditPanelTitle = string.Format(LangKeys.Title_EditModule, module.Id);
@@ -189,6 +211,27 @@ public partial class ModuleViewModel : ObservableObject
         if (string.IsNullOrWhiteSpace(EditModel.Name))
         {
             StatusMessage = LangKeys.Validation_ModuleNameRequired;
+            return;
+        }
+        if (EditModel.ResourceWaitTimeoutMs <= 0)
+        {
+            StatusMessage = "资源等待超时必须大于 0 毫秒。";
+            return;
+        }
+        if (EditModel.CompensationTimeoutMs <= 0)
+        {
+            StatusMessage = "补偿超时必须大于 0 毫秒。";
+            return;
+        }
+        if (!Enum.TryParse<ModuleRecoveryPolicy>(EditModel.RecoveryPolicy, true, out _))
+        {
+            StatusMessage = "模块恢复策略无效。";
+            return;
+        }
+        if (ModuleResourceReservations.Any(item =>
+                !Enum.TryParse<ResourceAccessMode>(item.AccessMode, true, out _)))
+        {
+            StatusMessage = "模块资源模式只能是 Exclusive 或 SharedRead。";
             return;
         }
 
@@ -213,6 +256,9 @@ public partial class ModuleViewModel : ObservableObject
                     CoreEvent = EditModel.CoreEvent,
                     NotifyEvent = EditModel.NotifyEvent,
                     TimeoutMs = EditModel.TimeoutMs,
+                    ResourceWaitTimeoutMs = EditModel.ResourceWaitTimeoutMs,
+                    CompensationTimeoutMs = EditModel.CompensationTimeoutMs,
+                    RecoveryPolicy = EditModel.RecoveryPolicy,
                     ContinueOnFailure = EditModel.ContinueOnFailure
                 };
 
@@ -228,10 +274,14 @@ public partial class ModuleViewModel : ObservableObject
                         CommandName = step.CommandName,
                         CommandParametersJson = step.CommandParametersJson,
                         IsAsync = step.IsAsync,
+                        ResourceAccessMode = step.ResourceAccessMode,
+                        ResultVariable = step.ResultVariable,
                         TimeoutMs = step.TimeoutMs,
-                        ContinueOnFailure = step.ContinueOnFailure
+                        ContinueOnFailure = step.ContinueOnFailure,
+                        IsCompensation = step.IsCompensation
                     });
                 }
+                AddModuleResourceReservations(entity);
 
                 _dbContext.Modules.Add(entity);
                 await _dbContext.SaveChangesAsync();
@@ -242,6 +292,7 @@ public partial class ModuleViewModel : ObservableObject
                 // 编辑现有模块 - 使用被追踪的实体
                 var entity = await _dbContext.Modules
                     .Include(m => m.Steps)
+                    .Include(m => m.ResourceReservations)
                     .FirstAsync(m => m.Id == EditModel.Id);
 
                 entity.Name = EditModel.Name.Trim();
@@ -252,11 +303,16 @@ public partial class ModuleViewModel : ObservableObject
                 entity.CoreEvent = EditModel.CoreEvent;
                 entity.NotifyEvent = EditModel.NotifyEvent;
                 entity.TimeoutMs = EditModel.TimeoutMs;
+                entity.ResourceWaitTimeoutMs = EditModel.ResourceWaitTimeoutMs;
+                entity.CompensationTimeoutMs = EditModel.CompensationTimeoutMs;
+                entity.RecoveryPolicy = EditModel.RecoveryPolicy;
                 entity.ContinueOnFailure = EditModel.ContinueOnFailure;
 
                 // 清除现有步骤并重新添加
                 _dbContext.ModuleSteps.RemoveRange(entity.Steps);
                 entity.Steps.Clear();
+                _dbContext.ModuleResourceReservations.RemoveRange(entity.ResourceReservations);
+                entity.ResourceReservations.Clear();
 
                 int order = 0;
                 foreach (var step in Steps)
@@ -270,10 +326,14 @@ public partial class ModuleViewModel : ObservableObject
                         CommandName = step.CommandName,
                         CommandParametersJson = step.CommandParametersJson,
                         IsAsync = step.IsAsync,
+                        ResourceAccessMode = step.ResourceAccessMode,
+                        ResultVariable = step.ResultVariable,
                         TimeoutMs = step.TimeoutMs,
-                        ContinueOnFailure = step.ContinueOnFailure
+                        ContinueOnFailure = step.ContinueOnFailure,
+                        IsCompensation = step.IsCompensation
                     });
                 }
+                AddModuleResourceReservations(entity);
 
                 await _dbContext.SaveChangesAsync();
                 StatusMessage = string.Format(LangKeys.Message_ModuleUpdatedWithSteps, entity.Name, Steps.Count);
@@ -282,6 +342,7 @@ public partial class ModuleViewModel : ObservableObject
             IsEditing = false;
             EditModel = null;
             Steps.Clear();
+            ModuleResourceReservations.Clear();
             SelectedStep = null;
             await LoadModulesAsync();
         }
@@ -301,6 +362,7 @@ public partial class ModuleViewModel : ObservableObject
         IsEditing = false;
         EditModel = null;
         Steps.Clear();
+        ModuleResourceReservations.Clear();
         SelectedStep = null;
         StatusMessage = LangKeys.Message_EditCancelled;
     }
@@ -353,6 +415,39 @@ public partial class ModuleViewModel : ObservableObject
         RecalculateOrderIndices();
         SelectedStep = null;
         StatusMessage = LangKeys.Message_StepRemoved;
+    }
+
+    [RelayCommand]
+    private void AddModuleResourceReservation()
+    {
+        if (SelectedModuleResourceHardware is null
+            || ModuleResourceReservations.Any(item => item.HardwareInstanceId == SelectedModuleResourceHardware.Id))
+            return;
+
+        ModuleResourceReservations.Add(new ModuleResourceReservationEditModel
+        {
+            HardwareInstanceId = SelectedModuleResourceHardware.Id,
+            Name = SelectedModuleResourceHardware.Name
+        });
+        SelectedModuleResourceHardware = null;
+    }
+
+    [RelayCommand]
+    private void RemoveModuleResourceReservation(ModuleResourceReservationEditModel? reservation)
+    {
+        if (reservation is not null) ModuleResourceReservations.Remove(reservation);
+    }
+
+    private void AddModuleResourceReservations(ModuleEntity entity)
+    {
+        foreach (var reservation in ModuleResourceReservations)
+        {
+            entity.ResourceReservations.Add(new ModuleResourceReservation
+            {
+                HardwareInstanceId = reservation.HardwareInstanceId,
+                AccessMode = reservation.AccessMode
+            });
+        }
     }
 
     [RelayCommand]
@@ -433,6 +528,12 @@ public partial class ModuleViewModel : ObservableObject
     {
         foreach (var step in Steps)
         {
+            if (!Enum.TryParse<ResourceAccessMode>(step.ResourceAccessMode, true, out _))
+            {
+                StatusMessage = $"步骤 '{step.Name}' 的资源模式只能是 Exclusive 或 SharedRead。";
+                return false;
+            }
+
             var profile = HardwareInstances
                 .FirstOrDefault(instance => instance.Id == step.HardwareInstanceId)
                 ?.Definition.ControlProfile;
@@ -504,7 +605,24 @@ public partial class ModuleEditModel : ObservableObject
     private int? _timeoutMs;
 
     [ObservableProperty]
+    private int _resourceWaitTimeoutMs = 30000;
+
+    [ObservableProperty]
+    private int _compensationTimeoutMs = 10000;
+
+    [ObservableProperty]
+    private string _recoveryPolicy = nameof(ModuleRecoveryPolicy.NotRecoverable);
+
+    [ObservableProperty]
     private bool _continueOnFailure = false;
+
+}
+
+public partial class ModuleResourceReservationEditModel : ObservableObject
+{
+    public long HardwareInstanceId { get; set; }
+    [ObservableProperty] private string _name = string.Empty;
+    [ObservableProperty] private string _accessMode = "Exclusive";
 }
 
 /// <summary>
@@ -536,8 +654,17 @@ public partial class StepEditModel : ObservableObject
     private bool _isAsync = true;
 
     [ObservableProperty]
+    private string _resourceAccessMode = "Exclusive";
+
+    [ObservableProperty]
+    private string? _resultVariable;
+
+    [ObservableProperty]
     private int? _timeoutMs;
 
     [ObservableProperty]
     private bool _continueOnFailure = false;
+
+    [ObservableProperty]
+    private bool _isCompensation;
 }
